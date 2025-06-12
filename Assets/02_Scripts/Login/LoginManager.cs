@@ -1,6 +1,7 @@
     using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using _02_Scripts.Alert;
 using _02_Scripts.Player;
 using Newtonsoft.Json;
 using TMPro;
@@ -41,15 +42,15 @@ public class LoginManager : MonoBehaviour
         yield return request.SendWebRequest();
 
         // 응답 처리
-        if (request.result == UnityWebRequest.Result.Success)
+        LoginResponse response = JsonConvert.DeserializeObject<LoginResponse>(request.downloadHandler.text);
+        if (response.isLogin)
         {
-            LoginResponse response = JsonConvert.DeserializeObject<LoginResponse>(request.downloadHandler.text);
             PlayerData loginData = response.data;
             login(loginData);
         }
         else
         {
-            Debug.LogError("서버 요청 실패: " + request.error);
+            AlertUIManager.Instance.OnAlert(response.message);
         }
     }
 
