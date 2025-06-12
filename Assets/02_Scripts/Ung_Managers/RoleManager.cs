@@ -14,6 +14,7 @@ public class RoleManager : MonoBehaviour
         Instance = this;
     }
 
+    
     public void AssignRoles()
     {
         // 예시: 임포스터 1명, 나머지 크루메이트
@@ -30,6 +31,7 @@ public class RoleManager : MonoBehaviour
             Debug.Log($"{shuffled[i]} assigned to {role}");
         }
     }
+    
 
     public Role GetRole(string playerID)
     {

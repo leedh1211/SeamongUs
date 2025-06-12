@@ -12,7 +12,7 @@ public class ReportManager : MonoBehaviour
     public void ReportBody(string reporterID, string deadPlayerID)
     {
         Debug.Log($"{reporterID} reported {deadPlayerID}'s body.");
-        UIManager.Instance.ShowMeetingUI(reporterID);
+        // UIManager.Instance.ShowMeetingUI(reporterID);
         // 실제 로직에서는 회의 참여자 목록 등도 세팅해야 함
     }
 }

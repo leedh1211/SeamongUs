@@ -54,11 +54,13 @@ public class VoteManager : MonoBehaviour
             Debug.Log("No votes submitted.");
             return;
         }
+        
+        // 투표 동률 시 스킵 로직 추가 요망
 
         string votedOut = voteResults.GroupBy(kv => kv.Value).OrderByDescending(g => g.Count()).First().Key;
 
         Debug.Log($"Voted out player: {votedOut}");
-        PlayerManager.Instance.KillPlayer(votedOut); // 실제 제거 처리
+         // 실제 제거 처리 로직 추가 요망
 
         voteResults.Clear();
     }

@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
             case GameState.RoleAssignment:
                 //플레이어 역할을 할당하고 게임 시작
-                RoleManager.Instance.AssignRoles();
+              //  RoleManager.Instance.AssignRoles();
                 ChangeState(GameState.Playing);
                 break;
 
@@ -68,5 +68,14 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"Game State changed: {CurrentState} -> {newState}");
         CurrentState = newState;
+    }
+
+    private void CheckGameResult()
+    {
+        // 남아있는 임포스터 수와 크루메이트 수를 체크하여 게임 종료 여부 결정
+
+        // 미션 완료 여부도 체크할 것
+
+        // 해당 메서드는 살해 발생, 혹은 투표 방출 이후에 호출할 것.
     }
 }
