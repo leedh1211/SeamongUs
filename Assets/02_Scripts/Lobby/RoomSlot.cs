@@ -8,18 +8,18 @@ namespace _02_Scripts.Lobby
     {
         [SerializeField] private TMP_Text roomNameText;
         [SerializeField] private TMP_Text playerCountText;
-        private string roomName;
+        private RoomInfo roomInfo;
 
         public void Init(RoomInfo info)
         {
-            roomName = info.Name;
-            roomNameText.text = roomName;
+            roomInfo = info;
+            roomNameText.text = roomInfo.Name;
             playerCountText.text = $"{info.PlayerCount} / {info.MaxPlayers}";
         }
 
         public void OnClickJoinButton()
         {
-            NetworkManager.Instance.JoinRoom(roomName);
+            NetworkManager.Instance.JoinRoom(roomInfo.Name);
         }
     }
 }

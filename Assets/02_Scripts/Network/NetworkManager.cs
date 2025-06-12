@@ -28,6 +28,7 @@ namespace _02_Scripts.Lobby
 
         public override void OnConnectedToMaster() //마스터에 연결 -> 로비로 진입
         {
+            Debug.Log("Connected to Master");
             PhotonNetwork.JoinLobby();
         }
         
@@ -41,7 +42,8 @@ namespace _02_Scripts.Lobby
             RoomOptions roomOptions = new RoomOptions()
             {
                 MaxPlayers = MaxPlayers,
-                IsVisible = IsVisible,
+                // IsVisible = IsVisible,
+                IsVisible = true,
                 IsOpen = true
             };
             
@@ -81,6 +83,7 @@ namespace _02_Scripts.Lobby
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList) // 방 리스트 업데이트 함수
         {
+            Debug.Log($"RoomList Updated: {roomList.Count}개");
             LobbyUIManager.Instance.UpdateRoomList(roomList);
         }
     }
