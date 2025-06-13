@@ -11,6 +11,8 @@ public class LaundryUI : MonoBehaviour
     [SerializeField] private List<Transform> clampSlots;
     [Header("옷더미")]
     [SerializeField] private GameObject dragClothPrefab;
+    [Header("드래그 영역")]
+    [SerializeField] private RectTransform dragArea;
 
     private Laundry mission;
     private string playerId;
@@ -48,6 +50,11 @@ public class LaundryUI : MonoBehaviour
                 Destroy(child.gameObject);
             }
         }
+        for (int i = dragArea.childCount - 1; i >= 0; i--)
+        {
+            Destroy(dragArea.GetChild(i).gameObject);
+        }
+
         //답안지
         var order = mission.GetorderPrefabs();
         for (int i = 0; i < referenceSlots.Count && i < order.Count; i++)
@@ -67,10 +74,18 @@ public class LaundryUI : MonoBehaviour
         var allPrefabs = Resources.LoadAll<GameObject>("ClothPrefabs");
         foreach (var prefab in allPrefabs)
         {
-            var icon = Instantiate(dragClothPrefab, transform);
-            icon.tag = "DragIcon";
-            var drag = icon.GetComponent<DragCloth>();
+            // 1) DragArea를 부모로, worldPositionStays=false 로 생성
+            var iconGO = Instantiate(dragClothPrefab, dragArea, false);
+
+            // 2) DragCloth 스크립트에 원본 프리팹 정보 할당
+            var drag = iconGO.GetComponent<DragCloth>();
             drag.clothPrefab = prefab;
+
+            // 3) Image 구성 요소에 스프라이트 할당
+            var uiImage = iconGO.GetComponent<Image>();
+            var sr = prefab.GetComponent<SpriteRenderer>();
+            if (sr != null)
+                uiImage.sprite = sr.sprite;
         }
     }
 
