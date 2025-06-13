@@ -1,33 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class MissionCollider : MonoBehaviour
 {
-    [Tooltip("Inspector에서 이 스팟에 할당된 미션 타입을 선택하세요")]
-    public MissionType missionType;
+    [Tooltip("Inspector에 이 미션에 대응하는 UI 패널 GameObject를 드래그하세요")]
+    [SerializeField] private GameObject missionUIPanel;
 
-    [SerializeField] private LaundryUI laundryUI;
+    private IMissionUI missionUI;
+    public MissionType missionType;
 
     private void Awake()
     {
+        if (missionUIPanel == null)
+        {
+            Debug.LogError($"{name}: missionUIPanel에 UI 패널 GameObject를 할당해야 합니다.");
+            return;
+        }
 
-        if (laundryUI == null)
-            laundryUI = FindObjectOfType<LaundryUI>();
+        // GameObject에서 IMissionUI 구현체를 찾아서 할당
+        missionUI = missionUIPanel.GetComponent<IMissionUI>();
+        if (missionUI == null)
+            Debug.LogError($"{name}: missionUIPanel에 IMissionUI를 구현한 컴포넌트(LaundryUI 등)를 붙여야 합니다.");
     }
 
-   
     public void HandleInteract(string playerId)
     {
-        // 1) Player의 할당된 미션 목록에서 이 타입 미션 가져오기
+        if (missionUI == null) return;
+
         var mission = MissionManager.Instance
             .PlayerMissions[playerId]
-            .FirstOrDefault(m => m.MissionID == missionType.ToString()) as Laundry;
-        if (mission == null) return;
+            .FirstOrDefault(m => m.MissionID == missionType.ToString());
+        if (mission == null || mission.IsCompleted) return;
 
-        // 2) UI 열기
-        laundryUI.gameObject.SetActive(true);
-        laundryUI.Initialize(mission, playerId);
+        missionUI.Show(mission, playerId);
     }
 }

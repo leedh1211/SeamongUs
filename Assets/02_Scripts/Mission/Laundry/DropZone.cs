@@ -10,35 +10,48 @@ public class DropZone : MonoBehaviour, IDropHandler
     [SerializeField] private int slotIndex;
     private Laundry mission;
     private string playerId;
+    private RectTransform dragArea;
+    private LaundryUI laundryUI;  // UI도 바로 닫을 수 있도록 참조
 
-    public void Initialize(Laundry mission, string playerId)
+    public void Initialize(Laundry mission, string playerId, RectTransform dragArea, LaundryUI ui)
     {
         this.mission = mission;
         this.playerId = playerId;
+        this.dragArea = dragArea;
+        this.laundryUI = ui;
     }
-
-    //public void InitializeLocal()
-    //{
-    //    var missions = MissionManager.Instance.PlayerMissions.Values.FirstOrDefault();
-    //    mission = missions?.Find(mission => mission is Laundry) as Laundry;
-    //}
 
     public void OnDrop(PointerEventData eventData)
     {
-        var drag = eventData.pointerDrag.GetComponent<DragCloth>();
-        if(drag != null && mission != null)
+        var dragCloth = eventData.pointerDrag.GetComponent<DragCloth>();
+        if (dragCloth == null || mission == null) return;
+
+        // 이 슬롯에 맞는 prefab
+        var expected = mission.GetorderPrefabs()[slotIndex];
+        bool isCorrect = dragCloth.clothPrefab == expected;
+
+        if (isCorrect)
         {
-            if (mission.GetorderPrefabs()[slotIndex] == drag.clothPrefab)
+            // 스냅 처리
+            dragCloth.rect.SetParent(transform, false);
+            dragCloth.rect.localPosition = Vector3.zero;
+            //dragCloth.rect.anchoredPosition = Vector2.zero;
+            dragCloth.enabled = false;
+
+            // 이제 slotIndex만 전달
+            (mission as Laundry).MarkSlotFilled(slotIndex);
+
+            if (mission.IsCompleted)
             {
-                mission.TryHang(drag.clothPrefab);
-                Destroy(drag.gameObject);
-                if (mission.IsCompleted)
-                    MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
+                MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
+                laundryUI.gameObject.SetActive(false);
             }
-            else
-            {
-                drag.rect.anchoredPosition = Vector2.zero; // 잘못된 경우 원래 위치로 되돌리기
-            }
+        }
+        else
+        {
+            // 오답 복귀
+            dragCloth.rect.SetParent(dragArea, false);
+            dragCloth.rect.anchoredPosition = Vector2.zero;
         }
     }
 }

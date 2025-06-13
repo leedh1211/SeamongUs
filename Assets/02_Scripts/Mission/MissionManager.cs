@@ -27,11 +27,13 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public IReadOnlyList<Mission> AllMissions => allMissions;
     public IReadOnlyDictionary<string, List<Mission>> PlayerMissions => playerMissions;
+    //테스트용
+    [SerializeField] private PlayerController playerController;
 
     // 생명주기
     private void Awake()
     {
-        if (Instance = null)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -42,12 +44,46 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             Destroy(gameObject);
         }
+        //테스트용
+#if UNITY_EDITOR
+        // Photon에 연결 안 돼 있어도 TestPlayer에 미션 할당
+        AssignMissions("TestPlayer");
+#endif
+        if (playerController == null)
+            playerController = FindObjectOfType<PlayerController>();
+        playerController.OnInteract += HandlePlayerInteract;
     }
 
     private void OnDestroy()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
+        //테스트용
+        if (playerController != null)
+            playerController.OnInteract -= HandlePlayerInteract;
     }
+
+    //테스트용
+    private void HandlePlayerInteract()
+    {
+        // E 키 눌렀을 때 OverlapCircle → MissionCollider 호출 로직
+        Collider2D hit = Physics2D.OverlapCircle(
+            playerController.transform.position,
+            playerController.interactRange,
+            playerController.interactLayer
+        );
+        if (hit != null && hit.TryGetComponent<MissionCollider>(out var trigger))
+        {
+            // 에디터 테스트용 혹은 PhotonNetwork.LocalPlayer.UserId
+#if UNITY_EDITOR
+            string pid = "TestPlayer";
+#else
+        string pid = PhotonNetwork.LocalPlayer.UserId;
+#endif
+            trigger.HandleInteract(pid);
+        }
+    }
+
+
 
     // 전체 미션 한번에 로드
     private void LoadAllMissions()
