@@ -67,4 +67,9 @@ public class StatManager : MonoBehaviour
             stat.OnValueChanged += callback;
         }
     }
+    private void Die()
+    {
+        Debug.Log("[StatManager] 플레이어 사망 처리 호출");
+        // TODO: 죽었을 때 해야 할 행동들 구현 (애니메이션, UI, 비활성화 등)
+    }
 }
