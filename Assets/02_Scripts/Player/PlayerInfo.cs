@@ -31,7 +31,7 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
         Nickname = "Player_" + Random.Range(0, 1000);
 
         // PlayerManager.Instance.RegisterPlayer(this);
-        GameManager.Instance.ChangeState(GameState.RoleAssignment);
+        // GameManager.Instance.ChangeState(GameState.RoleAssignment);
     }
 
     private void Init()

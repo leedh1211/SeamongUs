@@ -67,8 +67,7 @@ namespace _02_Scripts.Lobby
         public override void OnJoinedRoom()
         {
             Debug.Log("방에 입장했습니다.");
-            // SceneManager.LoadScene("DH_GameScene");
-            PhotonNetwork.LoadLevel("DH_GameScene");
+            PhotonNetwork.LoadLevel("GameScene");
         }
         
         public override void OnCreateRoomFailed(short returnCode, string message) // 방 생성실패 콜백
