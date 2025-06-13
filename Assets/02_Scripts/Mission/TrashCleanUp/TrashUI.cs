@@ -6,8 +6,11 @@ public class TrashUI : MonoBehaviour, IMissionUI
 {
     [Header("쓰레기 프리팹")]
     [SerializeField] private GameObject trashPrefab;
-    [Header("쓰레기 스폰 위치들")]
-    [SerializeField] private List<Transform> spawnPoints;
+    [Header("쓰레기 스폰 영역 (RectTransform)")]
+    [SerializeField] private RectTransform spawnArea;
+    [Header("쓰레기 스폰 갯수")]
+    [SerializeField] private int spawnCount;
+
 
     private TrashCleanup mission;
     private string playerId;
@@ -21,31 +24,41 @@ public class TrashUI : MonoBehaviour, IMissionUI
 
         gameObject.SetActive(true);
 
-        SpawnTrash();
+        SpawnTrashRandomly();
     }
 
-    private void SpawnTrash()
+    private void SpawnTrashRandomly()
     {
+        // 기존 아이템 정리
         foreach (var go in spawned)
-        {
-            if (go)
-            {
-                Destroy(go);
-            }
-        }
+            if (go) Destroy(go);
         spawned.Clear();
 
-        int count = spawnPoints.Count;
-        mission.SetTotalTrash(count);
+    
+        mission.SetTotalTrash(spawnCount);
 
-        foreach(var pt in spawnPoints)
+        // 스폰 영역 크기
+        var area = spawnArea.rect;
+        float halfW = area.width * 0.5f;
+        float halfH = area.height * 0.5f;
+
+        for (int i = 0; i < spawnCount; i++)
         {
-            var go = Instantiate(trashPrefab, pt.position, Quaternion.identity);
-            var ti = go.AddComponent<TrashItem>();
+            // 1) 부모는 spawnArea, worldPositionStays=false
+            var go = Instantiate(trashPrefab, spawnArea, false);
+            var rt = go.GetComponent<RectTransform>();
+
+            // 2) 랜덤 위치: pivot이 (0.5,0.5)라면
+            float x = Random.Range(-halfW, halfW);
+            float y = Random.Range(-halfH, halfH);
+            rt.anchoredPosition = new Vector2(x, y); // rt의 anchoredPosition은 부모의 anchor 기준으로 본인 피봇이 얼마나 떨어져있는지 설정해주는변수.
+
+            // 3) 클릭 시 동작을 위한 컴포넌트 세팅
+            var ti = go.GetComponent<TrashItem>() ?? go.AddComponent<TrashItem>();
             ti.Initialize(mission, playerId, this);
+
             spawned.Add(go);
         }
-
     }
 
     public void Hide()
