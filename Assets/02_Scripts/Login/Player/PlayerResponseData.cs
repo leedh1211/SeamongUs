@@ -1,6 +1,6 @@
 namespace _02_Scripts.Login.Player
 {
-    public class PlayerTestData
+    public class PlayerResponseData
     {
         public int seq;
         public string name;
