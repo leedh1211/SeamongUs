@@ -36,8 +36,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5347211133527075390}
   - {fileID: 6850340908535943482}
+  - {fileID: 5347211133527075390}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &2596196865317377704
@@ -259,12 +259,14 @@ MonoBehaviour:
   PlayerLevel: 0
   PlayerExp: 0
   PlayerGold: 0
+  isReady: 0
   SpriteData: 
   IsDead: 0
   Role: 0
   Transform: {fileID: 5299610917612844382}
   GameObject: {fileID: 4490475036587624388}
   IsLocalPlayer: 1
+  spriteRenderer: {fileID: 0}
 --- !u!114 &2161955762769035897
 MonoBehaviour:
   m_ObjectHideFlags: 0
