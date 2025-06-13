@@ -12,6 +12,8 @@ public class Laundry : Mission
     {
         var prefabs = Resources.LoadAll<GameObject>("ClothPrefabs");
         orderPrefabs = new List<GameObject>(prefabs);
+        Shuffle(orderPrefabs);
+        orderPrefabs = orderPrefabs.GetRange(0, Mathf.Min(5, orderPrefabs.Count));
     }
 
   
@@ -35,5 +37,36 @@ public class Laundry : Mission
             list[n] = list[k];
             list[k] = temp;
         }
+    }
+
+    public void TryHang(GameObject clothPrefab)
+    {
+        if (IsCompleted) return;
+        if (orderPrefabs[currentIndex] == clothPrefab)
+        {
+            currentIndex++;
+            if( currentIndex >= orderPrefabs.Count)
+            {
+                Complete();
+            }
+        }
+        else
+        {
+            currentIndex = 0; // 잘못널면 다시해야함.
+        }
+    }
+
+    public List<GameObject> GetorderPrefabs()
+    {
+        return new List<GameObject>(orderPrefabs);
+    }
+    public int GetCurrentIndex()
+    {
+        return currentIndex;
+    }
+
+    public void ResetProgress()
+    {
+        currentIndex = 0;
     }
 }
