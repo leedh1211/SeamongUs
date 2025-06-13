@@ -9,10 +9,11 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
 
     [Header("Jump")]
-    public float jumpHeight = 1f;
-    public float jumpDuration = 0.4f;
-    private bool isJumping;
-    private Vector3 originalPos;
+    [SerializeField] private float jumpHeight = 1f;
+    [SerializeField] private float jumpDuration = 0.4f;
+
+    private Vector3 visualDefaultPos;
+    private bool jumping;
 
     [Header("Layer Masks")]
     public LayerMask interactLayer;
@@ -28,11 +29,24 @@ public class PlayerController : MonoBehaviour
     public System.Action OnKill;
     public System.Action OnOpenInventory;
 
+    [Header("Refs")]
+    [SerializeField] private Transform visual;      // 캐릭터 스프라이트
+    [SerializeField] private Transform shadow;      // 그림자 (선택)
+    private Vector3 shadowOriginalScale;
+
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        originalPos = transform.position;
+        rb = GetComponent<Rigidbody2D>();                 // ← 다시 넣기
+        if (rb == null)
+            Debug.LogError("Rigidbody2D 컴포넌트가 없습니다!", this);
+
+        if (visual == null)
+            Debug.LogError("visual 트랜스폼이 할당되지 않았습니다!", this);
+        if (shadow != null)
+            shadowOriginalScale = shadow.localScale;
+        visualDefaultPos = visual.localPosition;
     }
+
 
     private void Update()
     {
@@ -76,41 +90,67 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnJumpInput(InputAction.CallbackContext context)
+    public void OnJumpInput(InputAction.CallbackContext ctx)
     {
-        if (context.performed && !isJumping)
+        if (ctx.performed)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, interactRange, jumpableLayer);
-            if (hit.collider != null)
+            Debug.Log("점프 시도됨");
+            StartCoroutine(JumpCoroutine());
+        }
+    }
+
+
+    private bool IsJumpableAhead()
+    {
+        // 탑뷰니까 “앞”은 moveInput 방향.
+        if (moveInput == Vector2.zero) return false;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position,
+                                             moveInput.normalized,
+                                             0.6f,    // 거리
+                                             jumpableLayer);
+        return hit.collider != null;
+    }
+
+    private System.Collections.IEnumerator JumpCoroutine()
+    {
+        jumping = true;
+        float half = jumpDuration * 0.5f;
+        float t = 0;
+
+        // 상승
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float h = Mathf.Lerp(0, jumpHeight, t / half);
+            visual.localPosition = visualDefaultPos + Vector3.up * h;
+            if (shadow)
             {
-                StartCoroutine(JumpOverObstacle());
+                shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
             }
-        }
-    }
 
-    private System.Collections.IEnumerator JumpOverObstacle()
-    {
-        isJumping = true;
-        Vector3 peak = originalPos + new Vector3(0, jumpHeight, 0);
-        float t = 0f;
-
-        while (t < jumpDuration / 2)
-        {
-            t += Time.deltaTime;
-            transform.position = Vector3.Lerp(originalPos, peak, t / (jumpDuration / 2));
             yield return null;
         }
 
-        t = 0f;
-        while (t < jumpDuration / 2)
+        // 하강
+        t = 0;
+        while (t < half)
         {
             t += Time.deltaTime;
-            transform.position = Vector3.Lerp(peak, originalPos, t / (jumpDuration / 2));
+            float h = Mathf.Lerp(jumpHeight, 0, t / half);
+            visual.localPosition = visualDefaultPos + Vector3.up * h;
+            if (shadow)
+            {
+                shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
+            }
+
             yield return null;
         }
 
-        isJumping = false;
+        visual.localPosition = visualDefaultPos;
+        if (shadow) shadow.localScale = shadowOriginalScale;
+        jumping = false;
     }
+
 
     public void OnInventoryInput(InputAction.CallbackContext context)
     {
