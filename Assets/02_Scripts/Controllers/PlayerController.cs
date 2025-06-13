@@ -5,7 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviourPun , IPunObservable
 {
     [Header("Movement")]
-    public float moveSpeed = 5f;
+    [SerializeField] private float baseMoveSpeed = 5f;
+    private float currentMoveSpeed;
     private Vector2 moveInput;
     private Rigidbody2D rb;
 
@@ -49,6 +50,7 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
         if (shadow != null)
             shadowOriginalScale = shadow.localScale;
         visualDefaultPos = visual.localPosition;
+        currentMoveSpeed = baseMoveSpeed;
     }
     
     private void FixedUpdate()
@@ -74,7 +76,7 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
 
     private void HandleMovement()
     {
-        Vector2 movement = moveInput * moveSpeed;
+        Vector2 movement = moveInput * currentMoveSpeed;
         rb.velocity = movement;
     }
 
@@ -179,6 +181,22 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
             OnOpenInventory?.Invoke();
         }
     }
+
+
+    public void ModifySpeed(float amount)
+    {
+        currentMoveSpeed += amount;
+        currentMoveSpeed = Mathf.Max(0f, currentMoveSpeed); // 음수 방지
+
+        Debug.Log($"[Speed] 이동속도 변경됨: {currentMoveSpeed}");
+    }
+
+    // 선택적으로 초기화용 메서드
+    public void ResetSpeed()
+    {
+        currentMoveSpeed = baseMoveSpeed;
+    }
+
     
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -191,4 +209,5 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
             networkPosition = (Vector3)stream.ReceiveNext();
         }
     } 
+
 }
