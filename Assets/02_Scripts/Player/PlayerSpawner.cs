@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -68,6 +68,12 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
                 if (playerManager != null)
                 {
                     playerManager.RegisterPlayer(info);
+                    PhotonNetwork.LocalPlayer.TagObject = player;
+                    var roomUI = FindObjectOfType<RoomUIManager>();
+                    if (roomUI != null)
+                    {
+                        roomUI.UpdatePlayerListFromManager();
+                    }
                 }
                 return;
             }
@@ -82,6 +88,13 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         if (playerManager != null)
         {
             playerManager.RegisterPlayer(fallbackInfo);
+            PhotonNetwork.LocalPlayer.TagObject = fallbackPlayer;
+        }
+        Debug.Log(fallbackInfo.Nickname);
+        var fallroomUI = FindObjectOfType<RoomUIManager>();
+        if (fallroomUI != null)
+        {
+            fallroomUI.UpdatePlayerListFromManager();
         }
     }
 
