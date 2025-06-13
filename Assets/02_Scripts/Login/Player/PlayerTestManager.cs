@@ -4,10 +4,10 @@ using _02_Scripts.Player;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class PlayerManager : Singleton<PlayerManager>
+public class PlayerTestManager : Singleton<PlayerTestManager>
 {
-    public PlayerData playerData;
-    public void Init(PlayerData data)
+    public PlayerDataTest playerData;
+    public void Init(PlayerDataTest data)
     {
         playerData = data;
         Debug.Log($"로그인된 유저: {data.name}");

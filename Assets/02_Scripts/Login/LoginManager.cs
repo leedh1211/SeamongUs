@@ -45,7 +45,7 @@ public class LoginManager : MonoBehaviour
         LoginResponse response = JsonConvert.DeserializeObject<LoginResponse>(request.downloadHandler.text);
         if (response.isLogin)
         {
-            PlayerData loginData = response.data;
+            PlayerDataTest loginData = response.data;
             login(loginData);
         }
         else
@@ -54,12 +54,12 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    private void login(PlayerData loginData)
+    private void login(PlayerDataTest loginData)
     {
         Debug.Log(loginData.seq);
         // PlayerManager 생성
         GameObject obj = new GameObject("PlayerManager");
-        PlayerManager manager = obj.AddComponent<PlayerManager>();
+        PlayerTestManager manager = obj.AddComponent<PlayerTestManager>();
         manager.Init(loginData);
 
         // 씬 이동

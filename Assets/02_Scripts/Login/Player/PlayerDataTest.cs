@@ -1,6 +1,6 @@
 namespace _02_Scripts.Player
 {
-    public class PlayerData
+    public class PlayerDataTest
     {
         public int seq;
         public string name;
