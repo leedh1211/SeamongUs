@@ -12576,9 +12576,9 @@ TextureImporter:
       name: '[Base]BaseChip_pipo 1_1051'
       rect:
         serializedVersion: 2
-        x: 96
+        x: 98
         y: 32
-        width: 32
+        width: 27
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -12725,7 +12725,7 @@ TextureImporter:
         serializedVersion: 2
         x: 96
         y: 0
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
