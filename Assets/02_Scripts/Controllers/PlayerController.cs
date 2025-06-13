@@ -1,3 +1,4 @@
+using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
     [Header("Jump")]
     [SerializeField] private float jumpHeight = 1f;
     [SerializeField] private float jumpDuration = 0.4f;
+    [SerializeField] private PlayerInfo _playerInfo;
 
     private Vector3 visualDefaultPos;
     private bool jumping;
@@ -51,6 +53,21 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
             shadowOriginalScale = shadow.localScale;
         visualDefaultPos = visual.localPosition;
         currentMoveSpeed = baseMoveSpeed;
+        
+        _playerInfo.currentPlayer = photonView.Owner;
+    }
+    
+    private void Start()
+    {
+        if (photonView.IsMine)
+            StartCoroutine(WaitAndRegister());
+    }
+    
+    
+    private IEnumerator WaitAndRegister()
+    {
+        yield return new WaitUntil(() => MissionManager.Instance != null);
+        MissionManager.Instance.RegisterLocalPlayer(this);
     }
     
     private void FixedUpdate()

@@ -28,30 +28,15 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public IReadOnlyList<Mission> AllMissions => allMissions;
     public IReadOnlyDictionary<string, List<Mission>> PlayerMissions => playerMissions;
     //테스트용
-    [SerializeField] private PlayerController playerController;
+    [SerializeField]
+    private PlayerController playerController;
 
     // 생명주기
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            PhotonNetwork.AddCallbackTarget(this);
-            LoadAllMissions();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        //테스트용
-#if UNITY_EDITOR
-        // Photon에 연결 안 돼 있어도 TestPlayer에 미션 할당
-        AssignMissions("TestPlayer");
-#endif
-        if (playerController == null)
-            playerController = FindObjectOfType<PlayerController>();
-        playerController.OnInteract += HandlePlayerInteract;
+        Instance = this;
+        PhotonNetwork.AddCallbackTarget(this);
+        LoadAllMissions();
     }
 
     private void OnDestroy()
@@ -74,12 +59,8 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (hit != null && hit.TryGetComponent<MissionCollider>(out var trigger))
         {
             // 에디터 테스트용 혹은 PhotonNetwork.LocalPlayer.UserId
-#if UNITY_EDITOR
-            string pid = "TestPlayer";
-#else
         string pid = PhotonNetwork.LocalPlayer.UserId;
-#endif
-            trigger.HandleInteract(pid);
+        trigger.HandleInteract(pid);
         }
     }
 
@@ -95,22 +76,24 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-    public override void OnJoinedRoom()
-    {
-        string pid = PhotonNetwork.LocalPlayer.UserId;
-        AssignMissions(pid);
-    }
+    // public override void OnJoinedRoom()
+    // {
+    //     string pid = PhotonNetwork.LocalPlayer.UserId;
+    //     AssignMissions(pid);
+    // }
 
     // 플레이어에게 미션 할당
-    public void AssignMissions(string playerId)
+    public void AssignMissions(string playerId, int count)
     {
         if (playerMissions.ContainsKey(playerId)) return;
+
         var rng = new System.Random();
         var selected = allMissions
             .OrderBy(_ => rng.Next())
-            .Take(3)
+            .Take(count)
             .Select(proto => proto.Clone())
             .ToList();
+
         playerMissions[playerId] = selected;
 
         var ids = selected.Select(m => m.MissionID).ToArray();
@@ -124,6 +107,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // 특정 미션 완료 처리
     public void CompleteMission(string playerID, string missionID)
     {
+        Debug.Log("Mission Completed");
         if (!playerMissions.TryGetValue(playerID, out var list))
         {
             return;
@@ -135,11 +119,10 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             mission.Complete();
             PhotonNetwork.RaiseEvent(
-            EventCodes.MissionCompleted,
-               new object[] { playerID, missionID },
-               new RaiseEventOptions { Receivers = ReceiverGroup.All },
-               SendOptions.SendReliable);
-            // 미션 UI 업데이트
+                EventCodes.MissionCompleted,
+                new object[] { playerID, missionID },
+                new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                SendOptions.SendReliable);
             CheckCrewmateVictory();
         }
     }
@@ -207,8 +190,31 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
 
         // 모든 플레이어의 미션이 완료되었으므로 승리 처리
+        GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
         //GameManager.Instance.EndGame(false); 같은 느낌. (false은 일반 시민 승리, true는 임포스터 승리로 가정)
     }
 
-
+    public void Init()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            int missionCount = 1; // 기본값
+            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("MissionCount", out object missionCountObj))
+            {
+                missionCount = (int)missionCountObj;
+            }
+            
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                AssignMissions(player.UserId, missionCount);
+            }
+            Debug.Log($"각 {missionCount}개의 미션 할당");
+        }
+    }
+    
+    public void RegisterLocalPlayer(PlayerController controller)
+    {
+        this.playerController = controller;
+        controller.OnInteract += HandlePlayerInteract;
+    }
 }

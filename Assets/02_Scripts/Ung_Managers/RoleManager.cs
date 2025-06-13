@@ -14,11 +14,11 @@ public class RoleManager : MonoBehaviour
     {
         Instance = this;
     }
-    public void AssignRoles()
+    public void AssignRoles(int impostorCount)
     {
         // 예시: 임포스터 1명, 나머지 크루메이트
         List<string> players = _playerManager.GetAllPlayerIDs(); // 플레이어 ID 목록 가져오기
-        int impostorCount = 1; // 임포스터 수 (예시로 1명), 나중에 UI에서 설정 가능
+        // int impostorCount = 1; // 임포스터 수 (예시로 1명), 나중에 UI에서 설정 가능
         Debug.Log($"Assigning roles to {players.Count} players with {impostorCount} impostors.");
 
         List<string> shuffled = new List<string>(players);

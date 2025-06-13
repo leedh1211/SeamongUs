@@ -117,6 +117,7 @@ MonoBehaviour:
   baseMoveSpeed: 5
   jumpHeight: 1
   jumpDuration: 0.4
+  _playerInfo: {fileID: 7225986675459966251}
   interactLayer:
     serializedVersion: 2
     m_Bits: 64

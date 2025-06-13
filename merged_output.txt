@@ -1,17 +1,38 @@
 ===== ?�일: %~dpnxF ===== 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DeadBody : MonoBehaviour
 {
-    // 사망한 플레이어의 정보를 나타내는 클래스
+    public string ownerID;
+    public string BodyID;             // 유니크 ID
+    public string PlayerID;           // 죽은 플레이어 ID
 
-    // 플레이어의 ID 등을 통해 시체의 색상, 닉네임 메서드 추가 요망
+    public void Initialize(string playerID)
+    {
+        ownerID = playerID;
+    }
 
-    // OnTriggerEnter2D 등을 통하여 생존자가 접근 시 리포트 기능 추가 요망
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player")) return;
 
+        Player otherPlayer = other.GetComponent<Player>();
+        if (otherPlayer != null && !otherPlayer.IsDead)
+        {
+            Debug.Log($"{otherPlayer.PlayerID}의 시체가 근처에 있어, Report버튼이 활성화됩니다.");
+        }
+    }
 
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        Player otherPlayer = other.GetComponent<Player>();
+        if (otherPlayer != null && !otherPlayer.IsDead)
+        {
+            Debug.Log($"{otherPlayer.PlayerID}의 시체가 멀어져, Report버튼이 비활성화됩니다.");
+        }
+    }
 }
  
 ===== ?�일: %~dpnxF ===== 
@@ -60,55 +81,43 @@ public class Room : MonoBehaviour
 
     void Start()
     {
-        //플레이어 ID와 호스트 여부 체크 기능 추가 요망
-
-        // UI 초기화
 
 
-        // 이벤트 리스너 등록
+
 
     }
 
     void SetupUIByHost()
     {
-        // 호스트 여부에 따라 UI 설정(호스트는 시작 버튼, 일반 플레이어는 준비 버튼)
         startButton.gameObject.SetActive(isHost);
         readyButton.gameObject.SetActive(!isHost);
 
-        // 방장 여부에 따라 드롭다운 활성화
         impostorCountDropdown.interactable = isHost;
         missionCountDropdown.interactable = isHost;
     }
 
     void RefreshPlayerSlots()
     {
-        // 플레이어 슬롯을 현재 플레이어 목록으로 업데이트해주는 로직
     }
 
     void OnClickReady()
     {
-        // (NetworkManager)로컬 플레이어가 준비 상태로 전환
     }
 
     void OnClickStart()
     {
-        // (NetworkManager)호스트가 게임 시작 요청
     }
 
     void OnChatSubmit(string message)
     {
-        // 채팅 메시지 전송 로직
     }
 
-    // 외부에서 호출
     public void AddChatMessage(string sender, string message)
     {
-        // 채팅 메시지를 UI에 추가하는 로직
     }
 
     public void UpdateCharacterSelection(string selectedCharacter)
     {
-        // 선택된 캐릭터를 네트워크 매니저에 전달
     }
 
 
@@ -148,18 +157,12 @@ using UnityEngine;
 
 public class CrewmateController : MonoBehaviour
 {
-    // 크루원의 상태를 관리하는 클래스
-
-    // 플레이어 ID Start문에 초기화 요망
-
-    // 구조에 따라 PlayerController를 부모 클래스로 삼을 수 있음
-
-    // TryInteractMission() TryReportBody() 등, 타 클래스와 연계하여 미션이나 신고 등 크루원이 해야하는 메서드 작성 요망.
-
-    // DeadBodyManager의 GetClosestDeadBodyID() 메서드를 통해 가장 가까운 시체를 찾고, 해당 시체의 ID를 리턴하는 메서드 작성 요망
 
 
-    // **중요** 이미 PlayerController 등에서 이미 메서드가 작성되었다면 스크립트 제거 요망.
+
+
+
+
 }
  
 ===== ?�일: %~dpnxF ===== 
@@ -167,17 +170,281 @@ using UnityEngine;
 
 public class ImposterController : MonoBehaviour
 {
-    // 임포스터의 상태를 관리하는 클래스
+    private PlayerInfo self;
+    [SerializeField] PlayerManager playerManager;
 
-    // 구조에 따라 PlayerController를 부모 클래스로 삼을 수 있음
+    void Update()
+    {
+        if (self == null)
+        {
+            self = playerManager.GetLocalPlayer();
+            if (self != null)
+            {
+                Debug.Log($"[ImposterController] self 초기화 성공: {self.Nickname}");
+            }
+        }
 
-    // TryKill() 메서드를 통해 타 플레이어를 죽이는 로직 작성 요망
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            TryKill();
+        }
 
-    // DeadBodyManager의 SpawnDeadBody() 메서드를 통해 죽인 플레이어의 시체를 생성하는 로직 작성 요망
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            TryReportBody();
+        }
+    }
 
-    // 타겟 플레어간의 거리를 계산하여, 일정 거리 이내에 있는 플레이어만 죽일 수 있도록 설정 요망
+    void TryKill()
+    {
+        PlayerInfo target = FindKillablePlayer();
+        Debug.Log(target);
+        if (target != null && !target.IsDead)
+        {
+            
 
-    // TryVent() 메서드를 통해 벤트로 이동하는 로직 작성 요망(추가 사항이므로 구현 보류도 가능)
+            Debug.Log($"{self.Nickname} 플레이어가 {target.Nickname} 살해");
+            playerManager.KillPlayer(target.PlayerID);
+        }
+        else
+        {
+            Debug.Log("살해 가능한 플레이어가 없습니다.");
+        }
+    }
+
+    void TryReportBody()
+    {
+        string deadID = FindNearestDeadBody();
+        if (deadID != null)
+        {
+            ReportManager.Instance.ReportBody(self.PlayerID, deadID);
+            GameManager.Instance.ChangeState(GameState.Meeting);
+        }
+    }
+
+    PlayerInfo FindKillablePlayer()
+    {
+        float killRange = 2.0f;
+        foreach (var player in playerManager.GetAlivePlayers())
+        {
+            if (player == null) continue;
+            if (self == null) continue; // 혹은 self 초기화 보장
+
+            if (player.PlayerID == self.PlayerID) continue;  // PlayerID 기준 비교가 더 안전
+            if (player.Role != Role.Crewmate) continue;
+            if (player.IsDead) continue;
+
+            float dist = Vector3.Distance(self.Transform.position, player.Transform.position);
+            if (dist <= killRange)
+            {
+                return player;
+            }
+        }
+        return null;
+    }
+
+
+    string FindNearestDeadBody()
+    {
+        return DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using Photon.Pun;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerController : MonoBehaviourPun , IPunObservable
+{
+    [Header("Movement")]
+    [SerializeField] private float baseMoveSpeed = 5f;
+    private float currentMoveSpeed;
+    private Vector2 moveInput;
+    private Rigidbody2D rb;
+
+    [Header("Jump")]
+    [SerializeField] private float jumpHeight = 1f;
+    [SerializeField] private float jumpDuration = 0.4f;
+
+    private Vector3 visualDefaultPos;
+    private bool jumping;
+
+    [Header("Layer Masks")]
+    public LayerMask interactLayer;
+    public LayerMask playerLayer;
+    public LayerMask jumpableLayer;
+
+    [Header("Detection")]
+    public float interactRange = 1.5f;
+    public float killRange = 1.2f;
+
+    [Header("UI Callback Hooks")]
+    public System.Action OnInteract;
+    public System.Action OnKill;
+    public System.Action OnOpenInventory;
+
+    [Header("Refs")]
+    [SerializeField] private Transform visual;      // 罹먮┃???ㅽ봽?쇱씠??
+    [SerializeField] private Transform shadow;      // 洹몃┝??(?좏깮)
+    [SerializeField] private float lerpSpeed = 10f; // ?꾩튂 蹂닿컙 ?띾룄
+    private Vector3 shadowOriginalScale;
+
+    private Vector3 networkPosition;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();                 // ???ㅼ떆 ?ｊ린
+        if (rb == null)
+            Debug.LogError("Rigidbody2D 而댄룷?뚰듃媛 ?놁뒿?덈떎!", this);
+
+        if (visual == null)
+            Debug.LogError("visual ?몃옖?ㅽ뤌???좊떦?섏? ?딆븯?듬땲??", this);
+        if (shadow != null)
+            shadowOriginalScale = shadow.localScale;
+        visualDefaultPos = visual.localPosition;
+        currentMoveSpeed = baseMoveSpeed;
+    }
+    
+    private void FixedUpdate()
+    {
+        if (!photonView.IsMine)
+        {
+            if (Vector3.Distance(transform.position, networkPosition) > 2f)
+            {
+                transform.position = networkPosition;
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, networkPosition, Time.fixedDeltaTime * lerpSpeed);
+            }
+        }
+        else
+        {
+            HandleMovement();
+        }
+    }
+
+    private void HandleMovement()
+    {
+        Vector2 movement = moveInput * currentMoveSpeed;
+        rb.velocity = movement;
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnInteractInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
+            if (target != null)
+            {
+                Debug.Log("誘몄뀡 ?곹샇?묒슜 ?쒕룄");
+                OnInteract?.Invoke();
+            }
+        }
+    }
+
+
+    public void OnJumpInput(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            Debug.Log("?먰봽 ?쒕룄??);
+            StartCoroutine(JumpCoroutine());
+        }
+    }
+
+
+    private bool IsJumpableAhead()
+    {
+        if (moveInput == Vector2.zero) return false;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position,
+                                             moveInput.normalized,
+                                             0.6f,    // 嫄곕━
+                                             jumpableLayer);
+        return hit.collider != null;
+    }
+
+    private System.Collections.IEnumerator JumpCoroutine()
+    {
+        jumping = true;
+        float half = jumpDuration * 0.5f;
+        float t = 0;
+
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float h = Mathf.Lerp(0, jumpHeight, t / half);
+            visual.localPosition = visualDefaultPos + Vector3.up * h;
+            if (shadow)
+            {
+                shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
+            }
+
+            yield return null;
+        }
+
+        t = 0;
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            float h = Mathf.Lerp(jumpHeight, 0, t / half);
+            visual.localPosition = visualDefaultPos + Vector3.up * h;
+            if (shadow)
+            {
+                shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
+            }
+
+            yield return null;
+        }
+
+        visual.localPosition = visualDefaultPos;
+        if (shadow) shadow.localScale = shadowOriginalScale;
+        jumping = false;
+    }
+
+
+    public void OnInventoryInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("?몃깽?좊━ ?닿린");
+            OnOpenInventory?.Invoke();
+        }
+    }
+
+
+    public void ModifySpeed(float amount)
+    {
+        currentMoveSpeed += amount;
+        currentMoveSpeed = Mathf.Max(0f, currentMoveSpeed); // ?뚯닔 諛⑹?
+
+        Debug.Log($"[Speed] ?대룞?띾룄 蹂寃쎈맖: {currentMoveSpeed}");
+    }
+
+    public void ResetSpeed()
+    {
+        currentMoveSpeed = baseMoveSpeed;
+    }
+
+    
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(transform.position);
+        }
+        else
+        {
+            networkPosition = (Vector3)stream.ReceiveNext();
+        }
+    } 
+
 }
  
 ===== ?�일: %~dpnxF ===== 
@@ -189,26 +456,21 @@ using UnityEngine;
 
 public static class EventBus
 {
-// ?대깽????낆쓣 ?ㅻ줈, ?대떦 ?대깽????낆쓽 ?몃뱾??delegate)瑜?媛믪쑝濡???ν븯???뺤뀛?덈━
     private static readonly Dictionary<Type, Delegate> eventDict
             = new Dictionary<Type, Delegate>();
-    //?뱀젙 ??낆쓽 ?대깽?몃? 援щ룆?섎뒗 硫붿꽌??
     public static void Subscribe<TEvent>(Action<TEvent> handler)
     {
         Type eventType = typeof(TEvent);
         if(eventDict.TryGetValue(eventType, out Delegate existingHandler))
         {
-            //?대? ?대떦 ??낆쓽 ?몃뱾?ш? 議댁옱?섎㈃, ?몃━寃뚯씠?몄뿉 異붽?
             eventDict[eventType] = Delegate.Combine(existingHandler, handler);
         }
         else
         {
-            //?덈줈????낆쓽 ?몃뱾?щ씪硫? ?뺤뀛?덈━???덈줈 異붽?
             eventDict[eventType] = handler;
         }
     }
 
-    //?뱀젙 ??낆쓽 ?대깽??援щ룆???댁젣?섎뒗 硫붿꽌??
     public static void UnSubscribe<TEvent>(Action<TEvent> handler)
     {
         Type eventType = typeof(TEvent);
@@ -223,13 +485,11 @@ public static class EventBus
             else
             {
                 eventDict[eventType] = newHandler;
-                // Debug.Log($"[EventBus] Unsubscribed from {eventType.Name}");
             }
         }
     }
 
 
-    //?뱀젙 ??낆쓽 ?대깽?몃? 諛쒗뻾?섎뒗 硫붿꽌??
     public static void Raise<TEvent>(TEvent eventArgs)
     {
         Type eventType = typeof(TEvent);
@@ -252,6 +512,140 @@ public static class EventBus
 ===== ?�일: %~dpnxF ===== 
 public struct OnPlayerInfoChanged
 {}
+ 
+===== ?�일: %~dpnxF ===== 
+using UnityEngine;
+
+public enum BuffType
+{
+    Speed,
+    RegenHp,
+    Invisibility
+}
+
+public class Buff
+{
+    public BuffType Type { get; private set; }
+    public float Value { get; private set; }
+    public float Duration { get; private set; }
+    private float timeRemaining;
+
+    public Buff(BuffType type, float value, float duration)
+    {
+        Type = type;
+        Value = value;
+        Duration = duration;
+        timeRemaining = duration;
+    }
+
+    public void Update(GameObject player, float deltaTime)
+    {
+        timeRemaining -= deltaTime;
+
+        if (Type == BuffType.RegenHp)
+        {
+            var statManager = player.GetComponent<StatManager>();
+            if (statManager != null)
+            {
+                statManager.Recover(StatType.CurHp, Value * deltaTime);
+            }
+        }
+    }
+
+    public bool IsExpired => timeRemaining <= 0f;
+
+    public void Apply(GameObject player)
+    {
+        switch (Type)
+        {
+            case BuffType.Speed:
+                player.GetComponent<PlayerController>()?.ModifySpeed(Value);
+                break;
+
+            case BuffType.Invisibility:
+                player.layer = LayerMask.NameToLayer("Invisible"); // 레이어는 프로젝트에 따라 다를 수 있음
+                break;
+        }
+    }
+
+    public void Remove(GameObject player)
+    {
+        switch (Type)
+        {
+            case BuffType.Speed:
+                player.GetComponent<PlayerController>()?.ModifySpeed(-Value);
+                break;
+
+            case BuffType.Invisibility:
+                player.layer = LayerMask.NameToLayer("Player"); // 원래 레이어로 복귀
+                break;
+        }
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BuffManager : MonoBehaviour
+{
+    private List<Buff> activeBuffs = new();
+
+    private void Update()
+    {
+        for (int i = activeBuffs.Count - 1; i >= 0; i--)
+        {
+            Buff buff = activeBuffs[i];
+            buff.Update(gameObject, Time.deltaTime);
+            if (buff.IsExpired)
+            {
+                buff.Remove(gameObject);
+                activeBuffs.RemoveAt(i);
+            }
+        }
+    }
+
+    public void ApplyBuff(Buff buff)
+    {
+        buff.Apply(gameObject);
+        activeBuffs.Add(buff);
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using UnityEngine;
+
+public class ItemEffectProcessor : MonoBehaviour
+{
+    [SerializeField] private StatManager statManager;
+    [SerializeField] private BuffManager buffManager;
+
+    public void UseItem(ItemSO item)
+    {
+        switch (item.effectType)
+        {
+            case ItemEffectType.HealHp:
+                statManager.Recover(StatType.CurHp, item.effectValue);
+                break;
+
+            case ItemEffectType.HealStamina:
+                statManager.Recover(StatType.Stamina, item.effectValue);
+                break;
+
+            case ItemEffectType.BuffSpeed:
+                buffManager.ApplyBuff(new Buff(BuffType.Speed, item.effectValue, item.duration));
+                break;
+
+            case ItemEffectType.RegenHp:
+                buffManager.ApplyBuff(new Buff(BuffType.RegenHp, item.effectValue, item.duration));
+                break;
+
+            case ItemEffectType.Invisibility:
+                buffManager.ApplyBuff(new Buff(BuffType.Invisibility, 0f, item.duration));
+                break;
+        }
+    }
+}
  
 ===== ?�일: %~dpnxF ===== 
 using System.Collections.Generic;
@@ -459,20 +853,16 @@ public class LoginManager : MonoBehaviour
     private IEnumerator SendLoginRequest(string userId, string password)
     {
         string HashPass = ConvertHash.StringToHash(password);
-        // JSON ?뺤떇?쇰줈 ?꾩넚???곗씠???앹꽦
         string jsonData = JsonConvert.SerializeObject(new LoginData(userId, HashPass));
 
-        // ?붿껌 媛앹껜 ?앹꽦
         UnityWebRequest request = new UnityWebRequest(loginUrl, "POST");
         byte[] jsonToSend = new UTF8Encoding().GetBytes(jsonData);
         request.uploadHandler = new UploadHandlerRaw(jsonToSend);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
-        // ?붿껌 ?꾩넚
         yield return request.SendWebRequest();
 
-        // ?묐떟 泥섎━
         LoginResponse response = JsonConvert.DeserializeObject<LoginResponse>(request.downloadHandler.text);
         if (response.isLogin)
         {
@@ -489,7 +879,6 @@ public class LoginManager : MonoBehaviour
     {
         Debug.Log(loginData.seq);
         LoginSession.loginPlayerInfo = loginData;
-        // ???대룞
         SceneManager.LoadScene("LobbyScene");
     }
 }
@@ -550,25 +939,30 @@ namespace _02_Scripts.Login.Player
 }
  
 ===== ?�일: %~dpnxF ===== 
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public interface IMissionUI 
+{
+    void Show(Mission mission, string playerId);
+}
+ 
+===== ?�일: %~dpnxF ===== 
 public abstract class Mission
 {
-    // 외부에서 읽기만 가능하도록 프로퍼티 설정
     public string MissionID { get; }
     public string Description { get; }
     public bool IsCompleted { get; private set; }
 
-    // 생성자로 ID/설명 설정
     protected Mission(string missionID, string description)
     {
         MissionID = missionID;
         Description = description;
     }
 
-    // 각 플레이어에게 개별 인스턴스를 나눠줄 수 있도록 복제해주어야함.
-    // 그렇게 안하면, 모든 플레이어가 같은 미션을 공유하게 됨.
     public abstract Mission Clone();
 
-    // 미션 완료 처리 메서드
     public void Complete()
     {
         if (!IsCompleted)
@@ -579,19 +973,56 @@ public abstract class Mission
 }
  
 ===== ?�일: %~dpnxF ===== 
+using System.Linq;
+using UnityEngine;
+
+public class MissionCollider : MonoBehaviour
+{
+    [Tooltip("Inspector에 이 미션에 대응하는 UI 패널 GameObject를 드래그하세요")]
+    [SerializeField] private GameObject missionUIPanel;
+
+    private IMissionUI missionUI;
+    public MissionType missionType;
+
+    private void Awake()
+    {
+        if (missionUIPanel == null)
+        {
+            Debug.LogError($"{name}: missionUIPanel에 UI 패널 GameObject를 할당해야 합니다.");
+            return;
+        }
+
+        missionUI = missionUIPanel.GetComponent<IMissionUI>();
+        if (missionUI == null)
+            Debug.LogError($"{name}: missionUIPanel에 IMissionUI를 구현한 컴포넌트(LaundryUI 등)를 붙여야 합니다.");
+    }
+
+    public void HandleInteract(string playerId)
+    {
+        if (missionUI == null) return;
+
+        var mission = MissionManager.Instance
+            .PlayerMissions[playerId]
+            .FirstOrDefault(m => m.MissionID == missionType.ToString());
+        if (mission == null || mission.IsCompleted) return;
+
+        missionUI.Show(mission, playerId);
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
 using System;
 using System.Collections.Generic;
 
 public static class MissionFactory
 {
-    // Enum 마다 어떤 클래스 인스턴스를 만들지보기 위한 딕셔너리
     private static readonly Dictionary<MissionType, Func<Mission>> map
         = new Dictionary<MissionType, Func<Mission>>()
     {
         { MissionType.FixSignpost, () => new FixSignpost() },
+        { MissionType.Laundry,    () => new Laundry()    }
     };
 
-    // 전체 미션 타입 목록
     public static IEnumerable<MissionType> GetAllTypes()
     {
         return map.Keys;
@@ -604,39 +1035,69 @@ public static class MissionFactory
 }
  
 ===== ?�일: %~dpnxF ===== 
+using Photon.Pun;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Photon.Pun.Demo.PunBasics;
 
-public class MissionManager : MonoBehaviour
+public static class EventCodes
 {
-    // 싱글톤
+    public const byte MissionsAssigned = 1;
+    public const byte MissionCompleted = 2;
+}
+
+public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
+{
     public static MissionManager Instance { get; private set; }
 
-    // 전체 미션 프로토타입 (Clone 복제용)
     private List<Mission> allMissions = new List<Mission>();
 
-    // 플레이어별 할당 미션
     private Dictionary<string, List<Mission>> playerMissions = new Dictionary<string, List<Mission>>();
 
     public IReadOnlyList<Mission> AllMissions => allMissions;
     public IReadOnlyDictionary<string, List<Mission>> PlayerMissions => playerMissions;
+    [SerializeField] private PlayerController playerController;
 
-    // 생명주기
     private void Awake()
     {
-        if (Instance = null)
+        Instance = this;
+        PhotonNetwork.AddCallbackTarget(this);
+        LoadAllMissions();
+
+        playerController = FindObjectOfType<PlayerController>();
+        playerController.OnInteract += HandlePlayerInteract;
+    }
+
+    private void OnDestroy()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+        if (playerController != null)
+            playerController.OnInteract -= HandlePlayerInteract;
+    }
+
+    private void HandlePlayerInteract()
+    {
+        Collider2D hit = Physics2D.OverlapCircle(
+            playerController.transform.position,
+            playerController.interactRange,
+            playerController.interactLayer
+        );
+        if (hit != null && hit.TryGetComponent<MissionCollider>(out var trigger))
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            LoadAllMissions();
-        }
-        else
-        {
-            Destroy(gameObject);
+#if UNITY_EDITOR
+            string pid = "TestPlayer";
+#else
+        string pid = PhotonNetwork.LocalPlayer.UserId;
+#endif
+            trigger.HandleInteract(pid);
         }
     }
 
-    // 전체 미션 한번에 로드
+
+
     private void LoadAllMissions()
     {
         allMissions.Clear();
@@ -646,25 +1107,31 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    // 플레이어에게 미션 할당
-    public void AssignMissions(string playerID)
+    public override void OnJoinedRoom()
     {
-        if (playerMissions.ContainsKey(playerID))
-        {
-            return; // 이미 할당된 플레이어는 무시
-        }
-
-        var clones = new List<Mission>();
-        foreach (var prototype in allMissions)
-        {
-            clones.Add(prototype.Clone()); // 각 플레이어에게 개별 인스턴스 할당
-        }
-
-        playerMissions.Add(playerID, clones);
-        //미션 UI 업데이트
+        string pid = PhotonNetwork.LocalPlayer.UserId;
+        AssignMissions(pid);
     }
 
-    // 특정 미션 완료 처리
+    public void AssignMissions(string playerId)
+    {
+        if (playerMissions.ContainsKey(playerId)) return;
+        var rng = new System.Random();
+        var selected = allMissions
+            .OrderBy(_ => rng.Next())
+            .Take(3)
+            .Select(proto => proto.Clone())
+            .ToList();
+        playerMissions[playerId] = selected;
+
+        var ids = selected.Select(m => m.MissionID).ToArray();
+        PhotonNetwork.RaiseEvent(
+            EventCodes.MissionsAssigned,
+            new object[] { playerId, ids },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            SendOptions.SendReliable);
+    }
+
     public void CompleteMission(string playerID, string missionID)
     {
         if (!playerMissions.TryGetValue(playerID, out var list))
@@ -672,12 +1139,15 @@ public class MissionManager : MonoBehaviour
             return;
         }
 
-        // 해당 플레이어의 미션 목록에서 미션 찾기
         var mission = list.Find(m => m.MissionID == missionID);
         if (mission != null && !mission.IsCompleted)
         {
             mission.Complete();
-            // 미션 UI 업데이트
+            PhotonNetwork.RaiseEvent(
+            EventCodes.MissionCompleted,
+               new object[] { playerID, missionID },
+               new RaiseEventOptions { Receivers = ReceiverGroup.All },
+               SendOptions.SendReliable);
             CheckCrewmateVictory();
         }
     }
@@ -700,12 +1170,39 @@ public class MissionManager : MonoBehaviour
 
         return (float)done / list.Count; // 완료된 미션 개수를 전체 미션 개수로 나누어 진행률 계산
     }
+    public void OnEvent(EventData photonEvent)
+    {
+        switch (photonEvent.Code)
+        {
+            case EventCodes.MissionsAssigned:
+                var dataA = (object[])photonEvent.CustomData;
+                string pidA = (string)dataA[0];
+                string[] mids = (string[])dataA[1];
+                var clones = new List<Mission>();
+                foreach (var mid in mids)
+                {
+                    var proto = allMissions.First(m => m.MissionID == mid);
+                    clones.Add(proto.Clone());
+                }
+                playerMissions[pidA] = clones;
+                break;
 
-    // 일반 시민 승리 조건 체크
-    // 전원 클리어시 승리 처리 상황( 나중에 조건 변경 가능 )
+            case EventCodes.MissionCompleted:
+                var dataC = (object[])photonEvent.CustomData;
+                string pidC = (string)dataC[0];
+                string midC = (string)dataC[1];
+                if (playerMissions.TryGetValue(pidC, out var listC))
+                {
+                    var ms = listC.FirstOrDefault(m => m.MissionID == midC);
+                    if (ms != null && !ms.IsCompleted) ms.Complete();
+                    CheckCrewmateVictory();
+                }
+                break;
+        }
+    }
+
     public void CheckCrewmateVictory()
     {
-        // 모든 플레이어의 미션이 완료되었는지 확인
         foreach (var player in playerMissions)
         {
             if (GetProgress(player.Key) < 1f)
@@ -714,15 +1211,16 @@ public class MissionManager : MonoBehaviour
             }
         }
 
-        // 모든 플레이어의 미션이 완료되었으므로 승리 처리
     }
+
+
 }
  
 ===== ?�일: %~dpnxF ===== 
 public enum MissionType
 {
     FixSignpost, // 표지판 고치기 미션
-    // 새 미션 추가시 여기에 한줄만 추가하면 됨.
+    Laundry
 }
  
 ===== ?�일: %~dpnxF ===== 
@@ -732,16 +1230,134 @@ using UnityEngine;
 
 public class FixSignpost : Mission
 {
-    // Mission 클래스 생성자 호출
     public FixSignpost()
         : base(MissionType.FixSignpost.ToString(),
             "이정표 수리하기")
     { }
 
-    // Clone
     public override Mission Clone()
     {
         return new FixSignpost();
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class DragCloth : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+{
+    public GameObject clothPrefab;
+    public RectTransform rect;
+    private CanvasGroup group;
+    private Canvas canvas;
+
+    private RectTransform originalParent;
+    private Vector2 originalAnchoredPos;
+
+    private Vector2 pointerOffset;
+
+    void Awake()
+    {
+        rect = GetComponent<RectTransform>();
+        group = gameObject.AddComponent<CanvasGroup>();
+        canvas = GetComponentInParent<Canvas>();
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        group.alpha = 0.6f;
+        group.blocksRaycasts = false;
+
+        originalParent = rect.parent as RectTransform;
+        originalAnchoredPos = rect.anchoredPosition;
+
+        Vector2 localPointerPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.transform as RectTransform,
+            eventData.position,
+            canvas.worldCamera,
+            out localPointerPos);
+        pointerOffset = localPointerPos - rect.anchoredPosition;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        Vector2 localPointerPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.transform as RectTransform,
+            eventData.position,
+            canvas.worldCamera,
+            out localPointerPos);
+
+        rect.anchoredPosition = localPointerPos - pointerOffset;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        group.alpha = 1f;
+        group.blocksRaycasts = true;
+
+        bool droppedOnZone = rect.parent.GetComponent<DropZone>() != null;
+        if (!droppedOnZone)
+        {
+            rect.SetParent(originalParent, worldPositionStays: false);
+            rect.anchoredPosition = originalAnchoredPos;
+        }
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
+
+public class DropZone : MonoBehaviour, IDropHandler
+{
+    [SerializeField] private int slotIndex;
+    private Laundry mission;
+    private string playerId;
+    private RectTransform dragArea;
+    private LaundryUI laundryUI;  // UI도 바로 닫을 수 있도록 참조
+
+    public void Initialize(Laundry mission, string playerId, RectTransform dragArea, LaundryUI ui)
+    {
+        this.mission = mission;
+        this.playerId = playerId;
+        this.dragArea = dragArea;
+        this.laundryUI = ui;
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        var dragCloth = eventData.pointerDrag.GetComponent<DragCloth>();
+        if (dragCloth == null || mission == null) return;
+
+        var expected = mission.GetorderPrefabs()[slotIndex];
+        bool isCorrect = dragCloth.clothPrefab == expected;
+
+        if (isCorrect)
+        {
+            dragCloth.rect.SetParent(transform, false);
+            dragCloth.rect.localPosition = Vector3.zero;
+            dragCloth.enabled = false;
+
+            (mission as Laundry).MarkSlotFilled(slotIndex);
+
+            if (mission.IsCompleted)
+            {
+                MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
+                laundryUI.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            dragCloth.rect.SetParent(dragArea, false);
+            dragCloth.rect.anchoredPosition = Vector2.zero;
+        }
     }
 }
  
@@ -750,39 +1366,199 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
 public class Laundry : Mission
 {
-    //Resources/ClothPrefabs 폴더에 빨래 프리팹들 있음.
     private List<GameObject> orderPrefabs;
-    private int currentIndex;
+    private bool[] filledSlots;
 
-    public Laundry() : base ("Laundry", "빨래를 제시된 순서대로 널어주세요.")
+    public Laundry()
+        : base("Laundry", "빨래를 제시된 순서대로 널어주세요.")
     {
         var prefabs = Resources.LoadAll<GameObject>("ClothPrefabs");
         orderPrefabs = new List<GameObject>(prefabs);
-    }
+        Shuffle(orderPrefabs);
+        orderPrefabs = orderPrefabs.GetRange(0, Mathf.Min(5, orderPrefabs.Count));
 
-  
+        filledSlots = new bool[orderPrefabs.Count];
+    }
 
     public override Mission Clone()
     {
         var clone = new Laundry();
         clone.orderPrefabs = new List<GameObject>(orderPrefabs);
-        clone.currentIndex = 0;
+        clone.filledSlots = new bool[orderPrefabs.Count];
         return clone;
+    }
+
+    public void MarkSlotFilled(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= filledSlots.Length)
+            return;
+
+        if (filledSlots[slotIndex])
+            return; // 이미 채워진 슬롯이면 무시
+
+        filledSlots[slotIndex] = true;
+
+        bool allFilled = true;
+        foreach (var filled in filledSlots)
+        {
+            if (!filled)
+            {
+                allFilled = false;
+                break;
+            }
+        }
+
+        if (allFilled)
+        {
+            Complete();
+        }
+    }
+
+    public int GetFilledCount()
+    {
+        int count = 0;
+        foreach (var filled in filledSlots)
+            if (filled) count++;
+        return count;
+    }
+
+    public List<GameObject> GetorderPrefabs()
+    {
+        return new List<GameObject>(orderPrefabs);
     }
 
     private void Shuffle<T>(List<T> list)
     {
-        var rnd = new System.Random();
+        var rng = new System.Random();
         int n = list.Count;
-        while(n>1)
+        while (n > 1)
         {
-            int k = rnd.Next(n--);
+            int k = rng.Next(n--);
             T temp = list[n];
             list[n] = list[k];
             list[k] = temp;
         }
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class LaundryUI : MonoBehaviour, IMissionUI
+{
+    [Header("정답지")]
+    [SerializeField] private List<Transform> referenceSlots;
+    [Header("빨래집게")]
+    [SerializeField] private List<Transform> clampSlots;
+    [Header("옷더미")]
+    [SerializeField] private GameObject dragClothPrefab;
+    [Header("드래그 영역")]
+    [SerializeField] private RectTransform dragArea;
+
+    private Laundry mission;
+    private string playerId;
+
+    public void Initialize(Laundry mission, string playerId)
+    {
+        this.mission = mission;
+        this.playerId = playerId;
+        RefreshUI();
+    }
+
+    public void RefreshUI()
+    {
+        foreach (Transform slot in referenceSlots)
+        {
+            for (int i = slot.childCount - 1; i >= 0; i--)
+            {
+                Destroy(slot.GetChild(i).gameObject);
+            }
+        }
+
+        foreach (Transform slot in clampSlots)
+        {
+            for (int i = slot.childCount - 1; i >= 0; i--)
+            {
+                Destroy(slot.GetChild(i).gameObject);
+            }
+        }
+
+        for ( int i = transform.childCount -1; i >= 0; i --)
+        {
+            var child = transform.GetChild(i);
+            if(child.CompareTag("DragIcon"))
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        for (int i = dragArea.childCount - 1; i >= 0; i--)
+        {
+            Destroy(dragArea.GetChild(i).gameObject);
+        }
+
+        var order = mission.GetorderPrefabs();
+        for (int i = 0; i < referenceSlots.Count && i < order.Count; i++)
+        {
+            Instantiate(order[i], referenceSlots[i].position, Quaternion.identity, referenceSlots[i]);
+        }
+
+        for (int i = 0; i < clampSlots.Count && i < order.Count; i++)
+        {
+            var zone = clampSlots[i].GetComponent<DropZone>();
+            zone.Initialize(mission, playerId, dragArea, this);  // dragArea 추가
+            clampSlots[i].GetComponent<Image>().color = new Color(1, 1, 1, 0.2f);
+        }
+
+        var allPrefabs = Resources.LoadAll<GameObject>("ClothPrefabs");
+        foreach (var prefab in allPrefabs)
+        {
+            var iconGO = Instantiate(dragClothPrefab, dragArea, false);
+            var drag = iconGO.GetComponent<DragCloth>();
+            drag.clothPrefab = prefab;
+
+            Sprite sprite = null;
+            var sr = prefab.GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sprite = sr.sprite;
+            else
+            {
+                sr = prefab.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                    sprite = sr.sprite;
+                else
+                {
+                    var img = prefab.GetComponent<Image>();
+                    if (img != null)
+                        sprite = img.sprite;
+                }
+            }
+
+            var uiImage = iconGO.GetComponent<Image>();
+            if (sprite != null)
+                uiImage.sprite = sprite;
+            else
+                Debug.LogWarning($"[{prefab.name}]에서 Sprite를 못 찾았습니다.");
+        }
+    }
+
+    public void Show(Mission missionBase, string playerId)
+    {
+        if (missionBase is Laundry laundry)
+        {
+            Debug.Log(">> MissionCollider.Show 호출");
+            gameObject.SetActive(true);
+            Initialize(laundry, playerId);
+        }
+
     }
 }
  
@@ -820,6 +1596,7 @@ namespace _02_Scripts.Lobby
 
         void Start() // ?ы넠?ㅽ듃?뚰겕???곌껐
         {
+            PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.ConnectUsingSettings();
         }
 
@@ -839,7 +1616,6 @@ namespace _02_Scripts.Lobby
             RoomOptions roomOptions = new RoomOptions()
             {
                 MaxPlayers = MaxPlayers,
-                // IsVisible = IsVisible,
                 IsVisible = true,
                 IsOpen = true
             };
@@ -855,7 +1631,7 @@ namespace _02_Scripts.Lobby
         public override void OnJoinedRoom()
         {
             Debug.Log("諛⑹뿉 ?낆옣?덉뒿?덈떎.");
-            SceneManager.LoadScene("DH_GameScene");
+            PhotonNetwork.LoadLevel("GameScene");
         }
         
         public override void OnCreateRoomFailed(short returnCode, string message) // 諛??앹꽦?ㅽ뙣 肄쒕갚
@@ -893,13 +1669,11 @@ using UnityEngine;
 
 public class InteractionController : MonoBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -907,211 +1681,16 @@ public class InteractionController : MonoBehaviour
 }
  
 ===== ?�일: %~dpnxF ===== 
-using Photon.Pun;
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class PlayerController : MonoBehaviourPun , IPunObservable
-{
-    [Header("Movement")]
-    public float moveSpeed = 5f;
-    private Vector2 moveInput;
-    private Rigidbody2D rb;
-
-    [Header("Jump")]
-    [SerializeField] private float jumpHeight = 1f;
-    [SerializeField] private float jumpDuration = 0.4f;
-
-    private Vector3 visualDefaultPos;
-    private bool jumping;
-
-    [Header("Layer Masks")]
-    public LayerMask interactLayer;
-    public LayerMask playerLayer;
-    public LayerMask jumpableLayer;
-
-    [Header("Detection")]
-    public float interactRange = 1.5f;
-    public float killRange = 1.2f;
-
-    [Header("UI Callback Hooks")]
-    public System.Action OnInteract;
-    public System.Action OnKill;
-    public System.Action OnOpenInventory;
-
-    [Header("Refs")]
-    [SerializeField] private Transform visual;      // 罹먮┃???ㅽ봽?쇱씠??
-    [SerializeField] private Transform shadow;      // 洹몃┝??(?좏깮)
-    [SerializeField] private float lerpSpeed = 5f; // ?꾩튂 蹂닿컙 ?띾룄
-    private Vector3 shadowOriginalScale;
-
-    private Vector3 networkPosition;
-
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody2D>();                 // ???ㅼ떆 ?ｊ린
-        if (rb == null)
-            Debug.LogError("Rigidbody2D 而댄룷?뚰듃媛 ?놁뒿?덈떎!", this);
-
-        if (visual == null)
-            Debug.LogError("visual ?몃옖?ㅽ뤌???좊떦?섏? ?딆븯?듬땲??", this);
-        if (shadow != null)
-            shadowOriginalScale = shadow.localScale;
-        visualDefaultPos = visual.localPosition;
-    }
-
-
-    private void Update()
-    {
-        if (photonView.IsMine)
-        {
-            HandleMovement();
-        }
-        else
-        {
-            // ?닿? ?꾨땶 ?ㅻⅨ ?뚮젅?댁뼱???꾩튂??遺?쒕읇寃??대룞
-            transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * lerpSpeed);
-        }
-    }
-
-    private void HandleMovement()
-    {
-        Vector2 movement = moveInput * moveSpeed;
-        rb.velocity = movement;
-    }
-
-    public void OnMove(InputAction.CallbackContext context)
-    {
-        moveInput = context.ReadValue<Vector2>();
-    }
-
-    public void OnInteractInput(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
-            if (target != null)
-            {
-                Debug.Log("誘몄뀡 ?곹샇?묒슜 ?쒕룄");
-                OnInteract?.Invoke();
-            }
-        }
-    }
-
-    public void OnKillInput(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
-            if (target != null)
-            {
-                Debug.Log("???쒕룄");
-                OnKill?.Invoke();
-            }
-        }
-    }
-
-    public void OnJumpInput(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            Debug.Log("?먰봽 ?쒕룄??);
-            StartCoroutine(JumpCoroutine());
-        }
-    }
-
-
-    private bool IsJumpableAhead()
-    {
-        // ?묐럭?덇퉴 ?쒖븵?앹? moveInput 諛⑺뼢.
-        if (moveInput == Vector2.zero) return false;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position,
-                                             moveInput.normalized,
-                                             0.6f,    // 嫄곕━
-                                             jumpableLayer);
-        return hit.collider != null;
-    }
-
-    private System.Collections.IEnumerator JumpCoroutine()
-    {
-        jumping = true;
-        float half = jumpDuration * 0.5f;
-        float t = 0;
-
-        // ?곸듅
-        while (t < half)
-        {
-            t += Time.deltaTime;
-            float h = Mathf.Lerp(0, jumpHeight, t / half);
-            visual.localPosition = visualDefaultPos + Vector3.up * h;
-            if (shadow)
-            {
-                shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
-            }
-
-            yield return null;
-        }
-
-        // ?섍컯
-        t = 0;
-        while (t < half)
-        {
-            t += Time.deltaTime;
-            float h = Mathf.Lerp(jumpHeight, 0, t / half);
-            visual.localPosition = visualDefaultPos + Vector3.up * h;
-            if (shadow)
-            {
-                shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
-            }
-
-            yield return null;
-        }
-
-        visual.localPosition = visualDefaultPos;
-        if (shadow) shadow.localScale = shadowOriginalScale;
-        jumping = false;
-    }
-
-
-    public void OnInventoryInput(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            Debug.Log("?몃깽?좊━ ?닿린");
-            OnOpenInventory?.Invoke();
-        }
-    }
-    
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(transform.position);
-        }
-        else
-        {
-            networkPosition = (Vector3)stream.ReceiveNext();
-        }
-    } 
-}
- 
-===== ?�일: %~dpnxF ===== 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerData : MonoBehaviour
+public class Player : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string PlayerID { get; private set; }
+    public bool IsDead { get; private set; } = false;
 
-    // Update is called once per frame
-    void Update()
+    public void Initialize(string id)
     {
-        
+        PlayerID = id;
     }
 }
  
@@ -1126,7 +1705,6 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
     public int PlayerSeq;               // ?뚮젅?댁뼱 ?쒕쾲 (0 ~ N)
     public string PlayerID;            // 怨좎쑀 ?앸퀎??(ex. PhotonView.ViewID or 而ㅼ뒪? UUID)
     public string Nickname;            // ?됰꽕??
-    // public Color Color;                // ?뚮젅?댁뼱 而щ윭
     public int PlayerLevel;            // (?좏깮 ?ы빆) ?덈꺼
     public int PlayerExp;            // (?좏깮 ?ы빆) 寃쏀뿕移?
     public int PlayerGold;             // (?좏깮 ?ы빆) 怨⑤뱶
@@ -1144,12 +1722,9 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
     void Start()
     {
         Init();
-        // PlayerID, Nickname ??珥덇린??癒쇱?
         PlayerID = System.Guid.NewGuid().ToString(); // or ?좊떦??ID
         Nickname = "Player_" + Random.Range(0, 1000);
 
-        // PlayerManager.Instance.RegisterPlayer(this);
-        GameManager.Instance.ChangeState(GameState.RoleAssignment);
     }
 
     private void Init()
@@ -1166,23 +1741,25 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
 }
  
 ===== ?�일: %~dpnxF ===== 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
-using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
     private Dictionary<string, PlayerInfo> playerDict = new Dictionary<string, PlayerInfo>();
-    
+
     public void RegisterPlayer(PlayerInfo player)
     {
         if (!playerDict.ContainsKey(player.PlayerID))
         {
             playerDict.Add(player.PlayerID, player);
+
+            if (playerDict.Count == 1)
+            {
+                player.IsLocalPlayer = true;
+                Debug.Log($"[RegisterPlayer] {player.Nickname}을 로컬 플레이어로 지정");
+            }
         }
     }
 
@@ -1193,7 +1770,17 @@ public class PlayerManager : MonoBehaviour
 
     public PlayerInfo GetLocalPlayer()
     {
-        return playerDict.Values.FirstOrDefault(p => p.IsLocalPlayer);
+        Debug.Log($"[GetLocalPlayer] 현재 플레이어 수: {playerDict.Count}");
+        foreach (var player in playerDict.Values)
+        {
+            Debug.Log($"[GetLocalPlayer] 체크중: {player.Nickname}, IsLocalPlayer={player.IsLocalPlayer}");
+            if (player.IsLocalPlayer)
+            {
+                Debug.Log($"[PlayerManager] 로컬 플레이어를 찾았습니다! : {player.Nickname}");
+                return player;
+            }
+        }
+        return null;
     }
 
     public List<PlayerInfo> GetAlivePlayers()
@@ -1211,75 +1798,229 @@ public class PlayerManager : MonoBehaviour
         if (playerDict.TryGetValue(playerID, out var player))
         {
             player.IsDead = true;
-            // ?щ쭩 ?좊땲硫붿씠?? ?쒖껜 ?앹꽦, UI 媛깆떊 ??異붽?
+
+
             Debug.Log($"{player.Nickname} has been killed.");
-        }
-    }
-
-    public void Init()
-    {
-        
-    }
-}
- 
-===== ?�일: %~dpnxF ===== 
-using Photon.Pun;
-using UnityEngine;
-
-public class PlayerSpawner : MonoBehaviourPunCallbacks
-{
-    [SerializeField] private PlayerManager playerManager;
-    public string playerPrefabName = "Prefabs/Player"; // Resources/Prefabs/Player.prefab
-    public Transform[] spawnPoints;
-
-    private void Start()
-    {
-        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
-        {
-            SpawnPlayer();
-        }
-        else
-        {
-            Debug.LogError("Photon room ?곌껐???꾩슂?⑸땲??");
-        }
-    }
-
-    private void SpawnPlayer()
-    {
-        int index = PhotonNetwork.LocalPlayer.ActorNumber % spawnPoints.Length;
-        Transform spawnPoint = spawnPoints[index];
-
-        GameObject player = PhotonNetwork.Instantiate(playerPrefabName, spawnPoint.position, Quaternion.identity);
-
-        // ?좏깮?곸쑝濡?PlayerManager???깅줉
-        PlayerInfo info = player.GetComponent<PlayerInfo>();
-        info.IsLocalPlayer = true;
-        
-        if (playerManager != null)
-        {
-            playerManager.RegisterPlayer(info);
         }
     }
 }
  
 ===== ?�일: %~dpnxF ===== 
 using System.Collections;
-using System.Collections.Generic;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class PlayerSpawner : MonoBehaviourPunCallbacks
+{
+    [SerializeField] private PlayerManager playerManager;
+    public string playerPrefabName = "Prefabs/Player"; // Resources/Prefabs/Player.prefab
+
+    public Transform fallbackSpawnPoint;
+    public LayerMask groundLayer;
+
+    private Collider2D groundCollider;
+    private bool hasSpawned = false;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (PhotonNetwork.InRoom && PhotonNetwork.IsConnectedAndReady)
+        {
+            GameObject groundObj = GameObject.Find("GroundLevel");
+            if (groundObj != null)
+            {
+                groundCollider = groundObj.GetComponent<Collider2D>();
+            }
+            SpawnPlayer();
+        }
+    }
+
+    private void SpawnPlayer()
+    {
+        Vector2 spawnPos = GetValidGroundPosition();
+
+        GameObject player = PhotonNetwork.Instantiate(playerPrefabName, spawnPos, Quaternion.identity);
+        PlayerInfo info = player.GetComponent<PlayerInfo>();
+        info.IsLocalPlayer = true;
+
+        if (playerManager != null)
+        {
+            playerManager.RegisterPlayer(info);
+        }
+    }
+
+    private Vector2 GetValidGroundPosition()
+    {
+        const float radius = 0.5f;
+        const int maxAttempts = 10;
+
+        if (groundCollider == null)
+        {
+            return fallbackSpawnPoint != null ? fallbackSpawnPoint.position : Vector2.zero;
+        }
+
+        Bounds bounds = groundCollider.bounds;
+
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            float x = Random.Range(bounds.min.x, bounds.max.x);
+            float y = Random.Range(bounds.min.y, bounds.max.y);
+            Vector2 tryPos = new Vector2(x, y);
+
+            if (groundCollider.OverlapPoint(tryPos))
+            {
+                Collider2D hit = Physics2D.OverlapCircle(tryPos, radius, LayerMask.GetMask("Player"));
+                if (hit == null)
+                {
+                    return tryPos;
+                }
+            }
+        }
+        return fallbackSpawnPoint != null ? fallbackSpawnPoint.position : Vector2.zero;
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using System;
 using UnityEngine;
 
-public class PlayerStatus : MonoBehaviour
+public class ResourceStat
 {
-    // Start is called before the first frame update
-    void Start()
+    public StatType Type { get; private set; }
+    public float CurrentValue { get; private set; }
+    public float MaxValue { get; private set; }
+
+    public Action<float> OnValueChanged;
+
+    public ResourceStat(StatType type, float maxValue)
     {
-        
+        Type = type;
+        MaxValue = maxValue;
+        CurrentValue = maxValue;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Recover(float amount)
     {
-        
+        CurrentValue = Mathf.Min(CurrentValue + amount, MaxValue);
+        OnValueChanged?.Invoke(CurrentValue);
     }
+
+    public void Consume(float amount)
+    {
+        CurrentValue = Mathf.Max(CurrentValue - amount, 0);
+        OnValueChanged?.Invoke(CurrentValue);
+    }
+
+    public void SetMax(float max)
+    {
+        MaxValue = max;
+        CurrentValue = Mathf.Min(CurrentValue, MaxValue);
+        OnValueChanged?.Invoke(CurrentValue);
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using System;
+using System.Collections.Generic;
+using System.Resources;
+using UnityEngine;
+
+public enum StatType
+{
+    CurHp,
+    Stamina
+}
+
+public class StatManager : MonoBehaviour
+{
+    private Dictionary<StatType, ResourceStat> stats = new();
+
+    private void Awake()
+    {
+        stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 100);
+        stats[StatType.Stamina] = new ResourceStat(StatType.Stamina, 100);
+    }
+
+    public float GetValue(StatType type)
+    {
+        if (stats.TryGetValue(type, out var stat))
+            return stat.CurrentValue;
+        return 0f;
+    }
+
+    public float GetMaxValue(StatType type)
+    {
+        if (stats.TryGetValue(type, out var stat))
+            return stat.MaxValue;
+        return 0f;
+    }
+
+    public void Recover(StatType type, float amount)
+    {
+        if (stats.TryGetValue(type, out var stat))
+        {
+            stat.Recover(amount);
+            Debug.Log($"[StatManager] {type} 회복: +{amount} → {stat.CurrentValue}/{stat.MaxValue}");
+        }
+    }
+
+    public void Consume(StatType type, float amount)
+    {
+        if (stats.TryGetValue(type, out var stat))
+        {
+            stat.Consume(amount);
+            Debug.Log($"[StatManager] {type} 소모: -{amount} → {stat.CurrentValue}/{stat.MaxValue}");
+        }
+    }
+
+    public void SetMaxValue(StatType type, float newMax)
+    {
+        if (stats.TryGetValue(type, out var stat))
+        {
+            stat.SetMax(newMax);
+        }
+    }
+
+    public void SubscribeToStatChange(StatType type, Action<float> callback)
+    {
+        if (stats.TryGetValue(type, out var stat))
+        {
+            stat.OnValueChanged += callback;
+        }
+    }
+}
+ 
+===== ?�일: %~dpnxF ===== 
+using UnityEngine;
+
+public enum ItemEffectType
+{
+    HealHp,
+    HealStamina,
+    BuffSpeed,
+    RegenHp,
+    Invisibility
+}
+
+[CreateAssetMenu(menuName = "SO/Item")]
+public class ItemSO : ScriptableObject
+{
+    public string itemName;
+    public Sprite icon;
+    public ItemEffectType effectType;
+    public float effectValue;
+    public float duration; // 지속 시간 (0이면 즉시 효과)
 }
  
 ===== ?�일: %~dpnxF ===== 
@@ -1341,7 +2082,6 @@ namespace _02_Scripts.SignUP
 
             if (!SignUpValidResult.IsValid)
             {
-                // UI留ㅻ땲????좎뒪???앹뾽 ?꾩슦湲?
                 AlertUIManager.Instance.OnAlert(SignUpValidResult.Message);
             }
             else
@@ -1400,20 +2140,16 @@ namespace _02_Scripts.SignUP
         private IEnumerator SendSignUpRequest(string userId, string password, string nickname, string email)
         {
             string HashPass = ConvertHash.StringToHash(password);
-            // JSON ?뺤떇?쇰줈 ?꾩넚???곗씠???앹꽦
             string jsonData = JsonConvert.SerializeObject(new SignUpData(userId, HashPass, nickname, email));
 
-            // ?붿껌 媛앹껜 ?앹꽦
             UnityWebRequest request = new UnityWebRequest(signUpUrl, "POST");
             byte[] jsonToSend = new UTF8Encoding().GetBytes(jsonData);
             request.uploadHandler = new UploadHandlerRaw(jsonToSend);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
 
-            // ?붿껌 ?꾩넚
             yield return request.SendWebRequest();
 
-            // ?묐떟 泥섎━
             if (request.result == UnityWebRequest.Result.Success)
             {
                 SignUpResponse response = JsonConvert.DeserializeObject<SignUpResponse>(request.downloadHandler.text);
@@ -1437,20 +2173,16 @@ namespace _02_Scripts.SignUP
 
         private IEnumerator SendDuplicateRequest(string userId)
         {
-            // JSON ?뺤떇?쇰줈 ?꾩넚???곗씠???앹꽦
             string jsonData = JsonConvert.SerializeObject(new { userId = userId });
 
-            // ?붿껌 媛앹껜 ?앹꽦
             UnityWebRequest request = new UnityWebRequest(duplicationCheckUrl, "POST");
             byte[] jsonToSend = new UTF8Encoding().GetBytes(jsonData);
             request.uploadHandler = new UploadHandlerRaw(jsonToSend);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
 
-            // ?붿껌 ?꾩넚
             yield return request.SendWebRequest();
 
-            // ?묐떟 泥섎━
             if (request.result == UnityWebRequest.Result.Success)
             {
                 duplicationData response = JsonConvert.DeserializeObject<duplicationData>(request.downloadHandler.text);
@@ -1518,10 +2250,6 @@ namespace _02_Scripts.SignUP
         [SerializeField] private TMP_InputField nickNameInputField;
         [SerializeField] private TMP_InputField emailInputField;
 
-        // public void Start()
-        // {
-        //     SignUpPopup.SetActive(false);
-        // }
 
         public void ShowSignUpPopup()
         {
@@ -1561,20 +2289,17 @@ public class UIManager : MonoBehaviour
             return instance;
         }
     }
-    
 
     public GameObject inGameUI;
     public GameObject missionUI;    //list?
     public GameObject meetingUI;
     public GameObject votingUI;
 
-    // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -1582,12 +2307,12 @@ public class UIManager : MonoBehaviour
 
     public void ShowInGameUI()
     {
-
+        
     }
 
     public void ShowMissionUI()
     {
-
+        
     }
 
     public void ShowVotingUI()
@@ -1602,15 +2327,49 @@ public class UIManager : MonoBehaviour
 }
  
 ===== ?�일: %~dpnxF ===== 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DeadBodyManager : MonoBehaviour
 {
-    // 임포스터에 의해 사망한 플레이어의 사체를 관리 및 스폰하는 클래스
+    public static DeadBodyManager Instance { get; private set; }
+    public GameObject deadBodyPrefab;
+    private List<DeadBody> deadBodies = new List<DeadBody>();
 
-    // 싱글톤화 필수
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    public void SpawnDeadBody(Vector3 position, string playerID)
+    {
+        GameObject body = Instantiate(deadBodyPrefab, position, Quaternion.identity);
+
+        DeadBody deadBodyComponent = body.GetComponent<DeadBody>();
+        deadBodyComponent.Initialize(playerID);
+
+        deadBodies.Add(deadBodyComponent); // 누락되어 있었다면 리스트에 추가
+    }
+
+    public string GetClosestDeadBodyID(Vector3 position)
+    {
+        DeadBody closest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var body in deadBodies)
+        {
+            if (body == null) continue;
+
+            float dist = Vector3.Distance(position, body.transform.position);
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                closest = body;
+            }
+        }
+
+        return (closest != null && minDistance <= 2.0f) ? closest.BodyID : null;
+    }
 }
  
 ===== ?�일: %~dpnxF ===== 
@@ -1644,50 +2403,30 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.Lobby:
-                // - GameState.Lobby 전환되는 시점
-                // 1. 플레이어가 방에 입장 시
-                // 2. 게임 종료 시
 
-                // 대기 화면 유지, 유저 접속 대기 로직
                 
                 break;
 
             case GameState.RoleAssignment:
-                // - GameState.RoleAssignment 전환되는 시점
-                // 1. 게임이 시작되었을 시
 
-
-                //플레이어 역할을 할당하고 게임 시작 로직
+                RoleManager.Instance.AssignRoles();
 
                 ChangeState(GameState.Playing);
                 break;
 
             case GameState.Playing:
-                // - GameState.Playing 전환되는 시점
-                // 1. RoleAssignment(역할 할당) 직후
-                // 2. 투표가 종료된 시점에서 누군가의 승리 조건이 아직 만족되지 않았을 시
 
-                // --- 임포스터 킬 로직---
 
-                // --- 미션 상호작용 로직---
 
-                // --- 사체 신고 로직---
                 break;
 
             case GameState.Meeting:
-                // - GameState.Meeting 전환되는 시점
-                // 1. 사체 신고가 발생했을 때
-                // 2. 가운데 종을 울려 회의를 소집하였을 때
 
-                // 회의 화면 표시
                 ChangeState(GameState.Voting);
                 break;
 
             case GameState.Voting:
-                // GameState.Voting 전환되는 시점
-                // 1. 모든 플레이어가 회의를 시작했을 때
 
-                // 투표 화면 표시
                 VoteManager.Instance.StartVotingPhase(() =>
                 {
                     ChangeState(GameState.Playing);
@@ -1695,48 +2434,63 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.Result:
-                // - GameState.Result 전환되는 시점
-                // 1. 임포스터와 크루원의 수가 동등해져 임포스터의 승리조건이 만족되었을 시
-                // 2. 크루원이 모든 미션을 완료했을 시
-                // 3. 투표를 통해 모든 임포스터가 제거되었을 시
 
-                // 게임 종료화면 표시
                 break;
         }
     }
 
     public void ChangeState(GameState newState)
     {
-        Debug.Log($"Game State changed: {CurrentState} -> {newState}");
+        if (CurrentState == newState) return;
+
         CurrentState = newState;
+        Debug.Log($"[GameManager] 상태가 {newState}로 변경됨");
     }
 
     private void CheckGameResult()
     {
-        // 남아있는 임포스터 수와 크루메이트 수를 체크하여 게임 종료 여부 결정
 
-        // 미션 완료 여부도 체크할 것
 
-        // 해당 메서드는 살해 발생, 혹은 투표 방출 이후에 호출할 것.
     }
 }
  
 ===== ?�일: %~dpnxF ===== 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GhostManager : MonoBehaviour
 {
-    // 사망한 플레이어 → 유령 상태를 관리하는 로직
+    public static GhostManager Instance { get; private set; }
 
-    // 싱글톤 패턴 적용
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
-    // 투명화, 벽 통과 설정, 시야 무제한 등 설정 로직 추가 요망
+    public void SetGhostAppearance(GameObject playerGO)
+    {
+        var renderers = playerGO.GetComponentsInChildren<Renderer>();
 
-    // 미션은 계속 수행 가능하도록 설정
+        foreach (var renderer in renderers)
+        {
+            foreach (var mat in renderer.materials)
+            {
+                Color c = mat.color;
+                c.a = 0.5f;  // 반투명도 50% 예시
+                mat.color = c;
+
+                mat.SetFloat("_Mode", 3); // Unity Standard Shader에서 Transparent 모드
+                mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                mat.SetInt("_ZWrite", 0);
+                mat.DisableKeyword("_ALPHATEST_ON");
+                mat.EnableKeyword("_ALPHABLEND_ON");
+                mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                mat.renderQueue = 3000;
+            }
+        }
+    }
 }
-
  
 ===== ?�일: %~dpnxF ===== 
 using UnityEngine;
@@ -1753,8 +2507,6 @@ public class ReportManager : MonoBehaviour
     public void ReportBody(string reporterID, string deadPlayerID)
     {
         Debug.Log($"{reporterID} reported {deadPlayerID}'s body.");
-        // UIManager.Instance.ShowMeetingUI(reporterID);
-        // 실제 로직에서는 회의 참여자 목록 등도 세팅해야 함
     }
 }
  
@@ -1769,30 +2521,48 @@ public class RoleManager : MonoBehaviour
     public static RoleManager Instance { get; private set; }
 
     private Dictionary<string, Role> playerRoles = new Dictionary<string, Role>();
+    [SerializeField] private PlayerManager _playerManager;
 
     void Awake()
     {
         Instance = this;
     }
-
-    /*
     public void AssignRoles()
     {
-        // 예시: 임포스터 1명, 나머지 크루메이트
-        List<string> players = PlayerManager.Instance.GetAllPlayerIDs(); // 플레이어 ID 목록 가져오기
+        List<string> players = _playerManager.GetAllPlayerIDs(); // 플레이어 ID 목록 가져오기
         int impostorCount = 1; // 임포스터 수 (예시로 1명), 나중에 UI에서 설정 가능
+        Debug.Log($"Assigning roles to {players.Count} players with {impostorCount} impostors.");
 
         List<string> shuffled = new List<string>(players);
         Shuffle(shuffled);
+        Debug.Log("Shuffled player IDs: " + string.Join(", ", shuffled));
 
         for (int i = 0; i < players.Count; i++)
         {
             Role role = (i < impostorCount) ? Role.Impostor : Role.Crewmate;
             playerRoles[shuffled[i]] = role;
             Debug.Log($"{shuffled[i]} assigned to {role}");
+
+            if (role == Role.Impostor)
+            {
+                PlayerInfo info = _playerManager.GetPlayerByID(shuffled[i]);
+                if (info != null && info.GetComponent<ImposterController>() == null)
+                {
+                    info.gameObject.AddComponent<ImposterController>();
+                    Debug.Log($"{shuffled[i]}에게 ImposterController 스크립트를 추가했습니다.");
+                }
+            }
+        }
+        foreach (string playerID in players)
+    {
+        PlayerInfo info = _playerManager.GetPlayerByID(playerID);
+        if (info != null)
+        {
+            info.Role = GetRole(playerID);
+            Debug.Log($"{info.Nickname} 역할: {info.Role}");
         }
     }
-    */
+    }
 
     public Role GetRole(string playerID)
     {
@@ -1827,9 +2597,6 @@ public class VoteManager : MonoBehaviour
         Instance = this;
     }
 
-    /// <summary>
-    /// 투표 시작: UI 보여주고 타이머 돌리고 종료 후 콜백
-    /// </summary>
     public void StartVotingPhase(System.Action onVoteEnd)
     {
         onVoteEndCallback = onVoteEnd;
@@ -1838,7 +2605,6 @@ public class VoteManager : MonoBehaviour
 
     private IEnumerator VotingRoutine()
     {
-       // UIManager.Instance.ShowVotingUI();
 
         Debug.Log("Voting started!");
         yield return new WaitForSeconds(60f); // 60초간 투표 가능, 해당 시간은 추후 float 필드화를 통한 설정 가능하게끔 수정 예정
@@ -1847,18 +2613,12 @@ public class VoteManager : MonoBehaviour
         onVoteEndCallback?.Invoke();
     }
 
-    /// <summary>
-    /// 한 플레이어가 다른 플레이어에게 투표
-    /// </summary>
     public void SubmitVote(string voterID, string targetID)
     {
         voteResults[voterID] = targetID;
         Debug.Log($"{voterID} voted for {targetID}");
     }
 
-    /// <summary>
-    /// 투표 결과 집계 및 처리
-    /// </summary>
     public void EndVote()
     {
         if (voteResults.Count == 0)
@@ -1867,12 +2627,10 @@ public class VoteManager : MonoBehaviour
             return;
         }
         
-        // 투표 동률 시 스킵 로직 추가 요망
 
         string votedOut = voteResults.GroupBy(kv => kv.Value).OrderByDescending(g => g.Count()).First().Key;
 
         Debug.Log($"Voted out player: {votedOut}");
-         // 실제 제거 처리 로직 추가 요망
 
         voteResults.Clear();
     }
@@ -1886,7 +2644,6 @@ namespace Utill
 {
     public static class ComponentExtensions
     {
-        /// TryGetComponent ??諛붾줈 蹂?섏뿉 ?좊떦?섎뒗 ?ы띁
         public static bool AssignComponent<T>(this Component component, ref T target) where T : Component
         {
             if (component.TryGetComponent<T>(out var result))
@@ -1907,7 +2664,6 @@ using UnityEngine;
 
 public class InstantObject : MonoBehaviour
 {
-    //?쒖꽦?????뱀젙 ?쒓컙 ?댄썑, ?먮룞?쇰줈 鍮꾪솢?깊솕 ?섎뒗 ?ㅻ툕?앺듃
 
     [SerializeField] private float duration;
     private void OnEnable()
@@ -1965,7 +2721,6 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
-    // ??以묐났 諛⑹?瑜??꾪븳 ?듭떖 濡쒖쭅
     protected virtual void Awake()
     {
         if (instance == null)

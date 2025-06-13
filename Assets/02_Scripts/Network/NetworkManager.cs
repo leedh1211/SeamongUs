@@ -1,9 +1,13 @@
+using System.Collections;
 using System.Collections.Generic;
 using _02_Scripts.Alert;
+using _02_Scripts.Login;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using ExitGames.Client.Photon;
 using UnityEngine.SceneManagement;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace _02_Scripts.Lobby
 {
@@ -12,10 +16,17 @@ namespace _02_Scripts.Lobby
         public static NetworkManager Instance;
 
         public PlayerInfo currentPlayerInfo;
+        public Photon.Realtime.Player currentPlayer;
 
-        public void Init(PlayerInfo playerInfo)
+        public void Init()
         {
-            currentPlayerInfo = playerInfo;
+            Hashtable properties = new Hashtable{
+            { "PlayerSeq", LoginSession.loginPlayerInfo.seq},
+            { "PlayerID", LoginSession.loginPlayerInfo.id},
+            { "Nickname", LoginSession.loginPlayerInfo.name},
+            { "PlayerLevel", LoginSession.loginPlayerInfo.level},
+            { "PlayerGold", LoginSession.loginPlayerInfo.gold}};
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
         }
 
         private void Awake() // 싱글톤 생성
@@ -27,12 +38,13 @@ namespace _02_Scripts.Lobby
             }
             Instance = this;
             DontDestroyOnLoad(gameObject); // 씬 전환 유지 원할 경우
+            PhotonNetwork.AutomaticallySyncScene = true;
+            PhotonNetwork.ConnectUsingSettings();
         }
 
         void Start() // 포톤네트워크에 연결
         {
-            PhotonNetwork.AutomaticallySyncScene = true;
-            PhotonNetwork.ConnectUsingSettings();
+            Init();
         }
 
         public override void OnConnectedToMaster() //마스터에 연결 -> 로비로 진입
@@ -51,8 +63,7 @@ namespace _02_Scripts.Lobby
             RoomOptions roomOptions = new RoomOptions()
             {
                 MaxPlayers = MaxPlayers,
-                // IsVisible = IsVisible,
-                IsVisible = true,
+                IsVisible = !IsVisible,
                 IsOpen = true
             };
             
@@ -67,7 +78,7 @@ namespace _02_Scripts.Lobby
         public override void OnJoinedRoom()
         {
             Debug.Log("방에 입장했습니다.");
-            PhotonNetwork.LoadLevel("GameScene");
+            GameManager.Instance.ChangeState(GameState.RoleAssignment);
         }
         
         public override void OnCreateRoomFailed(short returnCode, string message) // 방 생성실패 콜백
