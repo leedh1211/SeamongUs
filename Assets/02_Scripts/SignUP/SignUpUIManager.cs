@@ -22,7 +22,7 @@ namespace _02_Scripts.SignUP
         {
             SignUpPopup.SetActive(true);
         }
-        
+
         public void HideSignUpPopup()
         {
             SignUpPopup.SetActive(false);

@@ -1,4 +1,4 @@
-    using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using _02_Scripts.Alert;
@@ -13,9 +13,9 @@ public class LoginManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField idInputField;
     [SerializeField] private TMP_InputField pwInputField;
-    
+
     private string loginUrl = "http://localhost:3000/api/login/onLogin";
-    
+
     public void OnLoginButtonPressed()
     {
         string userId = idInputField.text;
@@ -24,7 +24,7 @@ public class LoginManager : MonoBehaviour
         Debug.Log($"로그인 시도: ID={userId}, PW={password}");
         StartCoroutine(SendLoginRequest(userId, password));
     }
-    
+
     private IEnumerator SendLoginRequest(string userId, string password)
     {
         string HashPass = ConvertHash.StringToHash(password);

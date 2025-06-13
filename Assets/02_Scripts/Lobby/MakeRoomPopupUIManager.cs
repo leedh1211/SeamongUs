@@ -7,14 +7,10 @@ namespace _02_Scripts.Lobby
 {
     public class MakeRoomPopupUIManager : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject makeRoomPopup;
-        [SerializeField]
-        private TMP_InputField roomNameText;
-        [SerializeField]
-        private TMP_InputField maxPlayersText;
-        [SerializeField]
-        private Toggle secretRoomToggle;
+        [SerializeField] private GameObject makeRoomPopup;
+        [SerializeField] private TMP_InputField roomNameText;
+        [SerializeField] private TMP_InputField maxPlayersText;
+        [SerializeField] private Toggle secretRoomToggle;
 
         private bool isFirstOpenPopup = true;
 
@@ -41,7 +37,7 @@ namespace _02_Scripts.Lobby
             makeRoomPopup.SetActive(false);
         }
 
-        public  void makeRoomBtnClicked()
+        public void makeRoomBtnClicked()
         {
             string roomName = roomNameText.text;
             int MaxPlayers = int.Parse(maxPlayersText.text);
@@ -49,7 +45,7 @@ namespace _02_Scripts.Lobby
             NetworkManager.Instance.MakeRoom(roomName, MaxPlayers, IsVisible);
             OnCloseMakeRoomPopup();
         }
-        
+
         private void OnInputChanged(string input)
         {
             if (int.TryParse(input, out int number))

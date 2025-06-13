@@ -55,7 +55,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
-    
+
     protected virtual void OnApplicationQuit()
     {
         applicationIsQuitting = true;
