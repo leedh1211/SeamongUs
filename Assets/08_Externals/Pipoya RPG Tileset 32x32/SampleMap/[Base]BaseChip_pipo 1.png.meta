@@ -166,7 +166,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 128
-        y: 4064
+        y: 4061
         width: 32
         height: 32
       alignment: 0
@@ -187,7 +187,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 160
-        y: 4064
+        y: 4061
         width: 32
         height: 32
       alignment: 0
@@ -903,7 +903,7 @@ TextureImporter:
         x: 160
         y: 3328
         width: 32
-        height: 32
+        height: 30
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1632,27 +1632,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_306'
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 3008
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cde25c52640999a45b2469577dc0723c
-      internalID: -764496196
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: '[Base]BaseChip_pipo 1_307'
       rect:
         serializedVersion: 2
@@ -1905,27 +1884,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_324'
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 2944
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4b21235b1b4bd5b419e2077025a496c4
-      internalID: -512536878
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: '[Base]BaseChip_pipo 1_325'
       rect:
         serializedVersion: 2
@@ -1942,27 +1900,6 @@ TextureImporter:
       bones: []
       spriteID: 0fcd7ed491ef2a84bbb4964dee8512eb
       internalID: -552049224
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_329'
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 2912
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c4611db022e49c14ba0a3656a1fe4e59
-      internalID: -689234317
       vertices: []
       indices: 
       edges: []
@@ -3942,132 +3879,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_480'
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 2304
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9cd10dd96dc7eea429ca68e8c7603520
-      internalID: -838622227
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_481'
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 2304
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7831ad06c2d34c9479a5d3a66ea93583
-      internalID: 1971198090
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_482'
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 2304
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0d59d0f3f601e844daba18f773a43fc8
-      internalID: 1088001905
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_483'
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 2304
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7e3b62b30af662546b1b475ad8b12b0b
-      internalID: -1603222568
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_484'
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 2304
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b190fac9fcb0db64caf004b0f4a75fc3
-      internalID: 419124227
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_485'
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 2304
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 07982c635857ffb4e93ed7789ce3ab47
-      internalID: 1065446314
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: '[Base]BaseChip_pipo 1_486'
       rect:
         serializedVersion: 2
@@ -4089,153 +3900,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_487'
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 2304
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0ff5baa7c0e70974e9347aaf119a8560
-      internalID: -60307845
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_488'
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 2272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 43f503885791123439803a84e71714db
-      internalID: -1182862520
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_489'
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 2272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f65335f9df03b384a9fc5cc5f77f37d7
-      internalID: -1299686317
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_490'
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 2272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f8c2c225de3d32248a1b32a46886d03c
-      internalID: -2056976032
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_491'
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 2272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9c76b51b9d2166e4eaf385a41dc6cdac
-      internalID: 685863291
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_492'
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 2272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5b72bb2c21939164bb869f6c47e3208d
-      internalID: -1697906632
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_493'
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 2272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 06cc69dae4c997545bc29dad3892afcd
-      internalID: -1715186940
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: '[Base]BaseChip_pipo 1_494'
       rect:
         serializedVersion: 2
@@ -4252,27 +3916,6 @@ TextureImporter:
       bones: []
       spriteID: 6f5bca3317c917a41a289e5923e36c5d
       internalID: 1063918408
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: '[Base]BaseChip_pipo 1_495'
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 2272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d7ffc1f8f6e2c114680852241729ee44
-      internalID: 449415977
       vertices: []
       indices: 
       edges: []
@@ -9448,7 +9091,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 992
+        y: 991
         width: 32
         height: 32
       alignment: 0
@@ -9471,7 +9114,7 @@ TextureImporter:
         x: 32
         y: 992
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9490,7 +9133,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 992
+        y: 991
         width: 32
         height: 32
       alignment: 0
@@ -9574,9 +9217,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 928
+        y: 929
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9595,9 +9238,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 928
+        y: 929
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9616,9 +9259,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 928
+        y: 929
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9637,7 +9280,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 896
+        y: 897
         width: 32
         height: 32
       alignment: 0
@@ -9658,7 +9301,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 896
+        y: 897
         width: 32
         height: 32
       alignment: 0
@@ -9679,8 +9322,8 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 896
-        width: 32
+        y: 897
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -9700,7 +9343,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 864
+        y: 865
         width: 32
         height: 32
       alignment: 0
@@ -9721,7 +9364,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 864
+        y: 865
         width: 32
         height: 32
       alignment: 0
@@ -9742,8 +9385,8 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 864
-        width: 32
+        y: 865
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -9849,7 +9492,7 @@ TextureImporter:
         x: 0
         y: 800
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9870,7 +9513,7 @@ TextureImporter:
         x: 32
         y: 800
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9891,7 +9534,7 @@ TextureImporter:
         x: 64
         y: 800
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9912,7 +9555,7 @@ TextureImporter:
         x: 96
         y: 800
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -10855,9 +10498,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 160
-        y: 544
+        y: 545
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -10876,9 +10519,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 192
-        y: 544
+        y: 545
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -11275,9 +10918,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 96
-        y: 448
+        y: 449
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -11296,9 +10939,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 128
-        y: 448
+        y: 449
         width: 32
-        height: 32
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -11422,7 +11065,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 128
-        y: 416
+        y: 417
         width: 32
         height: 32
       alignment: 0
