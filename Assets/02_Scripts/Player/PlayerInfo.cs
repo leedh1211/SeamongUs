@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+using _02_Scripts.Login;
+using Photon.Pun;
 using UnityEngine;
 
 [System.Serializable]
@@ -7,8 +8,9 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
     public int PlayerSeq;               // 플레이어 순번 (0 ~ N)
     public string PlayerID;            // 고유 식별자 (ex. PhotonView.ViewID or 커스텀 UUID)
     public string Nickname;            // 닉네임
-    public Color Color;                // 플레이어 컬러
+    // public Color Color;                // 플레이어 컬러
     public int PlayerLevel;            // (선택 사항) 레벨
+    public int PlayerExp;            // (선택 사항) 경험치
     public int PlayerGold;             // (선택 사항) 골드
 
     public string SpriteData;          // 선택한 캐릭터 스프라이트 이름/ID
@@ -20,54 +22,27 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
     public GameObject GameObject;      // 해당 플레이어의 GameObject (선택)
 
     public bool IsLocalPlayer = false; // 로컬 플레이어 여부 (클라이언트에서 직접 지정)
-
-    void Awake()
-    {
-        GameObject = this.gameObject;
-        Transform = this.transform;
-    }
-
+    
     void Start()
     {
-        /*
-        if (photonView.IsMine)
-        {
-            PlayerID = PhotonNetwork.LocalPlayer.UserId;
-            Nickname = PhotonNetwork.LocalPlayer.NickName;
-            IsLocalPlayer = true;
-
-            // 내 플레이어일 경우만 등록
-            PlayerManager.Instance.RegisterPlayer(this);
-         GameManager.Instance.ChangeState(GameState.RoleAssignment);
-        }
-        */
+        Init();
         // PlayerID, Nickname 등 초기화 먼저
-        if (string.IsNullOrEmpty(PlayerID))
-        {
-            PlayerID = System.Guid.NewGuid().ToString();
-        }
+        PlayerID = System.Guid.NewGuid().ToString(); // or 할당된 ID
         Nickname = "Player_" + Random.Range(0, 1000);
 
-        IsLocalPlayer = true;
-        PlayerManager.Instance.RegisterPlayer(this);
+        // PlayerManager.Instance.RegisterPlayer(this);
         GameManager.Instance.ChangeState(GameState.RoleAssignment);
     }
 
-    public void Die()
+    private void Init()
     {
-        if (IsDead) return;
-        IsDead = true;
-
-        // 유령 처리
-        //GetComponent<PlayerController>().enabled = false;
-
-        // 시체 생성
-        DeadBodyManager.Instance.SpawnDeadBody(transform.position, PlayerID);
-
-        // 시각 효과 (투명도 등)
-        // TODO: 유령 상태로 시각적 변경
-        // GhostManager에 요청해서 투명하게 처리
-        GhostManager.Instance.SetGhostAppearance(gameObject);
+        PlayerSeq = LoginSession.loginPlayerInfo.seq;               // 플레이어 순번 (0 ~ N)
+        PlayerID = LoginSession.loginPlayerInfo.id;            // 고유 식별자 (ex. PhotonView.ViewID or 커스텀 UUID)
+        Nickname = LoginSession.loginPlayerInfo.name;            // 닉네임
+        PlayerLevel = LoginSession.loginPlayerInfo.level;            // (선택 사항) 레벨
+        PlayerGold = LoginSession.loginPlayerInfo.gold;             // (선택 사항) 골드
+        
+        EventBus.Raise(new OnPlayerInfoChanged());
     }
 
 }
