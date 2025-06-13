@@ -7,7 +7,7 @@ public static class MissionFactory
     private static readonly Dictionary<MissionType, Func<Mission>> map
         = new Dictionary<MissionType, Func<Mission>>()
     {
-        { MissionType.FixSignpost, () => new FixSignpost() },
+        // { MissionType.FixSignpost, () => new FixSignpost() },
         { MissionType.Laundry,    () => new Laundry()    }
     };
 
