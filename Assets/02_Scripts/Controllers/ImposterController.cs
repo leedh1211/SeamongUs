@@ -2,15 +2,63 @@
 
 public class ImposterController : MonoBehaviour
 {
-    // 임포스터의 상태를 관리하는 클래스
+    private PlayerInfo self;
 
-    // 구조에 따라 PlayerController를 부모 클래스로 삼을 수 있음
+    void Start()
+    {
+        self = PlayerManager.Instance.GetLocalPlayer();  // LocalPlayer 정보 가져오기
+    }
 
-    // TryKill() 메서드를 통해 타 플레이어를 죽이는 로직 작성 요망
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            TryKill();
+        }
 
-    // DeadBodyManager의 SpawnDeadBody() 메서드를 통해 죽인 플레이어의 시체를 생성하는 로직 작성 요망
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            TryReportBody();
+        }
+    }
 
-    // 타겟 플레어간의 거리를 계산하여, 일정 거리 이내에 있는 플레이어만 죽일 수 있도록 설정 요망
+    void TryKill()
+    {
+        PlayerInfo target = FindKillablePlayer();
+        Debug.Log($"{target?.Nickname ?? "None"} Player를 살해 시도합니다.");
+        if (target != null)
+        {
+            Debug.Log($"{self.Nickname}플레이어가 {target.Nickname} 살해");
+            PlayerManager.Instance.KillPlayer(target.PlayerID);
+        }
+    }
 
-    // TryVent() 메서드를 통해 벤트로 이동하는 로직 작성 요망(추가 사항이므로 구현 보류도 가능)
+    void TryReportBody()
+    {
+        string deadID = FindNearestDeadBody();
+        if (deadID != null)
+        {
+            ReportManager.Instance.ReportBody(self.PlayerID, deadID);
+            GameManager.Instance.ChangeState(GameState.Meeting);
+        }
+    }
+
+    PlayerInfo FindKillablePlayer()
+    {
+        var alivePlayers = PlayerManager.Instance.GetAlivePlayers();
+        foreach (var p in alivePlayers)
+        {
+            if (p.PlayerID != self.PlayerID)
+            {
+                float dist = Vector3.Distance(transform.position, p.Transform.position);
+                if (dist < 2.0f) return p;
+            }
+        }
+        return null;
+    }
+
+    string FindNearestDeadBody()
+    {
+        return DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
+    }
 }

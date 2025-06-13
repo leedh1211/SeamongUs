@@ -40,8 +40,8 @@ public class GameManager : MonoBehaviour
                 // - GameState.RoleAssignment 전환되는 시점
                 // 1. 게임이 시작되었을 시
 
-
                 //플레이어 역할을 할당하고 게임 시작 로직
+                RoleManager.Instance.AssignRoles();
 
                 ChangeState(GameState.Playing);
                 break;
