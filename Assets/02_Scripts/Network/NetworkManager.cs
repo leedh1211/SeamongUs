@@ -3,12 +3,20 @@ using _02_Scripts.Alert;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _02_Scripts.Lobby
 {
     public class NetworkManager : MonoBehaviourPunCallbacks
     {
         public static NetworkManager Instance;
+
+        public PlayerInfo currentPlayerInfo;
+
+        public void Init(PlayerInfo playerInfo)
+        {
+            currentPlayerInfo = playerInfo;
+        }
 
         private void Awake() // 싱글톤 생성
         {
@@ -23,6 +31,7 @@ namespace _02_Scripts.Lobby
 
         void Start() // 포톤네트워크에 연결
         {
+            PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.ConnectUsingSettings();
         }
 
@@ -58,7 +67,8 @@ namespace _02_Scripts.Lobby
         public override void OnJoinedRoom()
         {
             Debug.Log("방에 입장했습니다.");
-            // UI 전환 또는 캐릭터 생성 등
+            // SceneManager.LoadScene("DH_GameScene");
+            PhotonNetwork.LoadLevel("DH_GameScene");
         }
         
         public override void OnCreateRoomFailed(short returnCode, string message) // 방 생성실패 콜백

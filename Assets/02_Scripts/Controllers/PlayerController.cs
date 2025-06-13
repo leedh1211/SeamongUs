@@ -1,7 +1,8 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPun , IPunObservable
 {
     [Header("Movement")]
     [SerializeField] private float baseMoveSpeed = 5f;
@@ -33,7 +34,10 @@ public class PlayerController : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private Transform visual;      // 캐릭터 스프라이트
     [SerializeField] private Transform shadow;      // 그림자 (선택)
+    [SerializeField] private float lerpSpeed = 10f; // 위치 보간 속도
     private Vector3 shadowOriginalScale;
+
+    private Vector3 networkPosition;
 
     private void Awake()
     {
@@ -48,11 +52,26 @@ public class PlayerController : MonoBehaviour
         visualDefaultPos = visual.localPosition;
         currentMoveSpeed = baseMoveSpeed;
     }
-
-
-    private void Update()
+    
+    private void FixedUpdate()
     {
-        HandleMovement();
+        if (!photonView.IsMine)
+        {
+            // 1. 일정 거리 이상일 경우 바로 순간이동 (패킷 손실 or 위치 차이 큼)
+            if (Vector3.Distance(transform.position, networkPosition) > 2f)
+            {
+                transform.position = networkPosition;
+            }
+            else
+            {
+                // 2. 부드럽게 보간 이동
+                transform.position = Vector3.Lerp(transform.position, networkPosition, Time.fixedDeltaTime * lerpSpeed);
+            }
+        }
+        else
+        {
+            HandleMovement();
+        }
     }
 
     private void HandleMovement()
@@ -163,6 +182,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     public void ModifySpeed(float amount)
     {
         currentMoveSpeed += amount;
@@ -176,4 +196,18 @@ public class PlayerController : MonoBehaviour
     {
         currentMoveSpeed = baseMoveSpeed;
     }
+
+    
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(transform.position);
+        }
+        else
+        {
+            networkPosition = (Vector3)stream.ReceiveNext();
+        }
+    } 
+
 }
