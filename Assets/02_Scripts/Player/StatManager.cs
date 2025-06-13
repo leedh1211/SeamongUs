@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Resources;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum StatType
 {
@@ -12,11 +14,10 @@ public enum StatType
 public class StatManager : MonoBehaviour
 {
     private Dictionary<StatType, ResourceStat> stats = new();
-    private Animator animator;
+    [SerializeField] private Animator animator;
     private void Awake()
     {
-        // 기본값 초기화 (테스트용)
-        stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 100);
+        stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 0);
         stats[StatType.Stamina] = new ResourceStat(StatType.Stamina, 100);
         animator = GetComponent<Animator>();
     }
@@ -76,9 +77,11 @@ public class StatManager : MonoBehaviour
     private void Die()
     {
         Debug.Log("[StatManager] 플레이어 사망 처리 호출");
+
         if (animator != null)
         {
             animator.SetTrigger("Die");
         }
     }
+
 }

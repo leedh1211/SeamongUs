@@ -1,6 +1,8 @@
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
+
 
 public class PlayerController : MonoBehaviourPun , IPunObservable
 {
@@ -35,10 +37,21 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
     [SerializeField] private Transform visual;      // 캐릭터 스프라이트
     [SerializeField] private Transform shadow;      // 그림자 (선택)
     [SerializeField] private float lerpSpeed = 10f; // 위치 보간 속도
+
+    [Header("Ghost Settings")]
+    [SerializeField] private float ghostMoveSpeed = 3f;         // 유령 상태 이동 속도
+    [SerializeField] private float ghostAlpha = 0.5f;       // 스프라이트 투명도
+    private bool isDead = false;
+    private bool isGhost = false;
+
+    private static readonly int DieHash = Animator.StringToHash("Die");
+    private static readonly int SpeedHash = Animator.StringToHash("currentMoveSpeed");
+
     private Vector3 shadowOriginalScale;
-
+    private Animator animator;
     private Vector3 networkPosition;
-
+    [SerializeField] private Transform playerSprite;
+    private static readonly int IsJumpingHash = Animator.StringToHash("isJumping");
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();                 // ← 다시 넣기
@@ -51,6 +64,8 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
             shadowOriginalScale = shadow.localScale;
         visualDefaultPos = visual.localPosition;
         currentMoveSpeed = baseMoveSpeed;
+        animator = GetComponentInChildren<Animator>();
+        Debug.Log("Animator loaded from: " + animator.gameObject.name);
     }
     
     private void FixedUpdate()
@@ -74,11 +89,33 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
         }
     }
 
+    // 플레이어 이동 처리 ─ 고스트/일반 구분
     private void HandleMovement()
     {
-        Vector2 movement = moveInput * currentMoveSpeed;
-        rb.velocity = movement;
+        if (isGhost)          
+        {
+            // 고스트 전용 이동 (Transform 직접 이동)
+            Vector2 movement = moveInput * ghostMoveSpeed;
+            transform.position += (Vector3)movement * Time.fixedDeltaTime;
+
+            
+            return;
+        }
+
+        // 2) 일반 상태
+        Vector2 movementNormal = moveInput * currentMoveSpeed;
+        rb.velocity = movementNormal;
+
+        animator.SetFloat("currentMoveSpeed", rb.velocity.magnitude);
+
+        // 이동 방향에 따른 FlipX (점프 중엔 유지)
+        if (!jumping && moveInput.x != 0 && playerSprite != null)
+        {
+            var sr = playerSprite.GetComponent<SpriteRenderer>();
+            if (sr != null) sr.flipX = moveInput.x < 0;
+        }
     }
+
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -135,6 +172,7 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
     private System.Collections.IEnumerator JumpCoroutine()
     {
         jumping = true;
+        animator.SetBool(IsJumpingHash, true);
         float half = jumpDuration * 0.5f;
         float t = 0;
 
@@ -151,6 +189,9 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
 
             yield return null;
         }
+        jumping = false;
+
+        animator.SetBool(IsJumpingHash, false);
 
         // 하강
         t = 0;
@@ -169,7 +210,6 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
 
         visual.localPosition = visualDefaultPos;
         if (shadow) shadow.localScale = shadowOriginalScale;
-        jumping = false;
     }
 
 
@@ -208,6 +248,46 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
         {
             networkPosition = (Vector3)stream.ReceiveNext();
         }
-    } 
+    }
+
+    public void Die()
+    {
+        if (isDead) return;               //  두 번 호출 금지
+        isDead = true;
+
+        Debug.Log("[StatManager] 플레이어 사망 처리 호출");
+
+        if (animator != null)
+            animator.SetTrigger(DieHash); //  사망 애니메이션 재생
+
+        StartCoroutine(DeathSequence());  //  1초 뒤 유령 전환
+    }
+
+    private IEnumerator DeathSequence()
+    {
+        yield return new WaitForSeconds(1f);  // ← 'Player_Dying' 길이에 맞춰 조정
+
+        //  유령(Ghost) 상태로 전환
+        gameObject.layer = LayerMask.NameToLayer("Ghost");
+
+        // 스프라이트 반투명
+        if (playerSprite != null)
+        {
+            SpriteRenderer sr = playerSprite.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                Color c = sr.color;
+                c.a = ghostAlpha;
+                sr.color = c;
+            }
+        }
+
+        // Rigidbody 비활성 (Physics 충돌 X)
+        if (rb != null)
+            rb.simulated = false;   // 또는 rb.isKinematic = true;
+
+        isGhost = true;
+    }
+
 
 }
