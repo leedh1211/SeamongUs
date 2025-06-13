@@ -1,7 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using Photon.Pun;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
+using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Photon.Pun.Demo.PunBasics;
 
-public class MissionManager : MonoBehaviour
+public static class EventCodes
+{
+    //미션 할당 이벤트 코드
+    public const byte MissionsAssigned = 1;
+    // 미션 완료 이벤트 코드
+    public const byte MissionCompleted = 2;
+}
+
+public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     // 싱글톤
     public static MissionManager Instance { get; private set; }
@@ -14,21 +27,63 @@ public class MissionManager : MonoBehaviour
 
     public IReadOnlyList<Mission> AllMissions => allMissions;
     public IReadOnlyDictionary<string, List<Mission>> PlayerMissions => playerMissions;
+    //테스트용
+    [SerializeField] private PlayerController playerController;
 
     // 생명주기
     private void Awake()
     {
-        if (Instance = null)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            PhotonNetwork.AddCallbackTarget(this);
             LoadAllMissions();
         }
         else
         {
             Destroy(gameObject);
         }
+        //테스트용
+#if UNITY_EDITOR
+        // Photon에 연결 안 돼 있어도 TestPlayer에 미션 할당
+        AssignMissions("TestPlayer");
+#endif
+        if (playerController == null)
+            playerController = FindObjectOfType<PlayerController>();
+        playerController.OnInteract += HandlePlayerInteract;
     }
+
+    private void OnDestroy()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+        //테스트용
+        if (playerController != null)
+            playerController.OnInteract -= HandlePlayerInteract;
+    }
+
+    //테스트용
+    private void HandlePlayerInteract()
+    {
+        // E 키 눌렀을 때 OverlapCircle → MissionCollider 호출 로직
+        Collider2D hit = Physics2D.OverlapCircle(
+            playerController.transform.position,
+            playerController.interactRange,
+            playerController.interactLayer
+        );
+        if (hit != null && hit.TryGetComponent<MissionCollider>(out var trigger))
+        {
+            // 에디터 테스트용 혹은 PhotonNetwork.LocalPlayer.UserId
+#if UNITY_EDITOR
+            string pid = "TestPlayer";
+#else
+        string pid = PhotonNetwork.LocalPlayer.UserId;
+#endif
+            trigger.HandleInteract(pid);
+        }
+    }
+
+
 
     // 전체 미션 한번에 로드
     private void LoadAllMissions()
@@ -40,22 +95,30 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    // 플레이어에게 미션 할당
-    public void AssignMissions(string playerID)
+    public override void OnJoinedRoom()
     {
-        if (playerMissions.ContainsKey(playerID))
-        {
-            return; // 이미 할당된 플레이어는 무시
-        }
+        string pid = PhotonNetwork.LocalPlayer.UserId;
+        AssignMissions(pid);
+    }
 
-        var clones = new List<Mission>();
-        foreach (var prototype in allMissions)
-        {
-            clones.Add(prototype.Clone()); // 각 플레이어에게 개별 인스턴스 할당
-        }
+    // 플레이어에게 미션 할당
+    public void AssignMissions(string playerId)
+    {
+        if (playerMissions.ContainsKey(playerId)) return;
+        var rng = new System.Random();
+        var selected = allMissions
+            .OrderBy(_ => rng.Next())
+            .Take(3)
+            .Select(proto => proto.Clone())
+            .ToList();
+        playerMissions[playerId] = selected;
 
-        playerMissions.Add(playerID, clones);
-        //미션 UI 업데이트
+        var ids = selected.Select(m => m.MissionID).ToArray();
+        PhotonNetwork.RaiseEvent(
+            EventCodes.MissionsAssigned,
+            new object[] { playerId, ids },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            SendOptions.SendReliable);
     }
 
     // 특정 미션 완료 처리
@@ -71,6 +134,11 @@ public class MissionManager : MonoBehaviour
         if (mission != null && !mission.IsCompleted)
         {
             mission.Complete();
+            PhotonNetwork.RaiseEvent(
+            EventCodes.MissionCompleted,
+               new object[] { playerID, missionID },
+               new RaiseEventOptions { Receivers = ReceiverGroup.All },
+               SendOptions.SendReliable);
             // 미션 UI 업데이트
             CheckCrewmateVictory();
         }
@@ -94,6 +162,36 @@ public class MissionManager : MonoBehaviour
 
         return (float)done / list.Count; // 완료된 미션 개수를 전체 미션 개수로 나누어 진행률 계산
     }
+    public void OnEvent(EventData photonEvent)
+    {
+        switch (photonEvent.Code)
+        {
+            case EventCodes.MissionsAssigned:
+                var dataA = (object[])photonEvent.CustomData;
+                string pidA = (string)dataA[0];
+                string[] mids = (string[])dataA[1];
+                var clones = new List<Mission>();
+                foreach (var mid in mids)
+                {
+                    var proto = allMissions.First(m => m.MissionID == mid);
+                    clones.Add(proto.Clone());
+                }
+                playerMissions[pidA] = clones;
+                break;
+
+            case EventCodes.MissionCompleted:
+                var dataC = (object[])photonEvent.CustomData;
+                string pidC = (string)dataC[0];
+                string midC = (string)dataC[1];
+                if (playerMissions.TryGetValue(pidC, out var listC))
+                {
+                    var ms = listC.FirstOrDefault(m => m.MissionID == midC);
+                    if (ms != null && !ms.IsCompleted) ms.Complete();
+                    CheckCrewmateVictory();
+                }
+                break;
+        }
+    }
 
     // 일반 시민 승리 조건 체크
     // 전원 클리어시 승리 처리 상황( 나중에 조건 변경 가능 )
@@ -109,5 +207,8 @@ public class MissionManager : MonoBehaviour
         }
 
         // 모든 플레이어의 미션이 완료되었으므로 승리 처리
+        //GameManager.Instance.EndGame(false); 같은 느낌. (false은 일반 시민 승리, true는 임포스터 승리로 가정)
     }
+
+
 }
