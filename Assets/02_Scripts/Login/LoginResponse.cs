@@ -4,5 +4,5 @@ public class LoginResponse
 {
     public string message { get; set; }
     public bool isLogin { get; set; }
-    public PlayerTestData data { get; set; }
+    public PlayerResponseData data { get; set; }
 }

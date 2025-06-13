@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using _02_Scripts.Alert;
+using _02_Scripts.Login;
 using _02_Scripts.Login.Player;
 using Newtonsoft.Json;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -13,8 +15,10 @@ public class LoginManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField idInputField;
     [SerializeField] private TMP_InputField pwInputField;
+    
+    PlayerInfo playerInfo;
 
-    private string loginUrl = "http://localhost:3000/api/login/onLogin";
+    private string loginUrl = "http://121.162.172.253:3000/api/login/onLogin";
 
     public void OnLoginButtonPressed()
     {
@@ -45,7 +49,7 @@ public class LoginManager : MonoBehaviour
         LoginResponse response = JsonConvert.DeserializeObject<LoginResponse>(request.downloadHandler.text);
         if (response.isLogin)
         {
-            PlayerTestData loginData = response.data;
+            PlayerResponseData loginData = response.data;
             login(loginData);
         }
         else
@@ -54,14 +58,10 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    private void login(PlayerTestData loginData)
+    private void login(PlayerResponseData loginData)
     {
         Debug.Log(loginData.seq);
-        // PlayerManager 생성
-        GameObject obj = new GameObject("PlayerManager");
-        PlayerTestManager manager = obj.AddComponent<PlayerTestManager>();
-        manager.Init(loginData);
-
+        LoginSession.loginPlayerInfo = loginData;
         // 씬 이동
         SceneManager.LoadScene("LobbyScene");
     }
