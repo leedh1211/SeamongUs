@@ -21,8 +21,8 @@ namespace _02_Scripts.SignUP
         [SerializeField] private TMP_InputField emailInputField;
         private bool IsDuplicateCheck = false;
 
-        private string signUpUrl = "http://localhost:3000/api/signUp/signUp";
-        private string duplicationCheckUrl = "http://localhost:3000/api/signUp/isDuplicateCheck";
+        private string signUpUrl = "http://121.162.172.253:3000/api/signUp/signUp";
+        private string duplicationCheckUrl = "http://121.162.172.253:3000/api/signUp/isDuplicateCheck";
 
         public void OnSignUpButtonPressed()
         {
