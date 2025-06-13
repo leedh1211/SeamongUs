@@ -1,6 +1,6 @@
-namespace _02_Scripts.Player
+namespace _02_Scripts.Login.Player
 {
-    public class PlayerDataTest
+    public class PlayerTestData
     {
         public int seq;
         public string name;

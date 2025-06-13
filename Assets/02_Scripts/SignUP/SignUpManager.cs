@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using _02_Scripts.Alert;
-using _02_Scripts.Player;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;

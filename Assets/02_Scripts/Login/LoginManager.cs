@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using _02_Scripts.Alert;
-using _02_Scripts.Player;
+using _02_Scripts.Login.Player;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
@@ -45,7 +45,7 @@ public class LoginManager : MonoBehaviour
         LoginResponse response = JsonConvert.DeserializeObject<LoginResponse>(request.downloadHandler.text);
         if (response.isLogin)
         {
-            PlayerDataTest loginData = response.data;
+            PlayerTestData loginData = response.data;
             login(loginData);
         }
         else
@@ -54,7 +54,7 @@ public class LoginManager : MonoBehaviour
         }
     }
 
-    private void login(PlayerDataTest loginData)
+    private void login(PlayerTestData loginData)
     {
         Debug.Log(loginData.seq);
         // PlayerManager 생성

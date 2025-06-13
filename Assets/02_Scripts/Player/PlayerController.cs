@@ -30,18 +30,18 @@ public class PlayerController : MonoBehaviour
     public System.Action OnOpenInventory;
 
     [Header("Refs")]
-    [SerializeField] private Transform visual;      // Ä³¸¯ÅÍ ½ºÇÁ¶óÀÌÆ®
-    [SerializeField] private Transform shadow;      // ±×¸²ÀÚ (¼±ÅÃ)
+    [SerializeField] private Transform visual;      // ìºë¦­í„° ìŠ¤í”„ë¼ì´íŠ¸
+    [SerializeField] private Transform shadow;      // ê·¸ë¦¼ì (ì„ íƒ)
     private Vector3 shadowOriginalScale;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();                 // ¡ç ´Ù½Ã ³Ö±â
+        rb = GetComponent<Rigidbody2D>();                 // â† ë‹¤ì‹œ ë„£ê¸°
         if (rb == null)
-            Debug.LogError("Rigidbody2D ÄÄÆ÷³ÍÆ®°¡ ¾ø½À´Ï´Ù!", this);
+            Debug.LogError("Rigidbody2D ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìŠµë‹ˆë‹¤!", this);
 
         if (visual == null)
-            Debug.LogError("visual Æ®·£½ºÆûÀÌ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù!", this);
+            Debug.LogError("visual íŠ¸ëœìŠ¤í¼ì´ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!", this);
         if (shadow != null)
             shadowOriginalScale = shadow.localScale;
         visualDefaultPos = visual.localPosition;
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
             Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
             if (target != null)
             {
-                Debug.Log("¹Ì¼Ç »óÈ£ÀÛ¿ë ½Ãµµ");
+                Debug.Log("ë¯¸ì…˜ ìƒí˜¸ì‘ìš© ì‹œë„");
                 OnInteract?.Invoke();
             }
         }
@@ -84,7 +84,7 @@ public class PlayerController : MonoBehaviour
             Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
             if (target != null)
             {
-                Debug.Log("Å³ ½Ãµµ");
+                Debug.Log("í‚¬ ì‹œë„");
                 OnKill?.Invoke();
             }
         }
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed)
         {
-            Debug.Log("Á¡ÇÁ ½ÃµµµÊ");
+            Debug.Log("ì í”„ ì‹œë„ë¨");
             StartCoroutine(JumpCoroutine());
         }
     }
@@ -102,11 +102,11 @@ public class PlayerController : MonoBehaviour
 
     private bool IsJumpableAhead()
     {
-        // Å¾ºä´Ï±î ¡°¾Õ¡±Àº moveInput ¹æÇâ.
+        // íƒ‘ë·°ë‹ˆê¹Œ â€œì•â€ì€ moveInput ë°©í–¥.
         if (moveInput == Vector2.zero) return false;
         RaycastHit2D hit = Physics2D.Raycast(transform.position,
                                              moveInput.normalized,
-                                             0.6f,    // °Å¸®
+                                             0.6f,    // ê±°ë¦¬
                                              jumpableLayer);
         return hit.collider != null;
     }
@@ -117,7 +117,7 @@ public class PlayerController : MonoBehaviour
         float half = jumpDuration * 0.5f;
         float t = 0;
 
-        // »ó½Â
+        // ìƒìŠ¹
         while (t < half)
         {
             t += Time.deltaTime;
@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        // ÇÏ°­
+        // í•˜ê°•
         t = 0;
         while (t < half)
         {
@@ -156,7 +156,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
-            Debug.Log("ÀÎº¥Åä¸® ¿­±â");
+            Debug.Log("ì¸ë²¤í† ë¦¬ ì—´ê¸°");
             OnOpenInventory?.Invoke();
         }
     }
