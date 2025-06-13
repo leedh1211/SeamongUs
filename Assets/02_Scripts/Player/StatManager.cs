@@ -12,12 +12,13 @@ public enum StatType
 public class StatManager : MonoBehaviour
 {
     private Dictionary<StatType, ResourceStat> stats = new();
-
+    private Animator animator;
     private void Awake()
     {
         // 기본값 초기화 (테스트용)
         stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 100);
         stats[StatType.Stamina] = new ResourceStat(StatType.Stamina, 100);
+        animator = GetComponent<Animator>();
     }
 
     public float GetValue(StatType type)
@@ -49,6 +50,11 @@ public class StatManager : MonoBehaviour
         {
             stat.Consume(amount);
             Debug.Log($"[StatManager] {type} 소모: -{amount} → {stat.CurrentValue}/{stat.MaxValue}");
+
+            if (type == StatType.CurHp && stat.CurrentValue <= 0)
+            {
+                Die();
+            }
         }
     }
 
@@ -70,6 +76,9 @@ public class StatManager : MonoBehaviour
     private void Die()
     {
         Debug.Log("[StatManager] 플레이어 사망 처리 호출");
-        // TODO: 죽었을 때 해야 할 행동들 구현 (애니메이션, UI, 비활성화 등)
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
     }
 }
