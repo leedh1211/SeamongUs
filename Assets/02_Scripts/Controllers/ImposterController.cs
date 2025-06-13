@@ -3,12 +3,13 @@
 public class ImposterController : MonoBehaviour
 {
     private PlayerInfo self;
+    [SerializeField] PlayerManager playerManager;
 
     void Update()
     {
         if (self == null)
         {
-            self = PlayerManager.Instance.GetLocalPlayer();
+            self = playerManager.GetLocalPlayer();
             if (self != null)
             {
                 Debug.Log($"[ImposterController] self 초기화 성공: {self.Nickname}");
@@ -35,7 +36,7 @@ public class ImposterController : MonoBehaviour
             
 
             Debug.Log($"{self.Nickname} 플레이어가 {target.Nickname} 살해");
-            PlayerManager.Instance.KillPlayer(target.PlayerID);
+            playerManager.KillPlayer(target.PlayerID);
         }
         else
         {
@@ -56,7 +57,7 @@ public class ImposterController : MonoBehaviour
     PlayerInfo FindKillablePlayer()
     {
         float killRange = 2.0f;
-        foreach (var player in PlayerManager.Instance.GetAlivePlayers())
+        foreach (var player in playerManager.GetAlivePlayers())
         {
             if (player == null) continue;
             if (self == null) continue; // 혹은 self 초기화 보장

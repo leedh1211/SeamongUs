@@ -8,6 +8,7 @@ public class RoleManager : MonoBehaviour
     public static RoleManager Instance { get; private set; }
 
     private Dictionary<string, Role> playerRoles = new Dictionary<string, Role>();
+    [SerializeField] private PlayerManager _playerManager;
 
     void Awake()
     {
@@ -16,7 +17,7 @@ public class RoleManager : MonoBehaviour
     public void AssignRoles()
     {
         // 예시: 임포스터 1명, 나머지 크루메이트
-        List<string> players = PlayerManager.Instance.GetAllPlayerIDs(); // 플레이어 ID 목록 가져오기
+        List<string> players = _playerManager.GetAllPlayerIDs(); // 플레이어 ID 목록 가져오기
         int impostorCount = 1; // 임포스터 수 (예시로 1명), 나중에 UI에서 설정 가능
         Debug.Log($"Assigning roles to {players.Count} players with {impostorCount} impostors.");
 
@@ -32,7 +33,7 @@ public class RoleManager : MonoBehaviour
 
             if (role == Role.Impostor)
             {
-                PlayerInfo info = PlayerManager.Instance.GetPlayerByID(shuffled[i]);
+                PlayerInfo info = _playerManager.GetPlayerByID(shuffled[i]);
                 if (info != null && info.GetComponent<ImposterController>() == null)
                 {
                     info.gameObject.AddComponent<ImposterController>();
@@ -42,7 +43,7 @@ public class RoleManager : MonoBehaviour
         }
         foreach (string playerID in players)
     {
-        PlayerInfo info = PlayerManager.Instance.GetPlayerByID(playerID);
+        PlayerInfo info = _playerManager.GetPlayerByID(playerID);
         if (info != null)
         {
             info.Role = GetRole(playerID);

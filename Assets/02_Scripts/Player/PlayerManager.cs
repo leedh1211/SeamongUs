@@ -1,62 +1,22 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-
-using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class PlayerManager : MonoBehaviour
 {
     private Dictionary<string, PlayerInfo> playerDict = new Dictionary<string, PlayerInfo>();
-    
+
+    /// <summary>
+    /// 플레이어 등록
+    /// </summary>
     public void RegisterPlayer(PlayerInfo player)
     {
         if (!playerDict.ContainsKey(player.PlayerID))
         {
             playerDict.Add(player.PlayerID, player);
-        }
-    }
 
-    public PlayerInfo GetPlayerByID(string id)
-    {
-        return playerDict.TryGetValue(id, out var player) ? player : null;
-    }
-
-    public PlayerInfo GetLocalPlayer()
-    {
-        return playerDict.Values.FirstOrDefault(p => p.IsLocalPlayer);
-    }
-
-    public List<PlayerInfo> GetAlivePlayers()
-    {
-        return playerDict.Values.Where(p => !p.IsDead).ToList();
-    }
-
-    public List<string> GetAllPlayerIDs()
-    {
-        return playerDict.Keys.ToList();
-    }
-
-    public void KillPlayer(string playerID)
-    {
-        if (playerDict.TryGetValue(playerID, out var player))
-        {
-            player.IsDead = true;
-            // 사망 애니메이션, 시체 생성, UI 갱신 등 추가
-            Debug.Log($"{player.Nickname} has been killed.");
-        }
-    }
-
-    public void Init()
-    {
-        if (!playerDict.ContainsKey(player.PlayerID))
-        {
-            // 플레이어 등록
-            playerDict.Add(player.PlayerID, player);
-
-            // 첫 번째 등록된 플레이어만 로컬 플레이어로 설정
-            if (playerDict.Count == 0)
+            // 첫 번째 등록된 플레이어를 로컬 플레이어로 설정
+            if (playerDict.Count == 1)
             {
                 player.IsLocalPlayer = true;
                 Debug.Log($"[RegisterPlayer] {player.Nickname}을 로컬 플레이어로 지정");
@@ -64,11 +24,17 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ID로 플레이어 조회
+    /// </summary>
     public PlayerInfo GetPlayerByID(string id)
     {
         return playerDict.TryGetValue(id, out var player) ? player : null;
     }
 
+    /// <summary>
+    /// 로컬 플레이어 반환
+    /// </summary>
     public PlayerInfo GetLocalPlayer()
     {
         Debug.Log($"[GetLocalPlayer] 현재 플레이어 수: {playerDict.Count}");
@@ -84,22 +50,35 @@ public class PlayerManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// 생존한 플레이어 목록
+    /// </summary>
     public List<PlayerInfo> GetAlivePlayers()
     {
         return playerDict.Values.Where(p => !p.IsDead).ToList();
     }
 
+    /// <summary>
+    /// 모든 플레이어 ID 목록
+    /// </summary>
     public List<string> GetAllPlayerIDs()
     {
         return playerDict.Keys.ToList();
     }
 
+    /// <summary>
+    /// 플레이어 사망 처리
+    /// </summary>
     public void KillPlayer(string playerID)
     {
         if (playerDict.TryGetValue(playerID, out var player))
         {
-            player.GameObject.GetComponent<PlayerInfo>().Die();
-            // 사망 애니메이션, 시체 생성, UI 갱신 등 추가
+            player.IsDead = true;
+
+            // 사망 처리 메서드 호출
+            // player.GameObject.GetComponent<PlayerInfo>().Die();
+
+            // 로그 출력
             Debug.Log($"{player.Nickname} has been killed.");
         }
     }

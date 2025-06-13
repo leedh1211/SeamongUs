@@ -13,7 +13,6 @@ public class UIManager : MonoBehaviour
             return instance;
         }
     }
-    
 
     public GameObject inGameUI;
     public GameObject missionUI;    //list?
@@ -34,12 +33,12 @@ public class UIManager : MonoBehaviour
 
     public void ShowInGameUI()
     {
-
+        
     }
 
     public void ShowMissionUI()
     {
-
+        
     }
 
     public void ShowVotingUI()
