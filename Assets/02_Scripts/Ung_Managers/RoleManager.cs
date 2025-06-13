@@ -40,6 +40,15 @@ public class RoleManager : MonoBehaviour
                 }
             }
         }
+        foreach (string playerID in players)
+    {
+        PlayerInfo info = PlayerManager.Instance.GetPlayerByID(playerID);
+        if (info != null)
+        {
+            info.Role = GetRole(playerID);
+            Debug.Log($"{info.Nickname} 역할: {info.Role}");
+        }
+    }
     }
 
     public Role GetRole(string playerID)

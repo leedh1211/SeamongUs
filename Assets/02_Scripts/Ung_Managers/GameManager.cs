@@ -91,8 +91,10 @@ public class GameManager : MonoBehaviour
 
     public void ChangeState(GameState newState)
     {
-        Debug.Log($"Game State changed: {CurrentState} -> {newState}");
+        if (CurrentState == newState) return;
+
         CurrentState = newState;
+        Debug.Log($"[GameManager] 상태가 {newState}로 변경됨");
     }
 
     private void CheckGameResult()

@@ -15,7 +15,11 @@ public class DeadBodyManager : MonoBehaviour
     public void SpawnDeadBody(Vector3 position, string playerID)
     {
         GameObject body = Instantiate(deadBodyPrefab, position, Quaternion.identity);
-        body.GetComponent<DeadBody>().Initialize(playerID);
+
+        DeadBody deadBodyComponent = body.GetComponent<DeadBody>();
+        deadBodyComponent.Initialize(playerID);
+
+        deadBodies.Add(deadBodyComponent); // 누락되어 있었다면 리스트에 추가
     }
 
     public string GetClosestDeadBodyID(Vector3 position)

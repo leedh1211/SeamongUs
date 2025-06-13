@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -77,18 +77,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnKillInput(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
-            if (target != null)
-            {
-                Debug.Log("킬 시도");
-                OnKill?.Invoke();
-            }
-        }
-    }
+    //public void OnKillInput(InputAction.CallbackContext context)
+    //{
+    //    if (context.performed)
+    //    {
+    //        Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
+    //        if (target != null)
+    //        {
+    //            Debug.Log("킬 시도");
+    //            OnKill?.Invoke();
+    //        }
+    //    }
+    //}
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
     {

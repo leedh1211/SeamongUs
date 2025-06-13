@@ -21,6 +21,12 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
 
     public bool IsLocalPlayer = false; // 로컬 플레이어 여부 (클라이언트에서 직접 지정)
 
+    void Awake()
+    {
+        GameObject = this.gameObject;
+        Transform = this.transform;
+    }
+
     void Start()
     {
         /*
@@ -36,11 +42,32 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
         }
         */
         // PlayerID, Nickname 등 초기화 먼저
-        PlayerID = System.Guid.NewGuid().ToString(); // or 할당된 ID
+        if (string.IsNullOrEmpty(PlayerID))
+        {
+            PlayerID = System.Guid.NewGuid().ToString();
+        }
         Nickname = "Player_" + Random.Range(0, 1000);
 
+        IsLocalPlayer = true;
         PlayerManager.Instance.RegisterPlayer(this);
         GameManager.Instance.ChangeState(GameState.RoleAssignment);
+    }
+
+    public void Die()
+    {
+        if (IsDead) return;
+        IsDead = true;
+
+        // 유령 처리
+        //GetComponent<PlayerController>().enabled = false;
+
+        // 시체 생성
+        DeadBodyManager.Instance.SpawnDeadBody(transform.position, PlayerID);
+
+        // 시각 효과 (투명도 등)
+        // TODO: 유령 상태로 시각적 변경
+        // GhostManager에 요청해서 투명하게 처리
+        GhostManager.Instance.SetGhostAppearance(gameObject);
     }
 
 }
