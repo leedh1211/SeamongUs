@@ -10,8 +10,11 @@ public class VoteManager : MonoBehaviour
     // 투표 시간
     [Header("투표시간(초)")]
     [SerializeField] private float voteTime = 30f; // 테스트용 시간 30초
+    public float VoteTime => voteTime; // VoteUI에서 접근할 수 있도록 공개
 
     private Dictionary<string, string> voteResults = new Dictionary<string, string>();
+    public IReadOnlyDictionary<string, string> VoteResults => voteResults;
+
     private System.Action onVoteEndCallback;
 
     void Awake()
@@ -46,15 +49,13 @@ public class VoteManager : MonoBehaviour
     private IEnumerator VotingRoutine()
     {
         // UIManager.Instance.ShowVotingUI();
-
-        Debug.Log("[VoteManager] 투표시작함, 시간: " + voteTime + "초");
         yield return new WaitForSeconds(voteTime);
 
         // 투표 종료 처리
         EndVote();
 
         // UI 닫기
-        UIManager.Instance.HideAllUI();
+        UIManager.Instance.HideVotingUI();
 
         // 게임매니져 콜백 -> 다시 플레이상태로 전환
         onVoteEndCallback?.Invoke();
