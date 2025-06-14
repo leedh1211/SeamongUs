@@ -72,5 +72,8 @@ public class SignpostUI : MonoBehaviour, IMissionUI
 
         // 서버에 완료 이벤트 전송 및 전체 체크
         MissionManager.Instance.CompleteMission(playerId, missionID);
+
+        // 창닫기
+        gameObject.SetActive(false);
     }
 }
