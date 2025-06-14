@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd17a45a9f044a648823b8b77d270fdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  baseMoveSpeed: 5
   jumpHeight: 1
   jumpDuration: 0.4
   interactLayer:
@@ -131,6 +131,9 @@ MonoBehaviour:
   visual: {fileID: 6850340908535943482}
   shadow: {fileID: 5347211133527075390}
   lerpSpeed: 5
+  ghostMoveSpeed: 3
+  ghostAlpha: 0.5
+  playerSprite: {fileID: 6850340908535943482}
 --- !u!114 &5767994551227924104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,7 +289,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 6248981312553392076}
   - {fileID: 1264566479098932612}
-  sceneViewId: 0
+  sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!114 &1264566479098932612
@@ -315,6 +318,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6850340908535943482}
   - component: {fileID: 1135091042394323237}
+  - component: {fileID: 2081370829006013961}
   m_Layer: 7
   m_Name: PlayerSprite
   m_TagString: Untagged
@@ -389,6 +393,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &2081370829006013961
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774900609748690274}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bd73a303862efc04cbb88a7067d59492, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6731800407148404691
 GameObject:
   m_ObjectHideFlags: 0
