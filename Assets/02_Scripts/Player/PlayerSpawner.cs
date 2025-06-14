@@ -44,12 +44,8 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         Vector2 spawnPos = GetValidGroundPosition();
 
         GameObject player = PhotonNetwork.Instantiate(playerPrefabName, spawnPos, Quaternion.identity);
-        PlayerInfo info = player.GetComponent<PlayerInfo>();
-        info.IsLocalPlayer = true;
-
         if (playerManager != null)
         {
-            playerManager.RegisterPlayer(info);
             BroadcastPlayerSpawn(player);
         }
     }

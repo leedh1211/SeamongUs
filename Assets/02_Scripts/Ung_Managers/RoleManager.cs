@@ -1,63 +1,80 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
 
-public enum Role { Crewmate, Impostor }
+public enum Role { UnManaged = 0, Crewmate = 1, Impostor = 2 }
 
 public class RoleManager : MonoBehaviour
 {
     public static RoleManager Instance { get; private set; }
 
-    private Dictionary<string, Role> playerRoles = new Dictionary<string, Role>();
-    [SerializeField] private PlayerManager _playerManager;
+    private Dictionary<int, Role> playerRoles = new Dictionary<int, Role>(); // ActorNumber 기반
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
     }
+
     public void AssignRoles(int impostorCount)
     {
-        // 예시: 임포스터 1명, 나머지 크루메이트
-        List<string> players = _playerManager.GetAllPlayerIDs(); // 플레이어 ID 목록 가져오기
-        // int impostorCount = 1; // 임포스터 수 (예시로 1명), 나중에 UI에서 설정 가능
-        Debug.Log($"Assigning roles to {players.Count} players with {impostorCount} impostors.");
+        Player[] players = PhotonNetwork.PlayerList;
+        Debug.Log($"Assigning roles to {players.Length} players with {impostorCount} impostors.");
 
-        List<string> shuffled = new List<string>(players);
+        List<Player> shuffled = new List<Player>(players);
         Shuffle(shuffled);
-        Debug.Log("Shuffled player IDs: " + string.Join(", ", shuffled));
+        Debug.Log("Shuffled ActorNumbers: " + string.Join(", ", shuffled.ConvertAll(p => p.ActorNumber.ToString())));
 
-        for (int i = 0; i < players.Count; i++)
+        for (int i = 0; i < shuffled.Count; i++)
         {
             Role role = (i < impostorCount) ? Role.Impostor : Role.Crewmate;
-            playerRoles[shuffled[i]] = role;
-            Debug.Log($"{shuffled[i]} assigned to {role}");
+            Player targetPlayer = shuffled[i];
+            int actorNumber = targetPlayer.ActorNumber;
 
-            if (role == Role.Impostor)
+            // 내부 Dictionary에도 저장
+            playerRoles[actorNumber] = role;
+
+            // CustomProperties 설정
+            Hashtable roleProp = new Hashtable
             {
-                PlayerInfo info = _playerManager.GetPlayerByID(shuffled[i]);
-                if (info != null && info.GetComponent<ImposterController>() == null)
-                {
-                    info.gameObject.AddComponent<ImposterController>();
-                    Debug.Log($"{shuffled[i]}에게 ImposterController 스크립트를 추가했습니다.");
-                }
+                { "Role", (int)role }
+            };
+            if (targetPlayer.IsLocal) // 본인만 Set 가능
+            {
+                PhotonNetwork.LocalPlayer.SetCustomProperties(roleProp);
             }
+
+            Debug.Log($"Player {actorNumber} assigned to {role}");
         }
-        foreach (string playerID in players)
+    }
+
+    public Role GetRole(Player player)
     {
-        PlayerInfo info = _playerManager.GetPlayerByID(playerID);
-        if (info != null)
+        if (player.CustomProperties.TryGetValue("Role", out object roleObj))
         {
-            info.Role = GetRole(playerID);
-            Debug.Log($"{info.Nickname} 역할: {info.Role}");
+            return (Role)(int)roleObj;
         }
-    }
+        return Role.UnManaged;
     }
 
-    public Role GetRole(string playerID)
+    public Role GetRoleByActorNumber(int actorNumber)
     {
-        return playerRoles.ContainsKey(playerID) ? playerRoles[playerID] : Role.Crewmate;
+        Player target = FindPlayerByActorNumber(actorNumber);
+        return target != null ? GetRole(target) : Role.UnManaged;
     }
 
-    private void Shuffle(List<string> list)
+    private Player FindPlayerByActorNumber(int actorNumber)
+    {
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.ActorNumber == actorNumber)
+                return player;
+        }
+        return null;
+    }
+
+    private void Shuffle(List<Player> list)
     {
         for (int i = 0; i < list.Count; i++)
         {

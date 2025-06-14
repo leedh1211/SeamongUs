@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [Header("Jump")]
     [SerializeField] private float jumpHeight = 1f;
     [SerializeField] private float jumpDuration = 0.4f;
-    [SerializeField] private PlayerInfo _playerInfo;
 
     private Vector3 visualDefaultPos;
     private bool jumping;
@@ -64,7 +63,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         shadowOriginalScale = shadow != null ? shadow.localScale : Vector3.one;
         currentMoveSpeed = baseMoveSpeed;
         animator = GetComponentInChildren<Animator>();
-        _playerInfo.currentPlayer = photonView.Owner;
     }
 
     private void Start()

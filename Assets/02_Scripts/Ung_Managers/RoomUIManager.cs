@@ -15,7 +15,7 @@ public class RoomUIManager : MonoBehaviour
         var playerManager = FindObjectOfType<PlayerManager>();
         if (playerManager != null)
         {
-            Dictionary<string, PlayerInfo> players = playerManager.GetAllPlayers();
+            Dictionary<int, GameObject> players = playerManager.GetAllPlayers();
             playerListDisplay.UpdatePlayerList(players);
         }
     }
