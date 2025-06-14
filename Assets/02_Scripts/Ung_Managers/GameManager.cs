@@ -33,51 +33,6 @@ public class GameManager : MonoBehaviour
         CurrentState = GameState.Lobby;
         DontDestroyOnLoad(this);
     }
-    
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name == "GameScene" && PhotonNetwork.IsMasterClient)
-        {
-            Debug.Log("[GameManager] GameScene 로드 완료됨. 역할 할당 대기 중...");
-            StartCoroutine(WaitAndAssignRoles());
-        }else if (scene.name == "GameScene")
-        {
-            ChangeState(GameState.Playing);
-        }
-    }
-    
-    private IEnumerator WaitAndAssignRoles()
-    {
-        yield return new WaitUntil(() => RoleManager.Instance != null);
-
-        // 플레이어가 1명 이상 접속할 때까지 기다림
-        yield return new WaitUntil(() =>
-        {
-            Debug.Log($"현재 접속자 수: {PhotonNetwork.PlayerList.Length}");
-            return PhotonNetwork.PlayerList.Length > 0;
-        });
-
-        int impostorCount = 1;
-        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("ImpostorCount", out object impostorObj))
-        {
-            impostorCount = (int)impostorObj;
-        }
-
-        Debug.Log("[GameManager] 역할 할당 시작");
-        RoleManager.Instance.AssignRoles(impostorCount);
-
-        ChangeState(GameState.Playing);
-    }
 
     void Update()
     {

@@ -8,6 +8,7 @@ using ExitGames.Client.Photon;
 public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     private Dictionary<int, GameObject> playerGODict = new Dictionary<int, GameObject>();
+    private HashSet<int> spawnedActorNumbers = new HashSet<int>();
 
     private void OnEnable()
     {
@@ -54,6 +55,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         return playerGODict;
     }
+    
+    public GameObject GetPlayersGO(int actorNumber)
+    {
+        return playerGODict[actorNumber];
+    }
 
     public void KillPlayer(int actorNumber)
     {
@@ -84,15 +90,38 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 {
                     RegisterPlayers((int)data[1], actorNumber);
                 }
-                
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    if (!spawnedActorNumbers.Contains(actorNumber))
+                    {
+                        spawnedActorNumbers.Add(actorNumber);
+                        Debug.Log($"[PlayerManager] 마스터: {actorNumber} 스폰 완료 감지 ({spawnedActorNumbers.Count}/{PhotonNetwork.CurrentRoom.PlayerCount})");
+
+                        if (spawnedActorNumbers.Count == PhotonNetwork.CurrentRoom.PlayerCount)
+                        {
+                            Debug.Log("[PlayerManager] 모든 플레이어 스폰 완료. 역할 할당 시작.");
+                            int impostorCount = 1;
+                            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("ImpostorCount", out object impostorObj))
+                            {
+                                impostorCount = (int)impostorObj;
+                            }
+
+                            Debug.Log("[GameManager] 역할 할당 시작");
+                            RoleManager.Instance.AssignRoles(impostorCount);
+                        }
+                    }
+                }
                 break;
             case EventCodes.PlayerJump:
                 controller = FindPlayerController(actorNumber);
                 controller.StartCoroutine(controller.JumpCoroutine());
                 break;
-            case EventCodes.PlayerKill:
-                 controller = FindPlayerController(actorNumber);
-                controller.OnKill?.Invoke();
+            case EventCodes.PlayerKill: //임포스터 actorNum = data[0]
+                
+                break;
+            case EventCodes.PlayerDied:
+                controller = FindPlayerController(actorNumber);
+                controller.Die();
                 break;
         }
     }

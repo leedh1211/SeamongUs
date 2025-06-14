@@ -126,21 +126,21 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void OnKillInput(InputAction.CallbackContext context)
-    {
-        if (photonView.IsMine && context.performed)
-        {
-            Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
-            if (target != null)
-            {
-                PhotonNetwork.RaiseEvent(
-                    EventCodes.PlayerKill,
-                    new object[] { PhotonNetwork.LocalPlayer.ActorNumber },
-                    new RaiseEventOptions { Receivers = ReceiverGroup.All },
-                    SendOptions.SendReliable);
-            }
-        }
-    }
+    // public void OnKillInput(InputAction.CallbackContext context)
+    // {
+    //     if (photonView.IsMine && context.performed)
+    //     {
+    //         Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
+    //         if (target != null)
+    //         {
+    //             PhotonNetwork.RaiseEvent(
+    //                 EventCodes.PlayerKill,
+    //                 new object[] { PhotonNetwork.LocalPlayer.ActorNumber },
+    //                 new RaiseEventOptions { Receivers = ReceiverGroup.All },
+    //                 SendOptions.SendReliable);
+    //         }
+    //     }
+    // }
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
     {

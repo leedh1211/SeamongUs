@@ -100,10 +100,16 @@ public class ImposterController : MonoBehaviour
 
     void RaiseKillEvent(int targetActorNumber)
     {
-        object[] content = new object[] { localPlayer.ActorNumber, targetActorNumber };
+        object[] content = new object[] { localPlayer.ActorNumber };
         PhotonNetwork.RaiseEvent(
             EventCodes.PlayerKill,
             content,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            ExitGames.Client.Photon.SendOptions.SendReliable
+        );
+        PhotonNetwork.RaiseEvent(
+            EventCodes.PlayerDied,
+            new object[] { targetActorNumber },
             new RaiseEventOptions { Receivers = ReceiverGroup.All },
             ExitGames.Client.Photon.SendOptions.SendReliable
         );
