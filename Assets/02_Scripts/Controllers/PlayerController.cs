@@ -2,6 +2,7 @@ using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviourPun , IPunObservable
 {
@@ -72,17 +73,25 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
     
     private void Start()
     {
-        if (photonView.IsMine)
+        if ( SceneManager.GetActiveScene().name == "GameScene" && photonView.IsMine)
+        {
+            Debug.Log("[GameManager] GameScene 로드 완료됨. 미션매니저할당.");
             StartCoroutine(WaitAndRegister());
+        }
     }
-    
     
     private IEnumerator WaitAndRegister()
     {
-        yield return new WaitUntil(() => MissionManager.Instance != null);
+        Debug.Log("WaitAndRegister 진입");
+        yield return new WaitUntil(() =>
+        {
+            Debug.Log($"MissionManager.Instance 상태: {MissionManager.Instance != null}");
+            return MissionManager.Instance != null;
+        });
+
+        Debug.Log("MissionManager.Instance 등록 시작");
         MissionManager.Instance.RegisterLocalPlayer(this);
     }
-    
     private void FixedUpdate()
     {
         if (!photonView.IsMine)
