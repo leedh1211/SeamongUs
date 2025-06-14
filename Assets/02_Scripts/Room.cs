@@ -5,8 +5,9 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
+using ExitGames.Client.Photon;
 
-public class Room : MonoBehaviourPunCallbacks
+public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     [Header("UI References")]
     public Button startButton;
@@ -19,6 +20,16 @@ public class Room : MonoBehaviourPunCallbacks
     private Dictionary<int, GameObject> playerSlots = new Dictionary<int, GameObject>();
 
     [SerializeField] private Button[] spriteButtons; // 9개 버튼 배열
+    
+    void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
 
     void Start()
     {
@@ -107,13 +118,21 @@ public class Room : MonoBehaviourPunCallbacks
     }
     bool IsAllPlayersReady()
     {
+        Debug.Log("count - "+PhotonNetwork.PlayerList.Length);
         foreach (Player p in PhotonNetwork.PlayerList)
         {
-            if (!p.CustomProperties.TryGetValue("IsReady", out object isReady) || !(isReady is bool ready && ready))
+            if (!PhotonNetwork.IsMasterClient)
             {
-                string playerName = string.IsNullOrEmpty(p.NickName) ? $"ID:{p.UserId}" : p.NickName;
-                Debug.LogWarning($"Player {playerName} is not ready.");
-                return false;
+                p.CustomProperties.TryGetValue("Nickname", out object playerName);
+                Debug.Log($"NickName: {playerName}");
+                if (!p.CustomProperties.TryGetValue("IsReady", out object isReady) || !(isReady is bool ready && ready))
+                {
+                    if (playerName is string)
+                    {
+                        Debug.LogWarning($"Player {playerName} is not ready.");    
+                    }
+                    return false;
+                }    
             }
         }
         return true;
@@ -125,7 +144,12 @@ public class Room : MonoBehaviourPunCallbacks
         if (IsAllPlayersReady())
         {
             Debug.Log("All players ready. Starting game...");
-            PhotonNetwork.LoadLevel("GameScene");
+            PhotonNetwork.RaiseEvent(
+                eventCode: 100, // 커스텀 코드. 100번 예시
+                eventContent: null,
+                raiseEventOptions: new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                sendOptions: SendOptions.SendReliable
+            );
         }
         else
         {
@@ -193,5 +217,15 @@ public class Room : MonoBehaviourPunCallbacks
     {
         SetupUIByHost();
         RefreshPlayerSlots();
+    }
+    
+    public void OnEvent(EventData photonEvent)
+    {
+        switch (photonEvent.Code)
+        {
+            case 100: // Start Game State 변경 이벤트
+                GameManager.Instance.ChangeState(GameState.RoleAssignment); // 각 클라이언트에서 실행됨
+                break;
+        }
     }
 }

@@ -20,13 +20,13 @@ namespace _02_Scripts.Lobby
 
         public void Init()
         {
-            Hashtable properties = new Hashtable{
-            { "PlayerSeq", LoginSession.loginPlayerInfo.seq},
-            { "PlayerID", LoginSession.loginPlayerInfo.id},
-            { "Nickname", LoginSession.loginPlayerInfo.name},
-            { "PlayerLevel", LoginSession.loginPlayerInfo.level},
-            { "PlayerGold", LoginSession.loginPlayerInfo.gold}};
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            PhotonNetwork.AutomaticallySyncScene = true;
+            PhotonNetwork.AuthValues = new AuthenticationValues
+            {
+                UserId = LoginSession.loginPlayerInfo.id
+            };
+            PhotonNetwork.NickName = LoginSession.loginPlayerInfo.name;
+            PhotonNetwork.ConnectUsingSettings();
         }
 
         private void Awake() // 싱글톤 생성
@@ -38,8 +38,6 @@ namespace _02_Scripts.Lobby
             }
             Instance = this;
             DontDestroyOnLoad(gameObject); // 씬 전환 유지 원할 경우
-            PhotonNetwork.AutomaticallySyncScene = true;
-            PhotonNetwork.ConnectUsingSettings();
         }
 
         void Start() // 포톤네트워크에 연결
@@ -78,7 +76,15 @@ namespace _02_Scripts.Lobby
         public override void OnJoinedRoom()
         {
             Debug.Log("방에 입장했습니다.");
-            GameManager.Instance.ChangeState(GameState.RoleAssignment);
+            Hashtable properties = new Hashtable{
+                { "PlayerSeq", LoginSession.loginPlayerInfo.seq},
+                { "PlayerID", LoginSession.loginPlayerInfo.id},
+                { "Nickname", LoginSession.loginPlayerInfo.name},
+                { "PlayerLevel", LoginSession.loginPlayerInfo.level},
+                { "PlayerGold", LoginSession.loginPlayerInfo.gold}};
+            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+            GameManager.Instance.ChangeState(GameState.WaitingRoom);
+            Debug.Log(PhotonNetwork.LocalPlayer.UserId);
         }
         
         public override void OnCreateRoomFailed(short returnCode, string message) // 방 생성실패 콜백

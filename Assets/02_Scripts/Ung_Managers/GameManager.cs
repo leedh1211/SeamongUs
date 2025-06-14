@@ -50,6 +50,9 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("[GameManager] GameScene 로드 완료됨. 역할 할당 대기 중...");
             StartCoroutine(WaitAndAssignRoles());
+        }else if (scene.name == "GameScene")
+        {
+            ChangeState(GameState.Playing);
         }
     }
     
@@ -151,6 +154,7 @@ public class GameManager : MonoBehaviour
             case GameState.Lobby:
                 break;
             case GameState.WaitingRoom:
+                PhotonNetwork.LoadLevel("WaitingScene");
                 break;
             case GameState.RoleAssignment:
                 PhotonNetwork.LoadLevel("GameScene");
