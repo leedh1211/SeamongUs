@@ -26,6 +26,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void Awake()
     {
+        Debug.Log("[MissionManager] Awake() 호출됨");
         Instance = this;
         PhotonNetwork.AddCallbackTarget(this);
         LoadAllMissions();
@@ -47,7 +48,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         );
         if (hit != null && hit.TryGetComponent<MissionCollider>(out var trigger))
         {
-            string pid = PhotonNetwork.LocalPlayer.ActorNumber.ToString(); // ✅ ActorNumber 사용
+            string pid = PhotonNetwork.LocalPlayer.ActorNumber.ToString();
             trigger.HandleInteract(pid);
         }
     }
@@ -73,7 +74,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
             .ToList();
 
         playerMissions[playerKey] = selected;
-
+        Debug.Log("playerMissions["+playerKey+"]="+playerMissions[playerKey]);
         var ids = selected.Select(m => m.MissionID).ToArray();
         PhotonNetwork.RaiseEvent(
             EventCodes.MissionsAssigned,
@@ -104,9 +105,13 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public float GetProgress(string playerKey)
     {
         if (!playerMissions.TryGetValue(playerKey, out var list) || list.Count == 0)
+        {
+            Debug.Log(list.Count);
             return 0f;
-
+        }
+        
         int done = list.Count(m => m.IsCompleted);
+        Debug.Log(done+"/"+list.Count);
         return (float)done / list.Count;
     }
 
@@ -164,7 +169,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            string playerKey = player.ActorNumber.ToString(); // ✅ 일관된 키
+            string playerKey = player.ActorNumber.ToString();
             AssignMissions(playerKey, missionCount);
         }
 

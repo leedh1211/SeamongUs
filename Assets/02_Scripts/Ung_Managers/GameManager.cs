@@ -58,10 +58,15 @@ public class GameManager : MonoBehaviour
     
     private IEnumerator WaitAndAssignRoles()
     {
-        // RoleManager 인스턴스가 생성될 때까지 대기
         yield return new WaitUntil(() => RoleManager.Instance != null);
 
-        // 룸 커스텀 프로퍼티에서 임포스터 수 가져오기
+        // 플레이어가 1명 이상 접속할 때까지 기다림
+        yield return new WaitUntil(() =>
+        {
+            Debug.Log($"현재 접속자 수: {PhotonNetwork.PlayerList.Length}");
+            return PhotonNetwork.PlayerList.Length > 0;
+        });
+
         int impostorCount = 1;
         if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("ImpostorCount", out object impostorObj))
         {
@@ -71,7 +76,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] 역할 할당 시작");
         RoleManager.Instance.AssignRoles(impostorCount);
 
-        // 이후 상태 전이
         ChangeState(GameState.Playing);
     }
 
@@ -160,7 +164,6 @@ public class GameManager : MonoBehaviour
                 PhotonNetwork.LoadLevel("GameScene");
                 break;
             case GameState.Playing:
-                Instantiate(missionManager, Vector3.zero, Quaternion.identity);
                 MissionManager.Instance.Init();
                 break;
             case GameState.Meeting:
