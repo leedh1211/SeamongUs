@@ -1,8 +1,7 @@
 ﻿public enum MissionType
 {
-    FixSignpost, // 표지판 고치기 미션
-    // 새 미션 추가시 여기에 한줄만 추가하면 됨.
-    Laundry,
-    TrashCleanup
-
+    Signpost, // 이정표 수리하기
+    Laundry, // 빨래 널기
+    //TrashCleanup, // 쓰레기 줍기
+    //FillWater, // 물 채우기
 }

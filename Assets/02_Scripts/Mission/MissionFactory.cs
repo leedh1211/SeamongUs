@@ -7,9 +7,10 @@ public static class MissionFactory
     private static readonly Dictionary<MissionType, Func<Mission>> map
         = new Dictionary<MissionType, Func<Mission>>()
     {
-        // { MissionType.FixSignpost, () => new FixSignpost() },
+        { MissionType.Signpost, () => new Signpost() },
         { MissionType.Laundry,    () => new Laundry()    },
-        // { MissionType.TrashCleanup,() => new TrashCleanup() }
+        //{ MissionType.TrashCleanup,() => new TrashCleanup() },
+        //{ MissionType.FillWater, () => new FillWater() }
     };
 
     // 전체 미션 타입 목록
