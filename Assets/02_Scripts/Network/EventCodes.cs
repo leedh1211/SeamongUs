@@ -15,6 +15,6 @@ public static class EventCodes
     public const byte PlayerAttacked = 104;
     
     //----------------------GameManageCode----------------------//
-    public const byte ChangeState = 200;
+    public const byte ChangeState = 199;
     
 }

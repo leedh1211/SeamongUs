@@ -7,7 +7,6 @@ using ExitGames.Client.Photon;
 
 public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
-    private Dictionary<string, PlayerInfo> playerDict = new Dictionary<string, PlayerInfo>();
     private Dictionary<string, GameObject> playerGODict = new Dictionary<string, GameObject>();
 
     private void OnEnable()
@@ -18,14 +17,6 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
-    }
-    
-    public void RegisterPlayer(PlayerInfo player)
-    {
-        if (!playerDict.ContainsKey(player.PlayerID))
-        {
-            playerDict.Add(player.PlayerID, player);
-        }
     }
     
     public void RegisterAllPlayers()
@@ -59,10 +50,26 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
         playerGODict[ActorNumber] = playerGO;
     }
 
-    public Dictionary<string, PlayerInfo> GetAllPlayers() => playerDict;
-    public PlayerInfo GetPlayerByID(string id) => playerDict.TryGetValue(id, out var player) ? player : null;
-    public PlayerInfo GetLocalPlayer() => playerDict.Values.FirstOrDefault(p => p.IsLocalPlayer);
-    public List<PlayerInfo> GetAlivePlayers() => playerDict.Values.Where(p => !p.IsDead).ToList();
+    public Dictionary<string, GameObject> GetAllPlayers()
+    {
+        return playerGODict;
+    }
+
+    public PlayerInfo GetPlayerByID(string ActorNumber)
+    {
+        return GetPlayerInfo(ActorNumber);
+    }
+
+    public PlayerInfo GetLocalPlayer()
+    {
+        return GetPlayerInfo(PhotonNetwork.LocalPlayer.ActorNumber.ToString());
+    }
+
+    public List<PlayerInfo> GetAlivePlayers()
+    {
+        return playerDict.Values.Where(p => !p.IsDead).ToList();
+    }
+
     public List<string> GetAllPlayerIDs() => playerDict.Keys.ToList();
     public Dictionary<string, PlayerInfo> GetAllPlayersDict() => playerDict;
 
@@ -122,5 +129,10 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public PlayerController FindPlayerController(string actorNumber)
     {
         return playerGODict.TryGetValue(actorNumber, out var go) ? go.GetComponent<PlayerController>() : null;
+    }
+
+    public PlayerInfo GetPlayerInfo(string ActorNumber)
+    {
+        return playerGODict[ActorNumber].GetComponent<PlayerInfo>();        
     }
 }

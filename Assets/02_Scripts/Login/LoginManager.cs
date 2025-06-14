@@ -15,8 +15,6 @@ public class LoginManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField idInputField;
     [SerializeField] private TMP_InputField pwInputField;
-    
-    PlayerInfo playerInfo;
 
     private string loginUrl = "http://121.162.172.253:3000/api/login/onLogin";
 
