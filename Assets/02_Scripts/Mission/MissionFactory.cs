@@ -9,7 +9,8 @@ public static class MissionFactory
     {
         { MissionType.FixSignpost, () => new FixSignpost() },
         { MissionType.Laundry,    () => new Laundry()    },
-        { MissionType.TrashCleanup,() => new TrashCleanup() }
+        { MissionType.TrashCleanup,() => new TrashCleanup() },
+        //{ MissionType.FillWater, () => new FillWater() }
     };
 
     // 전체 미션 타입 목록
