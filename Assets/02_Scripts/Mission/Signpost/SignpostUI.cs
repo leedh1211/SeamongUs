@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FixSignpostUI : MonoBehaviour, IMissionUI
+public class SignpostUI : MonoBehaviour, IMissionUI
 {
     [Header("팻말 조각 버튼들")]
     [SerializeField] private List<Button> pieceButtons;
