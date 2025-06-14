@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +16,11 @@ public class PlayerManager : MonoBehaviour
         {
             playerDict.Add(player.PlayerID, player);
         }
+    }
+
+    public Dictionary<string, PlayerInfo> GetAllPlayers()
+    {
+        return playerDict;
     }
 
     public PlayerInfo GetPlayerByID(string id)
@@ -38,6 +43,11 @@ public class PlayerManager : MonoBehaviour
         return playerDict.Keys.ToList();
     }
 
+    public Dictionary<string, PlayerInfo> GetAllPlayersDict()
+    {
+        return playerDict;
+    }
+
     public void KillPlayer(string playerID)
     {
         if (playerDict.TryGetValue(playerID, out var player))
@@ -46,10 +56,5 @@ public class PlayerManager : MonoBehaviour
             // 사망 애니메이션, 시체 생성, UI 갱신 등 추가
             Debug.Log($"{player.Nickname} has been killed.");
         }
-    }
-
-    public void Init()
-    {
-        
     }
 }

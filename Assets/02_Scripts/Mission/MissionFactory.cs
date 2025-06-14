@@ -8,6 +8,8 @@ public static class MissionFactory
         = new Dictionary<MissionType, Func<Mission>>()
     {
         { MissionType.FixSignpost, () => new FixSignpost() },
+        { MissionType.Laundry,    () => new Laundry()    },
+        { MissionType.TrashCleanup,() => new TrashCleanup() }
     };
 
     // 전체 미션 타입 목록

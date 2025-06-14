@@ -1,4 +1,4 @@
-using _02_Scripts.Login;
+﻿using _02_Scripts.Login;
 using Photon.Pun;
 using UnityEngine;
 
@@ -22,27 +22,65 @@ public class PlayerInfo : MonoBehaviourPunCallbacks
     public GameObject GameObject;      // 해당 플레이어의 GameObject (선택)
 
     public bool IsLocalPlayer = false; // 로컬 플레이어 여부 (클라이언트에서 직접 지정)
+
+    public SpriteRenderer spriteRenderer;
+
+   
+    public Photon.Realtime.Player currentPlayer;
     
+    private void Awake()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+    }
     void Start()
     {
-        Init();
+        
         // PlayerID, Nickname 등 초기화 먼저
-        PlayerID = System.Guid.NewGuid().ToString(); // or 할당된 ID
-        Nickname = "Player_" + Random.Range(0, 1000);
-
-        // PlayerManager.Instance.RegisterPlayer(this);
-        GameManager.Instance.ChangeState(GameState.RoleAssignment);
+       // PlayerID = System.Guid.NewGuid().ToString(); // or 할당된 ID
+       // Nickname = "Player_" + Random.Range(0, 1000);
+        currentPlayer = photonView.Owner;
+        Init(currentPlayer);
     }
 
-    private void Init()
+    private void Init(Photon.Realtime.Player owner)
     {
-        PlayerSeq = LoginSession.loginPlayerInfo.seq;               // 플레이어 순번 (0 ~ N)
-        PlayerID = LoginSession.loginPlayerInfo.id;            // 고유 식별자 (ex. PhotonView.ViewID or 커스텀 UUID)
-        Nickname = LoginSession.loginPlayerInfo.name;            // 닉네임
-        PlayerLevel = LoginSession.loginPlayerInfo.level;            // (선택 사항) 레벨
-        PlayerGold = LoginSession.loginPlayerInfo.gold;             // (선택 사항) 골드
-        
+        if (owner.CustomProperties.TryGetValue("PlayerSeq", out object playerSeq))
+        {
+            PlayerSeq = (int)playerSeq;    
+        }
+
+        if (owner.CustomProperties.TryGetValue("PlayerID", out object playerID))
+        {
+            PlayerID = (string)playerID;
+        };
+        if (owner.CustomProperties.TryGetValue("Nickname", out object nickname))
+        {
+            Nickname = (string)nickname;
+        }
+
+        if (owner.CustomProperties.TryGetValue("PlayerLevel", out object playerLevel))
+        {
+            PlayerLevel = (int)playerLevel;
+        }
+
+        if (owner.CustomProperties.TryGetValue("PlayerGold", out object playerGold))
+        {
+            PlayerGold = (int)playerGold;
+        }
         EventBus.Raise(new OnPlayerInfoChanged());
     }
+    public string GetDisplayInfo()
+    {
+        return $"[{PlayerSeq}] {Nickname} - Lv.{PlayerLevel} - Gold: {PlayerGold}";
+    }
 
+    [PunRPC]
+    public void SetSprite(string spriteName)
+    {
+        Sprite newSprite = Resources.Load<Sprite>(spriteName);
+        if (newSprite != null)
+        {
+            spriteRenderer.sprite = newSprite;
+        }
+    }
 }
