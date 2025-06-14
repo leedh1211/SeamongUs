@@ -38,13 +38,13 @@ public class Laundry : Mission
     /// <summary>
     /// 슬롯(slotIndex)에 올바른 옷이 놓였을 때 호출해주세요.
     /// </summary>
-    public void MarkSlotFilled(int slotIndex)
+    public bool MarkSlotFilled(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= filledSlots.Length)
-            return;
+            return false;
 
         if (filledSlots[slotIndex])
-            return; // 이미 채워진 슬롯이면 무시
+            return false; // 이미 채워진 슬롯이면 무시
 
         filledSlots[slotIndex] = true;
 
@@ -61,8 +61,10 @@ public class Laundry : Mission
 
         if (allFilled)
         {
-            Complete();
+            return true;
         }
+
+        return false;
     }
 
     /// <summary>

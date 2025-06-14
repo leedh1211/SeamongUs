@@ -39,9 +39,9 @@ public class DropZone : MonoBehaviour, IDropHandler
             dragCloth.enabled = false;
 
             // 이제 slotIndex만 전달
-            (mission as Laundry).MarkSlotFilled(slotIndex);
+            bool isFilled = (mission as Laundry).MarkSlotFilled(slotIndex);
 
-            if (mission.IsCompleted)
+            if (isFilled)
             {
                 MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
                 laundryUI.gameObject.SetActive(false);
