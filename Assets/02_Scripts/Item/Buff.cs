@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public enum BuffType
 {
@@ -44,10 +44,12 @@ public class Buff
         {
             case BuffType.Speed:
                 player.GetComponent<PlayerController>()?.ModifySpeed(Value);
+                Debug.Log($"[Buff] ì´ë™ì†ë„ +{Value} (ì§€ì† {Duration}ì´ˆ)");
                 break;
 
             case BuffType.Invisibility:
-                player.layer = LayerMask.NameToLayer("Invisible"); // ·¹ÀÌ¾î´Â ÇÁ·ÎÁ§Æ®¿¡ µû¶ó ´Ù¸¦ ¼ö ÀÖÀ½
+                player.layer = LayerMask.NameToLayer("Invisible"); // ë ˆì´ì–´ëŠ” í”„ë¡œì íŠ¸ì— ë”°ë¼ ë‹¤ë¥¼ ìˆ˜ ìˆìŒ
+                Debug.Log($"[Buff] ì€ì‹  ì‹œì‘ (ì§€ì† {Duration}ì´ˆ)");
                 break;
         }
     }
@@ -61,7 +63,7 @@ public class Buff
                 break;
 
             case BuffType.Invisibility:
-                player.layer = LayerMask.NameToLayer("Player"); // ¿ø·¡ ·¹ÀÌ¾î·Î º¹±Í
+                player.layer = LayerMask.NameToLayer("Player"); // ì›ë˜ ë ˆì´ì–´ë¡œ ë³µê·€
                 break;
         }
     }
