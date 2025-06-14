@@ -2,10 +2,6 @@
 using UnityEngine;
 using System.Linq;
 
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-
 public class PlayerManager : MonoBehaviour
 {
     private Dictionary<string, PlayerInfo> playerDict = new Dictionary<string, PlayerInfo>();
