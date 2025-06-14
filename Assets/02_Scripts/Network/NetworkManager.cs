@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using ExitGames.Client.Photon;
+using Photon.Pun.UtilityScripts;
 using UnityEngine.SceneManagement;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -14,8 +15,7 @@ namespace _02_Scripts.Lobby
     public class NetworkManager : MonoBehaviourPunCallbacks
     {
         public static NetworkManager Instance;
-
-        public PlayerInfo currentPlayerInfo;
+        
         public Photon.Realtime.Player currentPlayer;
 
         public void Init()
@@ -81,7 +81,12 @@ namespace _02_Scripts.Lobby
                 { "PlayerID", LoginSession.loginPlayerInfo.id},
                 { "Nickname", LoginSession.loginPlayerInfo.name},
                 { "PlayerLevel", LoginSession.loginPlayerInfo.level},
-                { "PlayerGold", LoginSession.loginPlayerInfo.gold}};
+                { "PlayerGold", LoginSession.loginPlayerInfo.gold},
+                { "SpriteData", ""},
+                { "IsDead", false},
+                { "Role", 0},
+            };
+            
             PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
             GameManager.Instance.ChangeState(GameState.WaitingRoom);
             Debug.Log(PhotonNetwork.LocalPlayer.UserId);

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4477170805550794494
+--- !u!1 &523111060896267576
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7156289712647071420}
-  - component: {fileID: 6253698351537395861}
+  - component: {fileID: 3250030827656318838}
+  - component: {fileID: 7738707692300483724}
   m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
@@ -17,28 +17,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7156289712647071420
+--- !u!4 &3250030827656318838
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4477170805550794494}
+  m_GameObject: {fileID: 523111060896267576}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.054285094}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 9164508786771637025}
+  m_Father: {fileID: 930837772186274528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &6253698351537395861
+--- !u!212 &7738707692300483724
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4477170805550794494}
+  m_GameObject: {fileID: 523111060896267576}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &8082277666558358154
+--- !u!1 &8988972954435382352
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,53 +92,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9164508786771637025}
-  - component: {fileID: 4095904174146169431}
-  - component: {fileID: 1554288626390037922}
+  - component: {fileID: 930837772186274528}
+  - component: {fileID: 2841090751415855149}
+  - component: {fileID: 69209417828254125}
   m_Layer: 6
-  m_Name: SignpostArea
+  m_Name: HerdArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9164508786771637025
+--- !u!4 &930837772186274528
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8082277666558358154}
+  m_GameObject: {fileID: 8988972954435382352}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: -13.68, z: 0}
+  m_LocalPosition: {x: -1.78, y: -0.64, z: 0.054285094}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7156289712647071420}
+  - {fileID: 3250030827656318838}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4095904174146169431
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8082277666558358154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a77dbb9ffbf2dc04c81fc1fdeeaa801f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  missionUIPanel: {fileID: 0}
-  missionType: 0
---- !u!61 &1554288626390037922
+--- !u!61 &2841090751415855149
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8082277666558358154}
+  m_GameObject: {fileID: 8988972954435382352}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -177,3 +163,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &69209417828254125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8988972954435382352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a77dbb9ffbf2dc04c81fc1fdeeaa801f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  missionUIPanel: {fileID: 0}
+  missionType: 3

@@ -1,20 +1,32 @@
 ﻿using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using System.Collections.Generic;
 
 public class ImposterController : MonoBehaviour
 {
-    private PlayerInfo self;
-    [SerializeField] PlayerManager playerManager;
+    private Player localPlayer;
+    private PhotonView view;
+
+    [SerializeField] private float killRange = 2.0f;
+
+    void Start()
+    {
+        view = GetComponent<PhotonView>();
+        if (view.IsMine)
+        {
+            localPlayer = PhotonNetwork.LocalPlayer;
+            Debug.Log($"[ImposterController] 로컬 플레이어 등록됨: {localPlayer.NickName}");
+        }
+        else
+        {
+            this.enabled = false;
+        }
+    }
 
     void Update()
     {
-        if (self == null)
-        {
-            self = playerManager.GetLocalPlayer();
-            if (self != null)
-            {
-                Debug.Log($"[ImposterController] self 초기화 성공: {self.Nickname}");
-            }
-        }
+        if (!view.IsMine) return;
 
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -29,14 +41,16 @@ public class ImposterController : MonoBehaviour
 
     void TryKill()
     {
-        PlayerInfo target = FindKillablePlayer();
-        Debug.Log(target);
-        if (target != null && !target.IsDead)
+        GameObject targetGO = FindKillablePlayer();
+        if (targetGO != null)
         {
-            
-
-            Debug.Log($"{self.Nickname} 플레이어가 {target.Nickname} 살해");
-            playerManager.KillPlayer(target.PlayerID);
+            int actorNumber = targetGO.GetComponent<PhotonView>().OwnerActorNr;
+            Player targetPlayer = FindPlayerByActorNumber(actorNumber);
+            if (targetPlayer != null)
+            {
+                Debug.Log($"{localPlayer.NickName}가 {targetPlayer.NickName}를 살해했습니다.");
+                RaiseKillEvent(actorNumber); // 서버 전체에 킬 이벤트 전송
+            }
         }
         else
         {
@@ -46,38 +60,62 @@ public class ImposterController : MonoBehaviour
 
     void TryReportBody()
     {
-        string deadID = FindNearestDeadBody();
+        string deadID = DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
         if (deadID != null)
         {
-            ReportManager.Instance.ReportBody(self.PlayerID, deadID);
+            ReportManager.Instance.ReportBody(localPlayer.ActorNumber.ToString(), deadID);
             GameManager.Instance.ChangeState(GameState.Meeting);
         }
     }
 
-    PlayerInfo FindKillablePlayer()
+    GameObject FindKillablePlayer()
     {
-        float killRange = 2.0f;
-        foreach (var player in playerManager.GetAlivePlayers())
+        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject playerGO in allPlayers)
         {
-            if (player == null) continue;
-            if (self == null) continue; // 혹은 self 초기화 보장
+            PhotonView pv = playerGO.GetComponent<PhotonView>();
+            if (pv == null || pv.OwnerActorNr == localPlayer.ActorNumber)
+                continue;
 
-            if (player.PlayerID == self.PlayerID) continue;  // PlayerID 기준 비교가 더 안전
-            if (player.Role != Role.Crewmate) continue;
-            if (player.IsDead) continue;
+            Player otherPlayer = FindPlayerByActorNumber(pv.OwnerActorNr);
+            if (otherPlayer == null || otherPlayer.CustomProperties == null)
+                continue;
 
-            float dist = Vector3.Distance(self.Transform.position, player.Transform.position);
+            // 조건: 크루메이트 + 살아있음
+            if ((int)(otherPlayer.CustomProperties["Role"] ?? 0) != (int)Role.Crewmate)
+                continue;
+            if ((bool)(otherPlayer.CustomProperties["IsDead"] ?? false))
+                continue;
+
+            float dist = Vector3.Distance(transform.position, playerGO.transform.position);
             if (dist <= killRange)
             {
-                return player;
+                return playerGO;
             }
         }
+
         return null;
     }
 
-
-    string FindNearestDeadBody()
+    void RaiseKillEvent(int targetActorNumber)
     {
-        return DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
+        object[] content = new object[] { localPlayer.ActorNumber, targetActorNumber };
+        PhotonNetwork.RaiseEvent(
+            EventCodes.PlayerKill,
+            content,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            ExitGames.Client.Photon.SendOptions.SendReliable
+        );
+    }
+
+    Player FindPlayerByActorNumber(int actorNumber)
+    {
+        foreach (var p in PhotonNetwork.PlayerList)
+        {
+            if (p.ActorNumber == actorNumber)
+                return p;
+        }
+        return null;
     }
 }
