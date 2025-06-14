@@ -145,7 +145,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             Debug.Log("All players ready. Starting game...");
             PhotonNetwork.RaiseEvent(
-                eventCode: 100, // 커스텀 코드. 100번 예시
+                eventCode: EventCodes.ChangeState, // 커스텀 코드. 100번 예시
                 eventContent: null,
                 raiseEventOptions: new RaiseEventOptions { Receivers = ReceiverGroup.All },
                 sendOptions: SendOptions.SendReliable
@@ -223,7 +223,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         switch (photonEvent.Code)
         {
-            case 100: // Start Game State 변경 이벤트
+            case EventCodes.ChangeState: // Start Game State 변경 이벤트
                 GameManager.Instance.ChangeState(GameState.RoleAssignment); // 각 클라이언트에서 실행됨
                 break;
         }
