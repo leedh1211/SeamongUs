@@ -1,11 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class Laundry : Mission
 {
     // Resources/ClothPrefabs 폴더에 빨래 프리팹들 있음.
