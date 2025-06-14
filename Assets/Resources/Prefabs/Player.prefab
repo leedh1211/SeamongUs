@@ -117,6 +117,7 @@ MonoBehaviour:
   baseMoveSpeed: 5
   jumpHeight: 1
   jumpDuration: 0.4
+  _playerInfo: {fileID: 0}
   interactLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -268,6 +269,7 @@ MonoBehaviour:
   Transform: {fileID: 5299610917612844382}
   GameObject: {fileID: 4490475036587624388}
   IsLocalPlayer: 1
+  spriteRenderer: {fileID: 0}
 --- !u!114 &2161955762769035897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,7 +291,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 6248981312553392076}
   - {fileID: 1264566479098932612}
-  sceneViewId: 1
+  sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!114 &1264566479098932612
