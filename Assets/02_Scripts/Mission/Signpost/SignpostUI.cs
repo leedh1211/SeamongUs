@@ -16,9 +16,9 @@ public class SignpostUI : MonoBehaviour, IMissionUI
     private void Awake()
     {
         // 각 버튼 클릭 시 회전 이벤트 연결
-        foreach (var btn in pieceButtons)
+        foreach (var button in pieceButtons)
         {
-            btn.onClick.AddListener(() => OnPieceClicked(btn));
+            button.onClick.AddListener(() => OnPieceClicked(button));
         }
         gameObject.SetActive(false);
     }
@@ -32,21 +32,21 @@ public class SignpostUI : MonoBehaviour, IMissionUI
         gameObject.SetActive(true);
     }
 
-    private void OnPieceClicked(Button btn)
+    private void OnPieceClicked(Button button)
     {
         // 45도씩 시계 방향 회전
-        var rt = btn.transform as RectTransform;
-        rt.localRotation *= Quaternion.Euler(0, 0, -45f);
+        var rotation = button.transform as RectTransform;
+        rotation.localRotation *= Quaternion.Euler(0, 0, -45f);
         CheckCompletion();
     }
 
     private void RandomizePieces()
     {
         // 0도(정답)만 빼고 랜덤 초기화
-        foreach (var btn in pieceButtons)
+        foreach (var button in pieceButtons)
         {
             int angle = angles[Random.Range(0, angles.Length)];
-            btn.transform.localRotation = Quaternion.Euler(0, 0, -angle);
+            button.transform.localRotation = Quaternion.Euler(0, 0, -angle);
         }
     }
 
@@ -54,9 +54,9 @@ public class SignpostUI : MonoBehaviour, IMissionUI
     {
         // Mission 객체에 위임 후, 완료되었다면 UI에서만 통보
         bool allAligned = true;
-        foreach (var btn in pieceButtons)
+        foreach (var button in pieceButtons)
         {
-            if (Mathf.Abs(btn.transform.localEulerAngles.z) > 0.1f)
+            if (Mathf.Abs(button.transform.localEulerAngles.z) > 0.1f)
             {
                 allAligned = false;
                 break;
