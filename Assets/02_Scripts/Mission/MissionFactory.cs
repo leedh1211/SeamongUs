@@ -9,7 +9,8 @@ public static class MissionFactory
     {
         { MissionType.Signpost, () => new Signpost() },
         { MissionType.Laundry,    () => new Laundry()    },
-        //{ MissionType.TrashCleanup,() => new TrashCleanup() },
+        { MissionType.TrashCleanup,() => new TrashCleanup() },
+        { MissionType.HerdMission, () => new HerdMission() },
         //{ MissionType.FillWater, () => new FillWater() }
     };
 
