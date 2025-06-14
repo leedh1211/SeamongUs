@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Photon.Realtime;
+using UnityEngine;
 
 public class DeadBody : MonoBehaviour
 {
@@ -17,22 +18,12 @@ public class DeadBody : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         Player otherPlayer = other.GetComponent<Player>();
-        if (otherPlayer != null && !otherPlayer.IsDead)
-        {
-            Debug.Log($"{otherPlayer.PlayerID}의 시체가 근처에 있어, Report버튼이 활성화됩니다.");
-            // UIManager.Instance.ShowReportButton(this);
-        }
+        // otherPlayer.IsDead = true;
+        // if (otherPlayer != null && !otherPlayer.IsDead)
+        // {
+        //     Debug.Log($"{otherPlayer.PlayerID}의 시체가 근처에 있어, Report버튼이 활성화됩니다.");
+        //     // UIManager.Instance.ShowReportButton(this);
+        // }
     }
 
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (!other.CompareTag("Player")) return;
-
-        Player otherPlayer = other.GetComponent<Player>();
-        if (otherPlayer != null && !otherPlayer.IsDead)
-        {
-            Debug.Log($"{otherPlayer.PlayerID}의 시체가 멀어져, Report버튼이 비활성화됩니다.");
-            // UIManager.Instance.HideReportButton();
-        }
-    }
 }

@@ -8,35 +8,35 @@ using UnityEngine;
 
 public class Laundry : Mission
 {
-    // Resources/ClothPrefabs Æú´õ¿¡ »¡·¡ ÇÁ¸®ÆÕµé ÀÖÀ½.
+    // Resources/ClothPrefabs í´ë”ì— ë¹¨ë˜ í”„ë¦¬íŒ¹ë“¤ ìˆìŒ.
     private List<GameObject> orderPrefabs;
-    // °¢ ½½·Ô(0ºÎÅÍ orderPrefabs.Count-1)º°·Î Ã¤¿öÁ³´ÂÁö ±â·Ï
+    // ê° ìŠ¬ë¡¯(0ë¶€í„° orderPrefabs.Count-1)ë³„ë¡œ ì±„ì›Œì¡ŒëŠ”ì§€ ê¸°ë¡
     private bool[] filledSlots;
 
     public Laundry()
-        : base("Laundry", "»¡·¡¸¦ Á¦½ÃµÈ ¼ø¼­´ë·Î ³Î¾îÁÖ¼¼¿ä.")
+        : base("Laundry", "ë¹¨ë˜ë¥¼ ì œì‹œëœ ìˆœì„œëŒ€ë¡œ ë„ì–´ì£¼ì„¸ìš”.")
     {
-        // 1) »¡·¡ ÇÁ¸®ÆÕ ºÒ·¯¿Í ·£´ı ¼¯Àº µÚ 5°³ »Ì±â
+        // 1) ë¹¨ë˜ í”„ë¦¬íŒ¹ ë¶ˆëŸ¬ì™€ ëœë¤ ì„ì€ ë’¤ 5ê°œ ë½‘ê¸°
         var prefabs = Resources.LoadAll<GameObject>("ClothPrefabs");
         orderPrefabs = new List<GameObject>(prefabs);
         Shuffle(orderPrefabs);
         orderPrefabs = orderPrefabs.GetRange(0, Mathf.Min(5, orderPrefabs.Count));
 
-        // 2) ½½·Ô Ã¤¿ò »óÅÂ ÃÊ±âÈ­
+        // 2) ìŠ¬ë¡¯ ì±„ì›€ ìƒíƒœ ì´ˆê¸°í™”
         filledSlots = new bool[orderPrefabs.Count];
     }
 
     public override Mission Clone()
     {
         var clone = new Laundry();
-        // Clone ½Ã °°Àº ¼ø¼­, ºó Ã¤¿ò »óÅÂ·Î º¹Á¦
+        // Clone ì‹œ ê°™ì€ ìˆœì„œ, ë¹ˆ ì±„ì›€ ìƒíƒœë¡œ ë³µì œ
         clone.orderPrefabs = new List<GameObject>(orderPrefabs);
         clone.filledSlots = new bool[orderPrefabs.Count];
         return clone;
     }
 
     /// <summary>
-    /// ½½·Ô(slotIndex)¿¡ ¿Ã¹Ù¸¥ ¿ÊÀÌ ³õ¿´À» ¶§ È£ÃâÇØÁÖ¼¼¿ä.
+    /// ìŠ¬ë¡¯(slotIndex)ì— ì˜¬ë°”ë¥¸ ì˜·ì´ ë†“ì˜€ì„ ë•Œ í˜¸ì¶œí•´ì£¼ì„¸ìš”.
     /// </summary>
     public void MarkSlotFilled(int slotIndex)
     {
@@ -44,11 +44,11 @@ public class Laundry : Mission
             return;
 
         if (filledSlots[slotIndex])
-            return; // ÀÌ¹Ì Ã¤¿öÁø ½½·ÔÀÌ¸é ¹«½Ã
+            return; // ì´ë¯¸ ì±„ì›Œì§„ ìŠ¬ë¡¯ì´ë©´ ë¬´ì‹œ
 
         filledSlots[slotIndex] = true;
 
-        // ¸ğµç ½½·ÔÀÌ Ã¤¿öÁ³´ÂÁö °Ë»ç
+        // ëª¨ë“  ìŠ¬ë¡¯ì´ ì±„ì›Œì¡ŒëŠ”ì§€ ê²€ì‚¬
         bool allFilled = true;
         foreach (var filled in filledSlots)
         {
@@ -66,7 +66,7 @@ public class Laundry : Mission
     }
 
     /// <summary>
-    /// ÇöÀç±îÁö Ã¤¿öÁø ½½·Ô °³¼ö¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+    /// í˜„ì¬ê¹Œì§€ ì±„ì›Œì§„ ìŠ¬ë¡¯ ê°œìˆ˜ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
     public int GetFilledCount()
     {
@@ -77,14 +77,14 @@ public class Laundry : Mission
     }
 
     /// <summary>
-    /// ÀÌ ¹Ì¼ÇÀÌ ¿ä±¸ÇÏ´Â »¡·¡ ÇÁ¸®ÆÕ ¼ø¼­ ¸®½ºÆ®¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+    /// ì´ ë¯¸ì…˜ì´ ìš”êµ¬í•˜ëŠ” ë¹¨ë˜ í”„ë¦¬íŒ¹ ìˆœì„œ ë¦¬ìŠ¤íŠ¸ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
     public List<GameObject> GetorderPrefabs()
     {
         return new List<GameObject>(orderPrefabs);
     }
 
-    // Fisher?Yates ·£´ı ¼ÅÇÃ
+    // Fisher?Yates ëœë¤ ì…”í”Œ
     private void Shuffle<T>(List<T> list)
     {
         var rng = new System.Random();

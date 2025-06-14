@@ -1698,6 +1698,7 @@ GameObject:
   - component: {fileID: 788159572}
   - component: {fileID: 788159571}
   - component: {fileID: 788159575}
+  - component: {fileID: 788159576}
   m_Layer: 5
   m_Name: CharacterInfoCanvas
   m_TagString: Untagged
@@ -1805,6 +1806,28 @@ MonoBehaviour:
   playerName: {fileID: 509913863}
   playerLevel: {fileID: 821887787}
   playerGold: {fileID: 36911871}
+--- !u!114 &788159576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788159570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &821887784
 GameObject:
   m_ObjectHideFlags: 0
@@ -3090,7 +3113,6 @@ GameObject:
   - component: {fileID: 1272852709}
   - component: {fileID: 1272852711}
   - component: {fileID: 1272852710}
-  - component: {fileID: 1272852712}
   m_Layer: 5
   m_Name: PlayerPanel
   m_TagString: Untagged
@@ -3160,30 +3182,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1272852708}
   m_CullTransparentMesh: 1
---- !u!114 &1272852712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1272852708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 414791d480f249a4186ad9629630ed66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerSeq: 0
-  PlayerID: 
-  Nickname: 
-  PlayerLevel: 0
-  PlayerExp: 0
-  PlayerGold: 0
-  SpriteData: 
-  IsDead: 0
-  Role: 0
-  Transform: {fileID: 0}
-  GameObject: {fileID: 0}
-  IsLocalPlayer: 0
 --- !u!1 &1317014802
 GameObject:
   m_ObjectHideFlags: 0
@@ -5524,6 +5522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b957e74dfe2482f4ebefe117ae755614, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  missionManager: {fileID: 3957928659897937936, guid: f27f44e3433dc1249a236c5edc42fcb2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class LaundryUI : MonoBehaviour, IMissionUI
 {
-    [Header("Á¤´äÁö")]
+    [Header("ì •ë‹µì§€")]
     [SerializeField] private List<Transform> referenceSlots;
-    [Header("»¡·¡Áı°Ô")]
+    [Header("ë¹¨ë˜ì§‘ê²Œ")]
     [SerializeField] private List<Transform> clampSlots;
-    [Header("¿Ê´õ¹Ì")]
+    [Header("ì˜·ë”ë¯¸")]
     [SerializeField] private GameObject dragClothPrefab;
-    [Header("µå·¡±× ¿µ¿ª")]
+    [Header("ë“œë˜ê·¸ ì˜ì—­")]
     [SerializeField] private RectTransform dragArea;
 
     private Laundry mission;
@@ -55,23 +55,23 @@ public class LaundryUI : MonoBehaviour, IMissionUI
             Destroy(dragArea.GetChild(i).gameObject);
         }
 
-        //´ä¾ÈÁö
+        //ë‹µì•ˆì§€
         var order = mission.GetorderPrefabs();
         for (int i = 0; i < referenceSlots.Count && i < order.Count; i++)
         {
             Instantiate(order[i], referenceSlots[i].position, Quaternion.identity, referenceSlots[i]);
         }
 
-        //»¡·¡Áı°Ôµé
+        //ë¹¨ë˜ì§‘ê²Œë“¤
         for (int i = 0; i < clampSlots.Count && i < order.Count; i++)
         {
             var zone = clampSlots[i].GetComponent<DropZone>();
-            zone.Initialize(mission, playerId, dragArea, this);  // dragArea Ãß°¡
-                                                           // ½Ã°¢È­ »öÀº ¹İÅõ¸íÀ¸·Î ¹Ù²ã µÎ¼¼¿ä
+            zone.Initialize(mission, playerId, dragArea, this);  // dragArea ì¶”ê°€
+                                                           // ì‹œê°í™” ìƒ‰ì€ ë°˜íˆ¬ëª…ìœ¼ë¡œ ë°”ê¿” ë‘ì„¸ìš”
             clampSlots[i].GetComponent<Image>().color = new Color(1, 1, 1, 0.2f);
         }
 
-        // ¿À¸¥ÂÊ µå·¡±× ¾ÆÀÌÄÜ »ı¼º
+        // ì˜¤ë¥¸ìª½ ë“œë˜ê·¸ ì•„ì´ì½˜ ìƒì„±
         var allPrefabs = Resources.LoadAll<GameObject>("ClothPrefabs");
         foreach (var prefab in allPrefabs)
         {
@@ -79,42 +79,42 @@ public class LaundryUI : MonoBehaviour, IMissionUI
             var drag = iconGO.GetComponent<DragCloth>();
             drag.clothPrefab = prefab;
 
-            // --- ½ºÇÁ¶óÀÌÆ® °¡Á®¿À´Â ·ÎÁ÷ º¸°­ ---
+            // --- ìŠ¤í”„ë¼ì´íŠ¸ ê°€ì ¸ì˜¤ëŠ” ë¡œì§ ë³´ê°• ---
             Sprite sprite = null;
-            // 1) ¸ÕÀú SpriteRenderer Ã£¾Æº¸±â
+            // 1) ë¨¼ì € SpriteRenderer ì°¾ì•„ë³´ê¸°
             var sr = prefab.GetComponent<SpriteRenderer>();
             if (sr != null)
                 sprite = sr.sprite;
             else
             {
-                // 2) ÀÚ½Ä¿¡ ÀÖÀ» ¼öµµ ÀÖÀ¸´Ï InChildrenÀ¸·Î
+                // 2) ìì‹ì— ìˆì„ ìˆ˜ë„ ìˆìœ¼ë‹ˆ InChildrenìœ¼ë¡œ
                 sr = prefab.GetComponentInChildren<SpriteRenderer>();
                 if (sr != null)
                     sprite = sr.sprite;
                 else
                 {
-                    // 3) UI Image¿¡ µé¾îÀÖ´Ù¸é
+                    // 3) UI Imageì— ë“¤ì–´ìˆë‹¤ë©´
                     var img = prefab.GetComponent<Image>();
                     if (img != null)
                         sprite = img.sprite;
                 }
             }
 
-            // 4) ÃÖÁ¾ ÇÒ´ç
+            // 4) ìµœì¢… í• ë‹¹
             var uiImage = iconGO.GetComponent<Image>();
             if (sprite != null)
                 uiImage.sprite = sprite;
             else
-                Debug.LogWarning($"[{prefab.name}]¿¡¼­ Sprite¸¦ ¸ø Ã£¾Ò½À´Ï´Ù.");
+                Debug.LogWarning($"[{prefab.name}]ì—ì„œ Spriteë¥¼ ëª» ì°¾ì•˜ìŠµë‹ˆë‹¤.");
         }
     }
 
     public void Show(Mission missionBase, string playerId)
     {
-        // Mission Å¸ÀÔ È®ÀÎ
+        // Mission íƒ€ì… í™•ì¸
         if (missionBase is Laundry laundry)
         {
-            Debug.Log(">> MissionCollider.Show È£Ãâ");
+            Debug.Log(">> MissionCollider.Show í˜¸ì¶œ");
             gameObject.SetActive(true);
             Initialize(laundry, playerId);
         }

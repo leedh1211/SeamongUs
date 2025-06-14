@@ -8,11 +8,11 @@ public class DragCloth : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     private CanvasGroup group;
     private Canvas canvas;
 
-    // µå·¡±× ½ÃÀÛ ½ÃÀÇ ºÎ¸ğ(DragArea)¿Í ·ÎÄÃ À§Ä¡ ÀúÀå
+    // ë“œë˜ê·¸ ì‹œì‘ ì‹œì˜ ë¶€ëª¨(DragArea)ì™€ ë¡œì»¬ ìœ„ì¹˜ ì €ì¥
     private RectTransform originalParent;
     private Vector2 originalAnchoredPos;
 
-    // ¸¶¿ì½º Å¬¸¯ À§Ä¡¿Í rect Áß½É °£ ¿ÀÇÁ¼Â
+    // ë§ˆìš°ìŠ¤ í´ë¦­ ìœ„ì¹˜ì™€ rect ì¤‘ì‹¬ ê°„ ì˜¤í”„ì…‹
     private Vector2 pointerOffset;
 
     void Awake()
@@ -24,15 +24,15 @@ public class DragCloth : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // 1) Åõ¸íµµ ³·Ãß°í Raycast Â÷´Ü
+        // 1) íˆ¬ëª…ë„ ë‚®ì¶”ê³  Raycast ì°¨ë‹¨
         group.alpha = 0.6f;
         group.blocksRaycasts = false;
 
-        // 2) ½ÃÀÛ ºÎ¸ğ¡¤À§Ä¡ ÀúÀå
+        // 2) ì‹œì‘ ë¶€ëª¨Â·ìœ„ì¹˜ ì €ì¥
         originalParent = rect.parent as RectTransform;
         originalAnchoredPos = rect.anchoredPosition;
 
-        // 3) Å¬¸¯ ÁöÁ¡°ú rect Áß½É °£ ¿ÀÇÁ¼Â °è»ê
+        // 3) í´ë¦­ ì§€ì ê³¼ rect ì¤‘ì‹¬ ê°„ ì˜¤í”„ì…‹ ê³„ì‚°
         Vector2 localPointerPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvas.transform as RectTransform,
@@ -44,7 +44,7 @@ public class DragCloth : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnDrag(PointerEventData eventData)
     {
-        // 1) ¸¶¿ì½º À§Ä¡¸¦ Äµ¹ö½º ·ÎÄÃ ÁÂÇ¥·Î
+        // 1) ë§ˆìš°ìŠ¤ ìœ„ì¹˜ë¥¼ ìº”ë²„ìŠ¤ ë¡œì»¬ ì¢Œí‘œë¡œ
         Vector2 localPointerPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvas.transform as RectTransform,
@@ -52,24 +52,24 @@ public class DragCloth : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             canvas.worldCamera,
             out localPointerPos);
 
-        // 2) ¿ÀÇÁ¼Â º¸Á¤ÇØ¼­ ÀÌ¹ÌÁö ºÙÀÌ±â
+        // 2) ì˜¤í”„ì…‹ ë³´ì •í•´ì„œ ì´ë¯¸ì§€ ë¶™ì´ê¸°
         rect.anchoredPosition = localPointerPos - pointerOffset;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // 1) ºÒÅõ¸í º¹±Í, Raycast ÀçÇã¿ë
+        // 1) ë¶ˆíˆ¬ëª… ë³µê·€, Raycast ì¬í—ˆìš©
         group.alpha = 1f;
         group.blocksRaycasts = true;
 
-        // 2) µå·ÓµÈ ºÎ¸ğ°¡ DropZoneÀÌ ¾Æ´Ï¶ó¸é ¿øÀ§Ä¡·Î º¹±Í
+        // 2) ë“œë¡­ëœ ë¶€ëª¨ê°€ DropZoneì´ ì•„ë‹ˆë¼ë©´ ì›ìœ„ì¹˜ë¡œ ë³µê·€
         bool droppedOnZone = rect.parent.GetComponent<DropZone>() != null;
         if (!droppedOnZone)
         {
             rect.SetParent(originalParent, worldPositionStays: false);
             rect.anchoredPosition = originalAnchoredPos;
         }
-        // ¸¸¾à DropZone ÂÊ¿¡¼­ ¼º°øÀûÀ¸·Î ºÎ¸ğ º¯°æÇß´Ù¸é,
-        // ±×´ë·Î ±× À§Ä¡¿¡ °íÁ¤µË´Ï´Ù.
+        // ë§Œì•½ DropZone ìª½ì—ì„œ ì„±ê³µì ìœ¼ë¡œ ë¶€ëª¨ ë³€ê²½í–ˆë‹¤ë©´,
+        // ê·¸ëŒ€ë¡œ ê·¸ ìœ„ì¹˜ì— ê³ ì •ë©ë‹ˆë‹¤.
     }
 }

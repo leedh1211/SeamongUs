@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using _02_Scripts.Alert;
+using Photon.Pun;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum GameState { 
-    Lobby, 
+    Lobby,
+    WaitingRoom,
     RoleAssignment, 
     Playing, 
     Meeting, 
@@ -11,16 +15,64 @@ public enum GameState {
     Result 
 }
 
+public enum EndGameCategory
+{
+    CitizensWin,
+    ImpostorsWin
+}
+
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private GameObject missionManager;
     public static GameManager Instance { get; private set; }
-
     public GameState CurrentState { get; private set; }
-
+    
     void Awake()
     {
         Instance = this;
         CurrentState = GameState.Lobby;
+        DontDestroyOnLoad(this);
+    }
+    
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GameScene" && PhotonNetwork.IsMasterClient)
+        {
+            Debug.Log("[GameManager] GameScene 로드 완료됨. 역할 할당 대기 중...");
+            StartCoroutine(WaitAndAssignRoles());
+        }else if (scene.name == "GameScene")
+        {
+            ChangeState(GameState.Playing);
+        }
+    }
+    
+    private IEnumerator WaitAndAssignRoles()
+    {
+        // RoleManager 인스턴스가 생성될 때까지 대기
+        yield return new WaitUntil(() => RoleManager.Instance != null);
+
+        // 룸 커스텀 프로퍼티에서 임포스터 수 가져오기
+        int impostorCount = 1;
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("ImpostorCount", out object impostorObj))
+        {
+            impostorCount = (int)impostorObj;
+        }
+
+        Debug.Log("[GameManager] 역할 할당 시작");
+        RoleManager.Instance.AssignRoles(impostorCount);
+
+        // 이후 상태 전이
+        ChangeState(GameState.Playing);
     }
 
     void Update()
@@ -33,24 +85,22 @@ public class GameManager : MonoBehaviour
                 // 2. 게임 종료 시
 
                 // 대기 화면 유지, 유저 접속 대기 로직
-                
                 break;
-
+            case GameState.WaitingRoom:
+                // -웨이팅룸에 입장하는 시점
+                // 1. 시작버튼 클릭시까지 대기
+                // 2. 시작버튼 클릭시 -> 임포스터 수, 미션 수와같은 정보를 포톤룸에 저장(포톤 커스텀 프로퍼티)
+                break;
             case GameState.RoleAssignment:
                 // - GameState.RoleAssignment 전환되는 시점
                 // 1. 게임이 시작되었을 시
-
-                //플레이어 역할을 할당하고 게임 시작 로직
-                RoleManager.Instance.AssignRoles();
-
-                ChangeState(GameState.Playing);
                 break;
 
             case GameState.Playing:
                 // - GameState.Playing 전환되는 시점
                 // 1. RoleAssignment(역할 할당) 직후
                 // 2. 투표가 종료된 시점에서 누군가의 승리 조건이 아직 만족되지 않았을 시
-
+                
                 // --- 임포스터 킬 로직---
 
                 // --- 미션 상호작용 로직---
@@ -92,17 +142,56 @@ public class GameManager : MonoBehaviour
     public void ChangeState(GameState newState)
     {
         if (CurrentState == newState) return;
-
+        ActionChangeState(newState);
         CurrentState = newState;
         Debug.Log($"[GameManager] 상태가 {newState}로 변경됨");
     }
 
-    private void CheckGameResult()
+    private void ActionChangeState(GameState newState)
+    {
+        switch (newState)
+        {
+            case GameState.Lobby:
+                break;
+            case GameState.WaitingRoom:
+                PhotonNetwork.LoadLevel("WaitingScene");
+                break;
+            case GameState.RoleAssignment:
+                PhotonNetwork.LoadLevel("GameScene");
+                break;
+            case GameState.Playing:
+                Instantiate(missionManager, Vector3.zero, Quaternion.identity);
+                MissionManager.Instance.Init();
+                break;
+            case GameState.Meeting:
+                break;
+            case GameState.Voting:
+                break;
+            case GameState.Result:
+                break;
+        }
+    }
+
+    private void CheckGameResult() // 이동헌 -> 게임매니저는 스테이트에 관한것만 관리하고, 투표Manager, PlayerManager, ImposterManager쪽에서 승패 결과 판단해서 게임매니저쪽에 EndGame만 호출해주는게 좋아보입니다.
     {
         // 남아있는 임포스터 수와 크루메이트 수를 체크하여 게임 종료 여부 결정
 
         // 미션 완료 여부도 체크할 것
 
         // 해당 메서드는 살해 발생, 혹은 투표 방출 이후에 호출할 것.
+    }
+
+    public void EndGame(EndGameCategory category)
+    {
+        string message = category switch
+        {
+            EndGameCategory.CitizensWin  => "시민이 승리하였습니다.",
+            EndGameCategory.ImpostorsWin => "살인마가 승리하였습니다.",
+            _ => "게임이 종료되었습니다."
+        };
+        // 테스트용
+        AlertUIManager.Instance.OnAlert(message);
+
+        ChangeState(GameState.Result);
     }
 }

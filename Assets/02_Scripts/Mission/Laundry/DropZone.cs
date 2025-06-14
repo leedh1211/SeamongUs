@@ -11,7 +11,7 @@ public class DropZone : MonoBehaviour, IDropHandler
     private Laundry mission;
     private string playerId;
     private RectTransform dragArea;
-    private LaundryUI laundryUI;  // UIµµ ¹Ù·Î ´İÀ» ¼ö ÀÖµµ·Ï ÂüÁ¶
+    private LaundryUI laundryUI;  // UIë„ ë°”ë¡œ ë‹«ì„ ìˆ˜ ìˆë„ë¡ ì°¸ì¡°
 
     public void Initialize(Laundry mission, string playerId, RectTransform dragArea, LaundryUI ui)
     {
@@ -26,19 +26,19 @@ public class DropZone : MonoBehaviour, IDropHandler
         var dragCloth = eventData.pointerDrag.GetComponent<DragCloth>();
         if (dragCloth == null || mission == null) return;
 
-        // ÀÌ ½½·Ô¿¡ ¸Â´Â prefab
+        // ì´ ìŠ¬ë¡¯ì— ë§ëŠ” prefab
         var expected = mission.GetorderPrefabs()[slotIndex];
         bool isCorrect = dragCloth.clothPrefab == expected;
 
         if (isCorrect)
         {
-            // ½º³À Ã³¸®
+            // ìŠ¤ëƒ… ì²˜ë¦¬
             dragCloth.rect.SetParent(transform, false);
             dragCloth.rect.localPosition = Vector3.zero;
             //dragCloth.rect.anchoredPosition = Vector2.zero;
             dragCloth.enabled = false;
 
-            // ÀÌÁ¦ slotIndex¸¸ Àü´Ş
+            // ì´ì œ slotIndexë§Œ ì „ë‹¬
             (mission as Laundry).MarkSlotFilled(slotIndex);
 
             if (mission.IsCompleted)
@@ -49,7 +49,7 @@ public class DropZone : MonoBehaviour, IDropHandler
         }
         else
         {
-            // ¿À´ä º¹±Í
+            // ì˜¤ë‹µ ë³µê·€
             dragCloth.rect.SetParent(dragArea, false);
             dragCloth.rect.anchoredPosition = Vector2.zero;
         }

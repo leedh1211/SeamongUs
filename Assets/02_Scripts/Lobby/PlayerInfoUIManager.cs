@@ -1,5 +1,7 @@
+using System;
 using _02_Scripts.Login;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,9 +27,19 @@ namespace _02_Scripts.Lobby
 
         private void HandlePlayerInfoChanged(OnPlayerInfoChanged e)
         {
+            ChangeInfo();
+        }
+
+        public void ChangeInfo()
+        {
             playerName.text = LoginSession.loginPlayerInfo.name;
             playerLevel.text = "Lv "+LoginSession.loginPlayerInfo.level;
             playerGold.text = LoginSession.loginPlayerInfo.gold+" G";
+        }
+
+        public void Start()
+        {
+            ChangeInfo();
         }
     }
 }
