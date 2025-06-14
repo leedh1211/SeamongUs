@@ -9,6 +9,8 @@ public static class EventCodes
 {
     public const byte MissionsAssigned = 1;
     public const byte MissionCompleted = 2;
+    public const byte MissionsAssignedCompleted = 3;
+    public const byte MissionCompletedUIRefresh = 4;
 }
 
 public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
@@ -98,6 +100,12 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 new object[] { playerKey, missionID },
                 new RaiseEventOptions { Receivers = ReceiverGroup.All },
                 SendOptions.SendReliable);
+            
+            PhotonNetwork.RaiseEvent(
+                EventCodes.MissionCompletedUIRefresh,
+                new object[] {},
+                new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                SendOptions.SendReliable);
             CheckCrewmateVictory();
         }
     }
@@ -142,19 +150,34 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
                         CheckCrewmateVictory();
                     }
                 }
+                CheckCrewmateVictory();
                 break;
         }
     }
 
     public void CheckCrewmateVictory()
     {
-        foreach (var player in playerMissions)
+        if (GetTotalProgress() < 1f)
+            return;
+        GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
+    }
+    
+    public float GetTotalProgress()
+    {
+        int totalMissions = 0;
+        int totalCompleted = 0;
+
+        foreach (var targetList in playerMissions)
         {
-            if (GetProgress(player.Key) < 1f)
-                return;
+            var missionList = targetList.Value;
+            totalMissions += missionList.Count;
+            totalCompleted += missionList.Count(m => m.IsCompleted);
         }
 
-        GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
+        if (totalMissions == 0)
+            return 0f;
+        
+        return (float)totalCompleted / totalMissions;
     }
 
     public void Init()
@@ -172,7 +195,12 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
             string playerKey = player.ActorNumber.ToString();
             AssignMissions(playerKey, missionCount);
         }
-
+        PhotonNetwork.RaiseEvent(
+            EventCodes.MissionsAssignedCompleted,
+            new object[] {},
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            SendOptions.SendReliable);
+        
         Debug.Log($"각 {missionCount}개의 미션 할당 완료.");
     }
 
