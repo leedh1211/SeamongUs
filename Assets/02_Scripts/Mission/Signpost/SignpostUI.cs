@@ -68,7 +68,6 @@ public class SignpostUI : MonoBehaviour, IMissionUI
         var mission = MissionManager.Instance
             .PlayerMissions[playerId]
             .First(m => m.MissionID == missionID);
-        mission.Complete();
 
         // 서버에 완료 이벤트 전송 및 전체 체크
         MissionManager.Instance.CompleteMission(playerId, missionID);
