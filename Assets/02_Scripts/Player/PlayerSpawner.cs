@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -49,7 +50,32 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         if (playerManager != null)
         {
             playerManager.RegisterPlayer(info);
+            BroadcastPlayerSpawn(player);
         }
+    }
+    
+    private void BroadcastPlayerSpawn(GameObject playerObject)
+    {
+        PhotonView view = playerObject.GetComponent<PhotonView>();
+        if (view == null)
+        {
+            Debug.LogError("PhotonView가 존재하지 않는 오브젝트입니다.");
+            return;
+        }
+
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        int viewID = view.ViewID;
+
+        object[] eventData = new object[] { actorNumber, viewID };
+
+        PhotonNetwork.RaiseEvent(
+            EventCodes.PlayerSpawn,
+            eventData,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            SendOptions.SendReliable
+        );
+
+        Debug.Log($"[PlayerSpawner] RaiseEvent로 PlayerSpawn 전송됨: Actor={actorNumber}, ViewID={viewID}");
     }
 
     private Vector2 GetValidGroundPosition()
