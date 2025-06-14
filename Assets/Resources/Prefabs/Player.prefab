@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2097679388941045810}
   - component: {fileID: 6248981312553392076}
   - component: {fileID: 5767994551227924104}
-  - component: {fileID: 7225986675459966251}
   - component: {fileID: 2161955762769035897}
   - component: {fileID: 1264566479098932612}
   m_Layer: 7
@@ -99,8 +98,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
+  m_Offset: {x: 0, y: -0.4}
+  m_Size: {x: 0.4, y: 0.2}
   m_Direction: 0
 --- !u!114 &6248981312553392076
 MonoBehaviour:
@@ -117,7 +116,6 @@ MonoBehaviour:
   baseMoveSpeed: 5
   jumpHeight: 1
   jumpDuration: 0.4
-  _playerInfo: {fileID: 0}
   interactLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -245,31 +243,6 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerController
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &7225986675459966251
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4490475036587624388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 414791d480f249a4186ad9629630ed66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerSeq: 0
-  PlayerID: 
-  Nickname: 
-  PlayerLevel: 0
-  PlayerExp: 0
-  PlayerGold: 0
-  SpriteData: 
-  IsDead: 0
-  Role: 0
-  Transform: {fileID: 5299610917612844382}
-  GameObject: {fileID: 4490475036587624388}
-  IsLocalPlayer: 1
-  spriteRenderer: {fileID: 0}
 --- !u!114 &2161955762769035897
 MonoBehaviour:
   m_ObjectHideFlags: 0
