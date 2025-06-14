@@ -176,7 +176,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        int missionCount = 1;
+        int missionCount = 4;
         if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("MissionCount", out object missionCountObj))
         {
             missionCount = (int)missionCountObj;
