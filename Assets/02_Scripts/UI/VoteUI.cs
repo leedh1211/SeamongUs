@@ -20,8 +20,8 @@ public class VoteUI : MonoBehaviour
     private void OnDisable()
     {
         // 다음에 켜질 때 UI 초기화
-        foreach (Transform transform in contentParent)
-            Destroy(transform.gameObject);
+        foreach (var slot in contentParent.GetComponentsInChildren<VoteUISlot>())
+            slot.gameObject.SetActive(false);
     }
 
     private IEnumerator StartTimer()
@@ -35,19 +35,25 @@ public class VoteUI : MonoBehaviour
         }
     }
 
+    // contentParent에 배치된 자식 슬롯들 사용으로 변경
     private void PopulateSlots()
     {
-        foreach (var player in PhotonNetwork.PlayerList)
-        {
-            var gameObject = Instantiate(slotTemplate, contentParent);
-            gameObject.SetActive(true);
+        var slots = contentParent.GetComponentsInChildren<VoteUISlot>(includeInactive: true);
+        var players = Photon.Pun.PhotonNetwork.PlayerList;
+        int count = Mathf.Min(slots.Length, players.Length);
 
-            var slot = gameObject.GetComponent<VoteUISlot>();
+        for (int i = 0; i < count; i++)
+        {
+            var slot = slots[i];
+            slot.gameObject.SetActive(true);
+
+            var player = players[i];
+
             slot.Init
                 (
-                    player.ActorNumber.ToString(),
-                    player.NickName,
-                    PhotonNetwork.LocalPlayer.ActorNumber.ToString()
+                player.ActorNumber.ToString(), // 플레이어 ID
+                player.NickName, // 플레이어 이름
+                Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber.ToString() // 로컬 플레이어 ID
                 );
         }
     }
