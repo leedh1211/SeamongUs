@@ -22,18 +22,6 @@ public class PlayerUIManager : MonoBehaviour
     {
         Instance = this;
     }
-
-    public void RegisterPlayerInventory(int actorNumber, UIInventory inventory)
-    {
-        playerInventories[actorNumber] = inventory;
-    }
-
-    public UIInventory GetInventoryByActorNumber(int actorNumber)
-    {
-        playerInventories.TryGetValue(actorNumber, out var inventory);
-        return inventory;
-    }
-
     public void Init()
     {
         int role = 0;

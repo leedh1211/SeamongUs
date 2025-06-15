@@ -5,31 +5,48 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviourPunCallbacks
 {
-    // 플레이어 ActorNumber 별 인벤토리 저장
+    // 상태 저장: 플레이어 ActorNumber별로 아이템 ID 목록 보관
     private Dictionary<int, List<int>> playerInventories = new();
 
-    public void AddItemToPlayer(int actorNumber, int itemId)
+    // MasterClient가 호출: 아이템 추가 요청 처리
+    [PunRPC]
+    public void RPC_RequestAddItem(int actorNumber, int itemId)
+    {
+        Debug.Log($"[Master] 플레이어 {actorNumber}에게 아이템 {itemId} 추가 요청 받음");
+
+        // 상태 업데이트
+        AddItemToPlayer(actorNumber, itemId);
+    }
+
+    // MasterClient 내부 함수: 상태만 관리, UI는 아님
+    private void AddItemToPlayer(int actorNumber, int itemId)
     {
         if (!playerInventories.ContainsKey(actorNumber))
             playerInventories[actorNumber] = new List<int>();
 
         playerInventories[actorNumber].Add(itemId);
 
-        // 해당 플레이어에게 인벤토리 갱신 RPC 호출
-        Player player = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
+        // 대상 플레이어 객체 찾기
+        Player player = PhotonNetwork.CurrentRoom?.GetPlayer(actorNumber);
         if (player != null)
         {
+            // 그 플레이어에게만 해당 아이템 갱신 요청
             photonView.RPC(nameof(RPC_UpdateInventory), player, itemId);
+        }
+        else
+        {
+            Debug.LogWarning($"[Master] ActorNumber {actorNumber}에 해당하는 플레이어를 찾을 수 없습니다.");
         }
     }
 
+    // 클라이언트에서만 실행되는 함수: UI에 직접 반영
     [PunRPC]
     private void RPC_UpdateInventory(int itemId)
     {
         var item = ItemDatabase.Instance.GetItemById(itemId);
         if (item == null)
         {
-            Debug.LogWarning($"아이템 ID {itemId}를 ItemDatabase에서 찾을 수 없습니다.");
+            Debug.LogWarning($"[Local] 아이템 ID {itemId}를 ItemDatabase에서 찾을 수 없습니다.");
             return;
         }
 
@@ -37,58 +54,15 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         if (uiInventory != null)
         {
             uiInventory.AddItem(item);
+            Debug.Log($"[Local] 아이템 '{item.itemName}' 인벤토리에 추가 완료");
         }
         else
         {
-            Debug.LogWarning("UIInventory를 찾을 수 없습니다.");
+            Debug.LogWarning("[Local] UIInventory 컴포넌트를 찾을 수 없습니다.");
         }
     }
-
-    // 플레이어가 아이템 획득 요청 RPC (DropItem에서 호출)
-    [PunRPC]
-    public void RPC_RequestAddItem(int actorNumber, int itemId)
+    public List<int> GetInventoryByActorNumber(int actorNumber)
     {
-        Debug.Log($"MasterClient: 플레이어 {actorNumber}에게 아이템 {itemId} 추가 처리");
-
-        ItemSO item = ItemDatabase.Instance.GetItemById(itemId);
-        if (item == null)
-        {
-            Debug.LogError($"아이템 ID {itemId}에 해당하는 아이템을 찾을 수 없습니다!");
-            return;
-        }
-
-        // 플레이어 오브젝트 찾기
-        GameObject playerGO = FindPlayerByActorNumber(actorNumber);
-        if (playerGO == null)
-        {
-            Debug.LogWarning($"플레이어 {actorNumber}의 게임 오브젝트를 찾을 수 없습니다.");
-            return;
-        }
-
-        UIInventory uiInventory = playerGO.GetComponent<UIInventory>();
-        if (uiInventory == null)
-        {
-            Debug.LogWarning($"플레이어 {actorNumber}에 UIInventory 컴포넌트가 없습니다.");
-            return;
-        }
-
-        // 인벤토리에 아이템 추가
-        uiInventory.AddItem(item);
-
-        Debug.Log($"아이템 '{item.itemName}'이 플레이어 {actorNumber}의 인벤토리에 추가되었습니다.");
-    }
-
-    // 플레이어 오브젝트를 ActorNumber로 찾는 함수
-    private GameObject FindPlayerByActorNumber(int actorNumber)
-    {
-        foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
-        {
-            PhotonView pv = player.GetComponent<PhotonView>();
-            if (pv != null && pv.Owner.ActorNumber == actorNumber)
-            {
-                return player;
-            }
-        }
-        return null;
+        return playerInventories.TryGetValue(actorNumber, out var inventory) ? inventory : new List<int>();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Photon.Pun;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,11 +27,23 @@ public class UIInventory : MonoBehaviour
 
     private InventoryItem selectedInventoryItem = null;
 
+    public static UIInventory Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
     private void Start()
     {
         useButton.onClick.AddListener(OnClickUseButton);
         useButton.interactable = false;
         RefreshUI();
+
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        PlayerItemUIManager.Instance.RegisterInventory(actorNumber, this);
+
     }
 
     public void AddItem(ItemSO item)
