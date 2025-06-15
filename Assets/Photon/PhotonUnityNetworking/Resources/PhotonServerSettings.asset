@@ -45,6 +45,9 @@ MonoBehaviour:
   - ReceiveRole
   - RPC_SpawnCompleted
   - ReceiveChatRPC
+  - RPC_OtherPlayerRemoveItem
+  - RPC_RequestAddItem
+  - RPC_UpdateInventory
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

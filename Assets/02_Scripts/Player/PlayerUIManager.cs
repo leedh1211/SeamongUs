@@ -1,6 +1,7 @@
-
+﻿
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,11 +16,23 @@ public class PlayerUIManager : MonoBehaviour
     private PlayerController player;
     public static PlayerUIManager Instance { get; private set; }
 
+    private Dictionary<int, UIInventory> playerInventories = new();
+
     private void Awake()
     {
         Instance = this;
     }
-    
+
+    public void RegisterPlayerInventory(int actorNumber, UIInventory inventory)
+    {
+        playerInventories[actorNumber] = inventory;
+    }
+
+    public UIInventory GetInventoryByActorNumber(int actorNumber)
+    {
+        playerInventories.TryGetValue(actorNumber, out var inventory);
+        return inventory;
+    }
 
     public void Init()
     {

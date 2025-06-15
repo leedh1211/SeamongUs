@@ -9,22 +9,19 @@ public class InventoryItem
     public ItemSO item;
     public int quantity;
 }
+
 public class UIInventory : MonoBehaviour
 {
-    [Header("인벤토리 아이템 목록")]
     [SerializeField] private List<InventoryItem> items = new();
-    [SerializeField] private Transform slotParent; // 슬롯들을 담을 부모 오브젝트 (Grid Layout이 있는 GameObject)
-    [SerializeField] private GameObject itemSlotPrefab; // 슬롯 프리팹
+    [SerializeField] private Transform slotParent;
+    [SerializeField] private GameObject itemSlotPrefab;
 
-    [Header("UI 요소")]
     [SerializeField] private TextMeshProUGUI itemNameText;
     [SerializeField] private TextMeshProUGUI itemDescText;
     [SerializeField] private Button useButton;
 
-    [Header("필요 참조")]
     [SerializeField] private ItemEffectHandler effectHandler;
 
-    [Header("슬롯 UI들")]
     [SerializeField] private List<ItemSlot> itemSlots = new();
 
     private InventoryItem selectedInventoryItem = null;
@@ -38,7 +35,6 @@ public class UIInventory : MonoBehaviour
 
     public void AddItem(ItemSO item)
     {
-        // 이미 존재하면 수량 증가
         InventoryItem existing = FindInventoryItem(item);
         if (existing != null)
         {
@@ -52,61 +48,22 @@ public class UIInventory : MonoBehaviour
         RefreshUI();
     }
 
-    public void SelectItem(InventoryItem inventoryItem)
+    public InventoryItem FindInventoryItem(ItemSO item)
     {
-
-        selectedInventoryItem = inventoryItem;
-        UpdateSelectedItemUI(inventoryItem);
-
-        Debug.Log($"[UIInventory] 아이템 선택됨: {inventoryItem.item.itemName}");
+        return items.Find(x => x.item == item);
     }
 
     private void UpdateSelectedItemUI(InventoryItem inventoryItem)
     {
+        // 예: 이름과 설명 텍스트 UI 갱신
         itemNameText.text = inventoryItem.item.itemName;
         itemDescText.text = GetItemEffectText(inventoryItem.item);
         useButton.interactable = true;
     }
 
-    private void OnClickUseButton()
-    {
-        if (selectedInventoryItem == null || selectedInventoryItem.quantity <= 0)
-        {
-            Debug.LogWarning("[UIInventory] 사용할 아이템이 없습니다.");
-            return;
-        }
-
-        Debug.Log($"[UIInventory] 아이템 사용: {selectedInventoryItem.item.itemName}");
-
-        // 아이템 효과 적용
-        effectHandler.UseItem(selectedInventoryItem.item);
-
-        // 수량 1 감소
-        selectedInventoryItem.quantity--;
-
-        // 수량이 0이면 인벤토리에서 제거
-        if (selectedInventoryItem.quantity <= 0)
-        {
-            items.Remove(selectedInventoryItem);
-            DeselectItem();
-        }
-
-        // UI 갱신
-        RefreshUI();
-    }
-
-    public void DeselectItem()
-    {
-        selectedInventoryItem = null;
-        itemNameText.text = "";
-        itemDescText.text = "";
-        useButton.interactable = false;
-
-        Debug.Log("[UIInventory] 아이템 선택 해제됨");
-    }
-
     private string GetItemEffectText(ItemSO item)
     {
+        // effectType에 따른 설명 리턴 (예시)
         return item.effectType switch
         {
             ItemEffectType.HealHp => $"체력 {item.effectValue} 회복",
@@ -117,15 +74,21 @@ public class UIInventory : MonoBehaviour
             _ => "알 수 없는 효과"
         };
     }
+    public void SelectItem(InventoryItem inventoryItem)
+    {
+        selectedInventoryItem = inventoryItem;
+        UpdateSelectedItemUI(inventoryItem);
+        Debug.Log($"[UIInventory] 아이템 선택됨: {inventoryItem.item.itemName}");
+    }
+
 
     public void RefreshUI()
     {
-        // 슬롯 부족하면 프리팹으로 추가 생성
         while (itemSlots.Count < items.Count)
         {
             GameObject slotObj = Instantiate(itemSlotPrefab, slotParent);
             ItemSlot newSlot = slotObj.GetComponent<ItemSlot>();
-            newSlot.inventory = this; // 필수: 자기 참조 전달
+            newSlot.inventory = this;
             itemSlots.Add(newSlot);
         }
 
@@ -144,8 +107,27 @@ public class UIInventory : MonoBehaviour
         }
     }
 
-    public InventoryItem FindInventoryItem(ItemSO item)
+    private void OnClickUseButton()
     {
-        return items.Find(x => x.item == item);
+        if (selectedInventoryItem == null || selectedInventoryItem.quantity <= 0)
+            return;
+
+        effectHandler.UseItem(selectedInventoryItem.item);
+
+        selectedInventoryItem.quantity--;
+        if (selectedInventoryItem.quantity <= 0)
+        {
+            items.Remove(selectedInventoryItem);
+            DeselectItem();
+        }
+        RefreshUI();
+    }
+
+    public void DeselectItem()
+    {
+        selectedInventoryItem = null;
+        itemNameText.text = "";
+        itemDescText.text = "";
+        useButton.interactable = false;
     }
 }

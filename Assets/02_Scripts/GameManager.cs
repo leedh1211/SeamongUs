@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
             case GameState.Lobby:
                 break;
             case GameState.WaitingRoom:
-                PhotonNetwork.LoadLevel("WaitingScene");
+                PhotonNetwork.LoadLevel("InventoryGameScene");
                 break;
             case GameState.RoleAssignment:
                 PhotonNetwork.LoadLevel("GameScene");
