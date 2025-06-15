@@ -44,6 +44,28 @@ public class UIInventory : MonoBehaviour
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
         PlayerItemUIManager.Instance.RegisterInventory(actorNumber, this);
 
+        if (effectHandler == null)
+        {
+            effectHandler = FindLocalPlayerEffectHandler();
+            if (effectHandler == null)
+            {
+                Debug.LogError("[UIInventory] 로컬 플레이어의 ItemEffectHandler를 찾을 수 없습니다.");
+            }
+        }
+
+    }
+
+    private ItemEffectHandler FindLocalPlayerEffectHandler()
+    {
+        foreach (var go in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            var view = go.GetComponent<PhotonView>();
+            if (view != null && view.IsMine)
+            {
+                return go.GetComponent<ItemEffectHandler>();
+            }
+        }
+        return null;
     }
 
     public void AddItem(ItemSO item)
