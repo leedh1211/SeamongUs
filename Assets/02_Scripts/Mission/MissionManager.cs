@@ -5,14 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public static class EventCodes
-{
-    public const byte MissionsAssigned = 1;
-    public const byte MissionCompleted = 2;
-    public const byte MissionsAssignedCompleted = 3;
-    public const byte MissionCompletedUIRefresh = 4;
-}
-
 public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static MissionManager Instance { get; private set; }
@@ -184,7 +176,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        int missionCount = 1;
+        int missionCount = 4;
         if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("MissionCount", out object missionCountObj))
         {
             missionCount = (int)missionCountObj;

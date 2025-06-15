@@ -1,10 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviourPun , IPunObservable
+public class PlayerController : MonoBehaviourPun, IPunObservable
 {
     [Header("Movement")]
     [SerializeField] private float baseMoveSpeed = 5f;
@@ -15,7 +17,6 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
     [Header("Jump")]
     [SerializeField] private float jumpHeight = 1f;
     [SerializeField] private float jumpDuration = 0.4f;
-    [SerializeField] private PlayerInfo _playerInfo;
 
     private Vector3 visualDefaultPos;
     private bool jumping;
@@ -35,77 +36,57 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
     public System.Action OnOpenInventory;
 
     [Header("Refs")]
-    [SerializeField] private Transform visual;      // 캐릭터 스프라이트
-    [SerializeField] private Transform shadow;      // 그림자 (선택)
-    [SerializeField] private float lerpSpeed = 10f; // 위치 보간 속도
+    [SerializeField] private Transform visual;
+    [SerializeField] private Transform shadow;
+    [SerializeField] private float lerpSpeed = 10f;
 
     [Header("Ghost Settings")]
-    [SerializeField] private float ghostMoveSpeed = 3f;         // 유령 상태 이동 속도
-    [SerializeField] private float ghostAlpha = 0.5f;       // 스프라이트 투명도
+    [SerializeField] private float ghostMoveSpeed = 3f;
+    [SerializeField] private float ghostAlpha = 0.5f;
     private bool isDead = false;
     private bool isGhost = false;
 
     private static readonly int DieHash = Animator.StringToHash("Die");
     private static readonly int SpeedHash = Animator.StringToHash("currentMoveSpeed");
+    private static readonly int IsJumpingHash = Animator.StringToHash("isJumping");
 
     private Vector3 shadowOriginalScale;
     private Animator animator;
     private Vector3 networkPosition;
+
     [SerializeField] private Transform playerSprite;
-    private static readonly int IsJumpingHash = Animator.StringToHash("isJumping");
+
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();                 // ← 다시 넣기
-        if (rb == null)
-            Debug.LogError("Rigidbody2D 컴포넌트가 없습니다!", this);
-
-        if (visual == null)
-            Debug.LogError("visual 트랜스폼이 할당되지 않았습니다!", this);
-        if (shadow != null)
-            shadowOriginalScale = shadow.localScale;
+        rb = GetComponent<Rigidbody2D>();
         visualDefaultPos = visual.localPosition;
+        shadowOriginalScale = shadow != null ? shadow.localScale : Vector3.one;
         currentMoveSpeed = baseMoveSpeed;
         animator = GetComponentInChildren<Animator>();
-        Debug.Log("Animator loaded from: " + animator.gameObject.name);
-        
-        _playerInfo.currentPlayer = photonView.Owner;
     }
-    
+
     private void Start()
     {
-        if ( SceneManager.GetActiveScene().name == "GameScene" && photonView.IsMine)
+        if (SceneManager.GetActiveScene().name == "GameScene" && photonView.IsMine)
         {
-            Debug.Log("[GameManager] GameScene 로드 완료됨. 미션매니저할당.");
             StartCoroutine(WaitAndRegister());
         }
     }
-    
+
     private IEnumerator WaitAndRegister()
     {
-        Debug.Log("WaitAndRegister 진입");
-        yield return new WaitUntil(() =>
-        {
-            Debug.Log($"MissionManager.Instance 상태: {MissionManager.Instance != null}");
-            return MissionManager.Instance != null;
-        });
-
-        Debug.Log("MissionManager.Instance 등록 시작");
+        yield return new WaitUntil(() => MissionManager.Instance != null);
         MissionManager.Instance.RegisterLocalPlayer(this);
     }
+
     private void FixedUpdate()
     {
         if (!photonView.IsMine)
         {
-            // 1. 일정 거리 이상일 경우 바로 순간이동 (패킷 손실 or 위치 차이 큼)
             if (Vector3.Distance(transform.position, networkPosition) > 2f)
-            {
                 transform.position = networkPosition;
-            }
             else
-            {
-                // 2. 부드럽게 보간 이동
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.fixedDeltaTime * lerpSpeed);
-            }
         }
         else
         {
@@ -113,33 +94,23 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
         }
     }
 
-    // 플레이어 이동 처리 ─ 고스트/일반 구분
     private void HandleMovement()
     {
-        if (isGhost)          
+        if (isGhost)
         {
-            // 고스트 전용 이동 (Transform 직접 이동)
-            Vector2 movement = moveInput * ghostMoveSpeed;
-            transform.position += (Vector3)movement * Time.fixedDeltaTime;
-
-            
+            transform.position += (Vector3)(moveInput * ghostMoveSpeed * Time.fixedDeltaTime);
             return;
         }
 
-        // 2) 일반 상태
-        Vector2 movementNormal = moveInput * currentMoveSpeed;
-        rb.velocity = movementNormal;
+        rb.velocity = moveInput * currentMoveSpeed;
+        animator.SetFloat(SpeedHash, rb.velocity.magnitude);
 
-        animator.SetFloat("currentMoveSpeed", rb.velocity.magnitude);
-
-        // 이동 방향에 따른 FlipX (점프 중엔 유지)
         if (!jumping && moveInput.x != 0 && playerSprite != null)
         {
             var sr = playerSprite.GetComponent<SpriteRenderer>();
             if (sr != null) sr.flipX = moveInput.x < 0;
         }
     }
-
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -150,118 +121,109 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
     {
         if (context.performed)
         {
-            Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
-            if (target != null)
-            {
-                Debug.Log("미션 상호작용 시도");
-                OnInteract?.Invoke();
-            }
+            OnInteractAction();
         }
+    }
+
+    public void OnInteractAction()
+    {
+        Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
+        if (target != null) OnInteract?.Invoke();
     }
 
     public void OnKillInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (photonView.IsMine && context.performed)
         {
-            Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
-            if (target != null)
-            {
-                Debug.Log("킬 시도");
-                OnKill?.Invoke();
-            }
+            TryKill();
+        }
+    }
+
+    public void TryKill()
+    {
+        if (photonView.gameObject.TryGetComponent<ImposterController>(out ImposterController imposter))
+        {
+            imposter.TryKill();    
+        }
+        else
+        {
+            Debug.Log("This Object is Not Imposter");
         }
     }
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (photonView.IsMine && ctx.performed)
         {
-            Debug.Log("점프 시도됨");
-            StartCoroutine(JumpCoroutine());
+            PhotonNetwork.RaiseEvent(
+                EventCodes.PlayerJump,
+                new object[] { PhotonNetwork.LocalPlayer.ActorNumber },
+                new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                SendOptions.SendReliable);
         }
     }
 
-
     private bool IsJumpableAhead()
     {
-        // 탑뷰니까 “앞”은 moveInput 방향.
         if (moveInput == Vector2.zero) return false;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position,
-                                             moveInput.normalized,
-                                             0.6f,    // 거리
-                                             jumpableLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, moveInput.normalized, 0.6f, jumpableLayer);
         return hit.collider != null;
     }
 
-    private System.Collections.IEnumerator JumpCoroutine()
+    public IEnumerator JumpCoroutine()
     {
         jumping = true;
         animator.SetBool(IsJumpingHash, true);
         float half = jumpDuration * 0.5f;
         float t = 0;
 
-        // 상승
         while (t < half)
         {
             t += Time.deltaTime;
             float h = Mathf.Lerp(0, jumpHeight, t / half);
             visual.localPosition = visualDefaultPos + Vector3.up * h;
-            if (shadow)
-            {
+            if (shadow != null)
                 shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
-            }
-
             yield return null;
         }
-        jumping = false;
 
+        jumping = false;
         animator.SetBool(IsJumpingHash, false);
 
-        // 하강
         t = 0;
         while (t < half)
         {
             t += Time.deltaTime;
             float h = Mathf.Lerp(jumpHeight, 0, t / half);
             visual.localPosition = visualDefaultPos + Vector3.up * h;
-            if (shadow)
-            {
+            if (shadow != null)
                 shadow.localScale = Vector3.Lerp(shadowOriginalScale, shadowOriginalScale * 0.8f, t / half);
-            }
-
             yield return null;
         }
 
         visual.localPosition = visualDefaultPos;
-        if (shadow) shadow.localScale = shadowOriginalScale;
+        if (shadow != null) shadow.localScale = shadowOriginalScale;
     }
-
 
     public void OnInventoryInput(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            Debug.Log("인벤토리 열기");
             OnOpenInventory?.Invoke();
         }
     }
 
-
     public void ModifySpeed(float amount)
     {
         currentMoveSpeed += amount;
-        currentMoveSpeed = Mathf.Max(0f, currentMoveSpeed); // 음수 방지
-
-        Debug.Log($"[Speed] 이동속도 변경됨: {currentMoveSpeed}");
+        currentMoveSpeed = Mathf.Max(0f, currentMoveSpeed);
     }
 
-    // 선택적으로 초기화용 메서드
     public void ResetSpeed()
     {
         currentMoveSpeed = baseMoveSpeed;
     }
 
-    
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
@@ -274,44 +236,58 @@ public class PlayerController : MonoBehaviourPun , IPunObservable
         }
     }
 
+    public void OnReportInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            OnReportAction();
+        }
+    }
+
+    public void OnReportAction()
+    {
+        VoteManager.Instance.StartVotingPhase(OnVotingEnd);
+    }
+    
+    private void OnVotingEnd()
+    {
+        foreach (var player in VoteManager.Instance.VoteResults)
+        {
+            // 플레이어에게 투표 결과 전송
+            Debug.Log($"  {player.Key} => {player.Value}");
+        }
+    }
+
     public void Die()
     {
-        if (isDead) return;               //  두 번 호출 금지
+        if (isDead) return;
         isDead = true;
 
-        Debug.Log("[StatManager] 플레이어 사망 처리 호출");
-
         if (animator != null)
-            animator.SetTrigger(DieHash); //  사망 애니메이션 재생
+            animator.SetTrigger(DieHash);
 
-        StartCoroutine(DeathSequence());  //  1초 뒤 유령 전환
+        StartCoroutine(DeathSequence());
     }
 
     private IEnumerator DeathSequence()
     {
-        yield return new WaitForSeconds(1f);  // ← 'Player_Dying' 길이에 맞춰 조정
-
-        //  유령(Ghost) 상태로 전환
+        yield return new WaitForSeconds(1f);
         gameObject.layer = LayerMask.NameToLayer("Ghost");
 
-        // 스프라이트 반투명
         if (playerSprite != null)
         {
-            SpriteRenderer sr = playerSprite.GetComponent<SpriteRenderer>();
+            var sr = playerSprite.GetComponent<SpriteRenderer>();
             if (sr != null)
             {
-                Color c = sr.color;
+                var c = sr.color;
                 c.a = ghostAlpha;
                 sr.color = c;
             }
         }
 
-        // Rigidbody 비활성 (Physics 충돌 X)
         if (rb != null)
-            rb.simulated = false;   // 또는 rb.isKinematic = true;
+            rb.simulated = false;
 
         isGhost = true;
     }
-
-
 }

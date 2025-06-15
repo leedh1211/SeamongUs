@@ -109,7 +109,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     }
     bool GetIsReady()
     {
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("IsReady", out object ready))
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object ready))
         {
             Debug.Log($"IsReady for {PhotonNetwork.LocalPlayer.NickName}: {ready}");
             return (bool)ready;
@@ -123,9 +123,9 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                p.CustomProperties.TryGetValue("Nickname", out object playerName);
+                p.CustomProperties.TryGetValue(PlayerPropKey.Nick, out object playerName);
                 Debug.Log($"NickName: {playerName}");
-                if (!p.CustomProperties.TryGetValue("IsReady", out object isReady) || !(isReady is bool ready && ready))
+                if (!p.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object isReady) || !(isReady is bool ready && ready))
                 {
                     if (playerName is string)
                     {
@@ -145,7 +145,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             Debug.Log("All players ready. Starting game...");
             PhotonNetwork.RaiseEvent(
-                eventCode: 100, // 커스텀 코드. 100번 예시
+                eventCode: EventCodes.ChangeState, // 커스텀 코드. 100번 예시
                 eventContent: null,
                 raiseEventOptions: new RaiseEventOptions { Receivers = ReceiverGroup.All },
                 sendOptions: SendOptions.SendReliable
@@ -223,7 +223,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         switch (photonEvent.Code)
         {
-            case 100: // Start Game State 변경 이벤트
+            case EventCodes.ChangeState: // Start Game State 변경 이벤트
                 GameManager.Instance.ChangeState(GameState.RoleAssignment); // 각 클라이언트에서 실행됨
                 break;
         }

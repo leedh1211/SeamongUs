@@ -42,6 +42,9 @@ MonoBehaviour:
   - ReceiveChatMessage
   - SetSprite
   - RPC_ChangeSprite
+  - ReceiveRole
+  - RPC_SpawnCompleted
+  - ReceiveChatRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
