@@ -4,11 +4,13 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class PlayerSpawner : MonoBehaviourPunCallbacks
 {
     [SerializeField] private PlayerManager playerManager;
     public string playerPrefabName = "Prefabs/Player"; // Resources/Prefabs/Player.prefab
+    [SerializeField] private GameObject groundObject;
 
     public Transform fallbackSpawnPoint;
     public LayerMask groundLayer;
@@ -74,35 +76,76 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         Debug.Log($"[PlayerSpawner] RaiseEvent로 PlayerSpawn 전송됨: Actor={actorNumber}, ViewID={viewID}");
     }
 
+    // private Vector2 GetValidGroundPosition()
+    // {
+    //     const float radius = 0.5f;
+    //     const int maxAttempts = 10;
+    //
+    //     if (groundCollider == null)
+    //     {
+    //         return fallbackSpawnPoint != null ? fallbackSpawnPoint.position : Vector2.zero;
+    //     }
+    //
+    //     Bounds bounds = groundCollider.bounds;
+    //
+    //     for (int i = 0; i < maxAttempts; i++)
+    //     {
+    //         float x = Random.Range(bounds.min.x, bounds.max.x);
+    //         float y = Random.Range(bounds.min.y, bounds.max.y);
+    //         Vector2 tryPos = new Vector2(x, y);
+    //
+    //         // 지면 위인지 확인
+    //         if (groundCollider.OverlapPoint(tryPos))
+    //         {
+    //             // 플레이어 겹침 체크
+    //             Collider2D hit = Physics2D.OverlapCircle(tryPos, radius, LayerMask.GetMask("Player"));
+    //             if (hit == null)
+    //             {
+    //                 return tryPos;
+    //             }
+    //         }
+    //     }
+    //     return fallbackSpawnPoint != null ? fallbackSpawnPoint.position : Vector2.zero;
+    // }
+
     private Vector2 GetValidGroundPosition()
     {
-        const float radius = 0.5f;
-        const int maxAttempts = 10;
-
-        if (groundCollider == null)
+        const float searchRadius = 5f;
+        const float playerCheckRadius = 0.5f;
+        const int maxAttempts = 20;
+        
+        if (groundObject == null)
         {
-            return fallbackSpawnPoint != null ? fallbackSpawnPoint.position : Vector2.zero;
+            Debug.LogWarning("GroundLevel 오브젝트를 찾을 수 없습니다.");
+            return Vector2.zero;
         }
 
-        Bounds bounds = groundCollider.bounds;
+        Tilemap tilemap = groundObject.GetComponent<Tilemap>();
+        if (tilemap == null)
+        {
+            Debug.LogWarning("GroundLevel 오브젝트에 Tilemap 컴포넌트가 없습니다.");
+            return Vector2.zero;
+        }
 
         for (int i = 0; i < maxAttempts; i++)
         {
-            float x = Random.Range(bounds.min.x, bounds.max.x);
-            float y = Random.Range(bounds.min.y, bounds.max.y);
-            Vector2 tryPos = new Vector2(x, y);
+            // 1. 0,0 기준으로 반경 5 이내 랜덤 위치
+            Vector2 randomPos = (Vector2)Vector2.zero + Random.insideUnitCircle * searchRadius;
 
-            // 지면 위인지 확인
-            if (groundCollider.OverlapPoint(tryPos))
+            // 2. 해당 위치에 타일이 있는지 확인
+            Vector3Int cellPos = tilemap.WorldToCell(randomPos);
+            if (!tilemap.HasTile(cellPos)) continue;
+
+            // 3. 해당 위치에 다른 플레이어가 겹치는지 확인
+            Collider2D hit = Physics2D.OverlapCircle(randomPos, playerCheckRadius, LayerMask.GetMask("Player"));
+            if (hit == null)
             {
-                // 플레이어 겹침 체크
-                Collider2D hit = Physics2D.OverlapCircle(tryPos, radius, LayerMask.GetMask("Player"));
-                if (hit == null)
-                {
-                    return tryPos;
-                }
+                return randomPos;
             }
         }
-        return fallbackSpawnPoint != null ? fallbackSpawnPoint.position : Vector2.zero;
+
+        Debug.LogWarning("유효한 위치를 찾지 못했습니다. (기본값 반환)");
+        return Vector2.zero; // fallback 위치
     }
+
 }
