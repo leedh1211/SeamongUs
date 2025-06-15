@@ -52,6 +52,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private Vector3 shadowOriginalScale;
     private Animator animator;
     private Vector3 networkPosition;
+    private bool facingLeft;
+    private bool playDance;
 
     [SerializeField] private Transform playerSprite;
 
@@ -106,8 +108,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         if (!jumping && moveInput.x != 0 && playerSprite != null)
         {
-            var sr = playerSprite.GetComponent<SpriteRenderer>();
-            if (sr != null) sr.flipX = moveInput.x < 0;
+            bool nextFacingLeft = moveInput.x < 0;
+            if (nextFacingLeft != facingLeft)
+            {
+                facingLeft = nextFacingLeft;
+                var sr = playerSprite.GetComponent<SpriteRenderer>();
+                if (sr) sr.flipX = facingLeft;          // 내 화면 즉시 반영
+            }
         }
     }
 
@@ -228,10 +235,15 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
+            stream.SendNext(facingLeft);
         }
         else
         {
             networkPosition = (Vector3)stream.ReceiveNext();
+            facingLeft      = (bool)  stream.ReceiveNext();
+            
+            var sr = playerSprite.GetComponent<SpriteRenderer>();
+            if (sr) sr.flipX = facingLeft;
         }
     }
 
@@ -292,4 +304,21 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         
         isGhost = true;
     }
+    public void OnDanceInput(InputAction.CallbackContext ctx)   // Input System에서 G 키와 매핑
+    {
+        if (photonView.IsMine && ctx.performed)
+        {
+            playDance = true;                     // 내 화면 즉시 트리거
+            animator.SetTrigger("Dance");         // Animator에 Dance 트리거
+
+            // 다른 클라이언트에도 알려주기 (간단 RPC)
+            photonView.RPC(nameof(DoDanceRPC), RpcTarget.Others);
+        }
+    }
+
+    [PunRPC] void DoDanceRPC()
+    {
+        animator.SetTrigger("Dance");
+    }
+
 }
