@@ -37,10 +37,10 @@ public class VoteManager : MonoBehaviour
         onVoteEndCallback = onVoteEnd;
 
         // UI 띄우기
-        UIManager.Instance.ShowVotingUI(); // 가상의 UI 매니저, 실제 구현 필요
+        UIManager.Instance.ShowVotingUI();
 
         // 게임 상태 전환
-        GameManager.Instance.ChangeState(GameState.Voting); // 가상의 게임 매니저, 실제 구현 필요
+        GameManager.Instance.ChangeState(GameState.Voting);
 
         // 실제 투표 코루틴 시작
         StartCoroutine(VotingRoutine());
