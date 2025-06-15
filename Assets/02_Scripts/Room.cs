@@ -109,7 +109,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     }
     bool GetIsReady()
     {
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("IsReady", out object ready))
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object ready))
         {
             Debug.Log($"IsReady for {PhotonNetwork.LocalPlayer.NickName}: {ready}");
             return (bool)ready;
@@ -123,9 +123,9 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                p.CustomProperties.TryGetValue("Nickname", out object playerName);
+                p.CustomProperties.TryGetValue(PlayerPropKey.Nick, out object playerName);
                 Debug.Log($"NickName: {playerName}");
-                if (!p.CustomProperties.TryGetValue("IsReady", out object isReady) || !(isReady is bool ready && ready))
+                if (!p.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object isReady) || !(isReady is bool ready && ready))
                 {
                     if (playerName is string)
                     {

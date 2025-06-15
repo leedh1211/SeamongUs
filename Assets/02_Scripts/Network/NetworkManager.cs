@@ -76,21 +76,28 @@ namespace _02_Scripts.Lobby
         public override void OnJoinedRoom()
         {
             Debug.Log("방에 입장했습니다.");
-            Hashtable properties = new Hashtable{
-                { "PlayerSeq", LoginSession.loginPlayerInfo.seq},
-                { "PlayerID", LoginSession.loginPlayerInfo.id},
-                { "Nickname", LoginSession.loginPlayerInfo.name},
-                { "PlayerLevel", LoginSession.loginPlayerInfo.level},
-                { "PlayerGold", LoginSession.loginPlayerInfo.gold},
-                { "SpriteData", ""},
-                { "IsDead", false},
-                { "Role", 0},
+
+            // ① loginPlayerInfo 같은 커스텀 클래스를 통째로 넣지 않는다.
+            // ② Sprite, Color, List 같은 복잡한 타입도 넣지 않는다.
+            // ③ Photon이 기본 지원하는 타입( string, int, bool, byte … )만 넣는다.
+            Hashtable props = new Hashtable
+            {
+                { PlayerPropKey.Seq  , LoginSession.loginPlayerInfo.seq   }, // int
+                { PlayerPropKey.Id   , LoginSession.loginPlayerInfo.id    }, // string
+                { PlayerPropKey.Nick , LoginSession.loginPlayerInfo.name  }, // string
+                { PlayerPropKey.Level, LoginSession.loginPlayerInfo.level }, // int
+                { PlayerPropKey.Gold , LoginSession.loginPlayerInfo.gold  }, // int
+                { PlayerPropKey.Spr  , 0               }, // int (스프라이트 인덱스만)
+                { PlayerPropKey.IsDead , false           }, // bool
+                { PlayerPropKey.Role , (byte)0         },  // byte
+                { PlayerPropKey.IsReady , false         }  // bool
             };
-            
-            PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+
             GameManager.Instance.ChangeState(GameState.WaitingRoom);
-            Debug.Log(PhotonNetwork.LocalPlayer.UserId);
         }
+
         
         public override void OnCreateRoomFailed(short returnCode, string message) // 방 생성실패 콜백
         {

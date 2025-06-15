@@ -4,10 +4,12 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
+using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     private Dictionary<int, GameObject> playerGODict = new Dictionary<int, GameObject>();
+    private HashSet<int> spawnedActorNumbers = new HashSet<int>();
 
     private void OnEnable()
     {
@@ -54,6 +56,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         return playerGODict;
     }
+    
+    public GameObject GetPlayersGO(int actorNumber)
+    {
+        return playerGODict[actorNumber];
+    }
 
     public void KillPlayer(int actorNumber)
     {
@@ -84,15 +91,39 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 {
                     RegisterPlayers((int)data[1], actorNumber);
                 }
-                
+                if (PhotonNetwork.IsMasterClient && SceneManager.GetActiveScene().name == "GameScene")
+                {
+                    if (!spawnedActorNumbers.Contains(actorNumber))
+                    {
+                        spawnedActorNumbers.Add(actorNumber);
+                        Debug.Log($"[PlayerManager] 마스터: {actorNumber} 스폰 완료 감지 ({spawnedActorNumbers.Count}/{PhotonNetwork.CurrentRoom.PlayerCount})");
+
+                        if (spawnedActorNumbers.Count == PhotonNetwork.CurrentRoom.PlayerCount)
+                        {
+                            Debug.Log("[PlayerManager] 모든 플레이어 스폰 완료. 역할 할당 시작.");
+                            int impostorCount = 1;
+                            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("ImpostorCount", out object impostorObj))
+                            {
+                                impostorCount = (int)impostorObj;
+                            }
+
+                            Debug.Log("[GameManager] 역할 할당 시작");
+                            RoleManager.Instance.AssignRoles(impostorCount);
+                        }
+                    }
+                }
                 break;
             case EventCodes.PlayerJump:
                 controller = FindPlayerController(actorNumber);
                 controller.StartCoroutine(controller.JumpCoroutine());
                 break;
-            case EventCodes.PlayerKill:
-                 controller = FindPlayerController(actorNumber);
-                controller.OnKill?.Invoke();
+            case EventCodes.PlayerKill: //임포스터 actorNum = data[0]
+                
+                break;
+            case EventCodes.PlayerDied:
+                controller = FindPlayerController(actorNumber);
+                controller.Die();
+                CheckEndGame();
                 break;
         }
     }
@@ -109,5 +140,36 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public PlayerController FindPlayerController(int actorNumber)
     {
         return playerGODict.TryGetValue(actorNumber, out var go) ? go.GetComponent<PlayerController>() : null;
+    }
+
+    public void CheckEndGame()
+    {
+        int AliveCrewmate = 0;
+        int AliveImposter = 0;
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            player.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object IsDead);
+            if (!(bool)IsDead)
+            {
+                player.CustomProperties.TryGetValue(PlayerPropKey.Role, out object role);
+                if ((int)role == 1)
+                {
+                    AliveCrewmate += 1;
+                }else if ((int)role == 2)
+                {
+                    AliveImposter += 1;
+                }
+            }
+        }
+
+        if (AliveCrewmate <= AliveImposter) // 임포스터 승리
+        {
+            GameManager.Instance.EndGame(EndGameCategory.ImpostorsWin);
+        }
+
+        if (AliveImposter == 0) // 생존자 승리
+        {
+            GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
+        }
     }
 }

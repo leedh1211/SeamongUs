@@ -24,22 +24,22 @@ public class ImposterController : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (!view.IsMine) return;
+    // void Update()
+    // {
+    //     if (!view.IsMine) return;
+    //
+    //     if (Input.GetKeyDown(KeyCode.F))
+    //     {
+    //         TryKill();
+    //     }
+    //
+    //     if (Input.GetKeyDown(KeyCode.R))
+    //     {
+    //         TryReportBody();
+    //     }
+    // }
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            TryKill();
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            TryReportBody();
-        }
-    }
-
-    void TryKill()
+    public void TryKill()
     {
         GameObject targetGO = FindKillablePlayer();
         if (targetGO != null)
@@ -58,15 +58,15 @@ public class ImposterController : MonoBehaviour
         }
     }
 
-    void TryReportBody()
-    {
-        string deadID = DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
-        if (deadID != null)
-        {
-            ReportManager.Instance.ReportBody(localPlayer.ActorNumber.ToString(), deadID);
-            GameManager.Instance.ChangeState(GameState.Meeting);
-        }
-    }
+    // void TryReportBody()
+    // {
+    //     string deadID = DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
+    //     if (deadID != null)
+    //     {
+    //         ReportManager.Instance.ReportBody(localPlayer.ActorNumber.ToString(), deadID);
+    //         GameManager.Instance.ChangeState(GameState.Meeting);
+    //     }
+    // }
 
     GameObject FindKillablePlayer()
     {
@@ -83,9 +83,9 @@ public class ImposterController : MonoBehaviour
                 continue;
 
             // 조건: 크루메이트 + 살아있음
-            if ((int)(otherPlayer.CustomProperties["Role"] ?? 0) != (int)Role.Crewmate)
+            if ((int)(otherPlayer.CustomProperties[PlayerPropKey.Role] ?? 0) != (int)Role.Crewmate)
                 continue;
-            if ((bool)(otherPlayer.CustomProperties["IsDead"] ?? false))
+            if ((bool)(otherPlayer.CustomProperties[PlayerPropKey.IsDead] ?? false))
                 continue;
 
             float dist = Vector3.Distance(transform.position, playerGO.transform.position);
@@ -100,10 +100,16 @@ public class ImposterController : MonoBehaviour
 
     void RaiseKillEvent(int targetActorNumber)
     {
-        object[] content = new object[] { localPlayer.ActorNumber, targetActorNumber };
+        object[] content = new object[] { localPlayer.ActorNumber };
         PhotonNetwork.RaiseEvent(
             EventCodes.PlayerKill,
             content,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            ExitGames.Client.Photon.SendOptions.SendReliable
+        );
+        PhotonNetwork.RaiseEvent(
+            EventCodes.PlayerDied,
+            new object[] { targetActorNumber },
             new RaiseEventOptions { Receivers = ReceiverGroup.All },
             ExitGames.Client.Photon.SendOptions.SendReliable
         );

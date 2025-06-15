@@ -6,72 +6,54 @@ using ExitGames.Client.Photon;
 
 public enum Role { UnManaged = 0, Crewmate = 1, Impostor = 2 }
 
-public class RoleManager : MonoBehaviour
+public class RoleManager : MonoBehaviourPunCallbacks
 {
+    [SerializeField] private PlayerManager playerManager;
     public static RoleManager Instance { get; private set; }
 
-    private Dictionary<int, Role> playerRoles = new Dictionary<int, Role>(); // ActorNumber 기반
-
-    private void Awake()
-    {
-        Instance = this;
-    }
+    private void Awake() => Instance = this;
 
     public void AssignRoles(int impostorCount)
     {
-        Player[] players = PhotonNetwork.PlayerList;
-        Debug.Log($"Assigning roles to {players.Length} players with {impostorCount} impostors.");
-
-        List<Player> shuffled = new List<Player>(players);
+        List<Player> shuffled = new List<Player>(PhotonNetwork.PlayerList);
         Shuffle(shuffled);
-        Debug.Log("Shuffled ActorNumbers: " + string.Join(", ", shuffled.ConvertAll(p => p.ActorNumber.ToString())));
 
         for (int i = 0; i < shuffled.Count; i++)
         {
             Role role = (i < impostorCount) ? Role.Impostor : Role.Crewmate;
-            Player targetPlayer = shuffled[i];
-            int actorNumber = targetPlayer.ActorNumber;
+            Player player = shuffled[i];
+            int actorNumber = player.ActorNumber;
 
-            // 내부 Dictionary에도 저장
-            playerRoles[actorNumber] = role;
-
-            // CustomProperties 설정
-            Hashtable roleProp = new Hashtable
-            {
-                { "Role", (int)role }
-            };
-            if (targetPlayer.IsLocal) // 본인만 Set 가능
-            {
-                PhotonNetwork.LocalPlayer.SetCustomProperties(roleProp);
-            }
-
-            Debug.Log($"Player {actorNumber} assigned to {role}");
+            GetComponent<PhotonView>().RPC(nameof(ReceiveRole), player, (int)role);
         }
     }
 
-    public Role GetRole(Player player)
+    [PunRPC]
+    public void ReceiveRole(int roleInt)
     {
-        if (player.CustomProperties.TryGetValue("Role", out object roleObj))
+        Role role = (Role)roleInt;
+        Debug.Log($"[RoleManager] My Role: {role}");
+
+        if (role == Role.Impostor)
         {
-            return (Role)(int)roleObj;
+            int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+            GameObject myGO = playerManager.GetPlayersGO(actorNumber);
+            if (myGO != null && myGO.GetComponent<ImposterController>() == null)
+                myGO.AddComponent<ImposterController>();
         }
-        return Role.UnManaged;
-    }
 
-    public Role GetRoleByActorNumber(int actorNumber)
-    {
-        Player target = FindPlayerByActorNumber(actorNumber);
-        return target != null ? GetRole(target) : Role.UnManaged;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.Role, roleInt } });
     }
-
-    private Player FindPlayerByActorNumber(int actorNumber)
+    
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
-        foreach (var player in PhotonNetwork.PlayerList)
+        if (targetPlayer.IsLocal && changedProps.ContainsKey(PlayerPropKey.Role))
         {
-            if (player.ActorNumber == actorNumber)
-                return player;
+            int role = (int)changedProps[PlayerPropKey.Role];
+            Debug.Log($"[RoleManager] OnPlayerPropertiesUpdate 호출됨: {role}");
+            PlayerUIManager.Instance.Init(); // 여기서 정확히 반영됨
+            GameManager.Instance.ChangeState(GameState.Playing);
         }
-        return null;
     }
 
     private void Shuffle(List<Player> list)

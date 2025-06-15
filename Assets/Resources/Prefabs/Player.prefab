@@ -238,6 +238,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 851bc1f2-e3d0-409b-b5b8-23375a4d5849
     m_ActionName: PlayerController/Inventory[/Keyboard/tab]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6248981312553392076}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnReportInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9716fd14-9773-4792-af3c-e2b10612b8bd
+    m_ActionName: PlayerController/Report[/Keyboard/r]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerController
@@ -264,6 +280,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 6248981312553392076}
   - {fileID: 1264566479098932612}
+  - {fileID: 4505400380270857614}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -294,6 +311,7 @@ GameObject:
   - component: {fileID: 6850340908535943482}
   - component: {fileID: 1135091042394323237}
   - component: {fileID: 2081370829006013961}
+  - component: {fileID: 4505400380270857614}
   m_Layer: 7
   m_Name: PlayerSprite
   m_TagString: Untagged
@@ -389,6 +407,33 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4505400380270857614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774900609748690274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 9
+    SynchronizeType: 0
+    Name: Die
+  - Type: 1
+    SynchronizeType: 0
+    Name: currentMoveSpeed
+  - Type: 4
+    SynchronizeType: 0
+    Name: isJumping
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0
 --- !u!1 &6731800407148404691
 GameObject:
   m_ObjectHideFlags: 0
