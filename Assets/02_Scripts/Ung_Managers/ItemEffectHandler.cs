@@ -6,6 +6,15 @@ public class ItemEffectHandler : MonoBehaviour
     [SerializeField] private StatManager statManager;
     [SerializeField] private BuffManager buffManager;
 
+    private void Awake()
+    {
+        if (statManager == null)
+            statManager = GetComponent<StatManager>() ?? GetComponentInParent<StatManager>();
+
+        if (buffManager == null)
+            buffManager = GetComponent<BuffManager>() ?? GetComponentInParent<BuffManager>();
+    }
+
     public void UseItem(ItemSO item)
     {
         switch (item.effectType)
