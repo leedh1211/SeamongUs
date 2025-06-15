@@ -98,7 +98,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                         spawnedActorNumbers.Add(actorNumber);
                         Debug.Log($"[PlayerManager] 마스터: {actorNumber} 스폰 완료 감지 ({spawnedActorNumbers.Count}/{PhotonNetwork.CurrentRoom.PlayerCount})");
 
-                        if (spawnedActorNumbers.Count == PhotonNetwork.CurrentRoom.PlayerCount)
+                        if (spawnedActorNumbers.Count == PhotonNetwork.CurrentRoom.PlayerCount &&
+                            PhotonNetwork.PlayerList.All(p => playerGODict.ContainsKey(p.ActorNumber)))
                         {
                             Debug.Log("[PlayerManager] 모든 플레이어 스폰 완료. 역할 할당 시작.");
                             int impostorCount = 1;
@@ -108,6 +109,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                             }
 
                             Debug.Log("[GameManager] 역할 할당 시작");
+                            
                             RoleManager.Instance.AssignRoles(impostorCount);
                         }
                     }
@@ -124,6 +126,19 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 controller = FindPlayerController(actorNumber);
                 controller.Die();
                 CheckEndGame();
+                break;
+            case EventCodes.VoteResult:
+                int targetActor = (int)photonEvent.CustomData;
+                if (targetActor != -1)
+                {
+                    var player = FindPlayerController(targetActor);
+                    player.Die();
+                }
+                // 투표결과 팝업 출력
+                UIManager.Instance.ShowVoteResultPopup(targetActor, () =>
+                {
+                    GameManager.Instance.ChangeState(GameState.Playing);
+                });
                 break;
         }
     }

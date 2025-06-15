@@ -13,15 +13,14 @@ public class ReportManager : MonoBehaviour
     {
         Instance = this;
     }
-
-    [ContextMenu("리포트 바디")]
-    public void ReportBody(int deadPlayerActNum = 1)
+    
+    public void ReportBody(int deadPlayerActNum)
     {
         int playerID = PhotonNetwork.LocalPlayer.ActorNumber;
         List<DeadBody> deadBodyList = DeadBodyManager.Instance.GetDeadBodies();
         DeadBody deadBody = DeadBodyManager.Instance.GetDeadBody(deadPlayerActNum);
-        int findPeopleActorNum = deadBody.PlayerActorNumber;
-        
+        int findPeopleActorNum = deadBody.PlayerActorNumber; // 시체의 주인 PlayerActorNumber
+        DeadBodyManager.Instance.RemoveAllDeadBody(); // 시체 삭제
         object[] eventData = new object[] {findPeopleActorNum};
         PhotonNetwork.RaiseEvent(
             EventCodes.PlayerReport,
