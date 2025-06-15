@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
+using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -90,7 +91,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 {
                     RegisterPlayers((int)data[1], actorNumber);
                 }
-                if (PhotonNetwork.IsMasterClient)
+                if (PhotonNetwork.IsMasterClient && SceneManager.GetActiveScene().name == "GameScene")
                 {
                     if (!spawnedActorNumbers.Contains(actorNumber))
                     {
