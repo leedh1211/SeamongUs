@@ -121,26 +121,35 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (context.performed)
         {
-            Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
-            if (target != null) OnInteract?.Invoke();
+            OnInteractAction();
         }
     }
 
-    // public void OnKillInput(InputAction.CallbackContext context)
-    // {
-    //     if (photonView.IsMine && context.performed)
-    //     {
-    //         Collider2D target = Physics2D.OverlapCircle(transform.position, killRange, playerLayer);
-    //         if (target != null)
-    //         {
-    //             PhotonNetwork.RaiseEvent(
-    //                 EventCodes.PlayerKill,
-    //                 new object[] { PhotonNetwork.LocalPlayer.ActorNumber },
-    //                 new RaiseEventOptions { Receivers = ReceiverGroup.All },
-    //                 SendOptions.SendReliable);
-    //         }
-    //     }
-    // }
+    public void OnInteractAction()
+    {
+        Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
+        if (target != null) OnInteract?.Invoke();
+    }
+
+    public void OnKillInput(InputAction.CallbackContext context)
+    {
+        if (photonView.IsMine && context.performed)
+        {
+            TryKill();
+        }
+    }
+
+    public void TryKill()
+    {
+        if (photonView.gameObject.TryGetComponent<ImposterController>(out ImposterController imposter))
+        {
+            imposter.TryKill();    
+        }
+        else
+        {
+            Debug.Log("This Object is Not Imposter");
+        }
+    }
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
     {
@@ -224,6 +233,28 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         else
         {
             networkPosition = (Vector3)stream.ReceiveNext();
+        }
+    }
+
+    public void OnReportInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            OnReportAction();
+        }
+    }
+
+    public void OnReportAction()
+    {
+        VoteManager.Instance.StartVotingPhase(OnVotingEnd);
+    }
+    
+    private void OnVotingEnd()
+    {
+        foreach (var player in VoteManager.Instance.VoteResults)
+        {
+            // 플레이어에게 투표 결과 전송
+            Debug.Log($"  {player.Key} => {player.Value}");
         }
     }
 

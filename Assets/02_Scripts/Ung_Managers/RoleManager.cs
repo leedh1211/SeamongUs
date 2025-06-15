@@ -6,7 +6,7 @@ using ExitGames.Client.Photon;
 
 public enum Role { UnManaged = 0, Crewmate = 1, Impostor = 2 }
 
-public class RoleManager : MonoBehaviour
+public class RoleManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private PlayerManager playerManager;
     public static RoleManager Instance { get; private set; }
@@ -43,7 +43,17 @@ public class RoleManager : MonoBehaviour
         }
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.Role, roleInt } });
-        GameManager.Instance.ChangeState(GameState.Playing);
+    }
+    
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        if (targetPlayer.IsLocal && changedProps.ContainsKey(PlayerPropKey.Role))
+        {
+            int role = (int)changedProps[PlayerPropKey.Role];
+            Debug.Log($"[RoleManager] OnPlayerPropertiesUpdate 호출됨: {role}");
+            PlayerUIManager.Instance.Init(); // 여기서 정확히 반영됨
+            GameManager.Instance.ChangeState(GameState.Playing);
+        }
     }
 
     private void Shuffle(List<Player> list)

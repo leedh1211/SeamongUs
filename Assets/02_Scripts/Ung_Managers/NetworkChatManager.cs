@@ -53,7 +53,7 @@ namespace _02_Scripts.Ung_Managers
         [PunRPC]
         private void ReceiveChatRPC(string message, PhotonMessageInfo info)
         {
-            Player sender = info.Sender; // 보낸 플레이어
+            Photon.Realtime.Player sender = info.Sender; // 보낸 플레이어
             string nickname = sender.NickName; // 닉네임
 
             /* 아바타 스프라이트 인덱스 가져오기  */

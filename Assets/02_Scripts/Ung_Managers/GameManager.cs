@@ -23,7 +23,6 @@ public enum EndGameCategory
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject missionManager;
     public static GameManager Instance { get; private set; }
     public GameState CurrentState { get; private set; }
     
