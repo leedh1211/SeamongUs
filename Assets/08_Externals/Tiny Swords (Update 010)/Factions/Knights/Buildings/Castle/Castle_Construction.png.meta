@@ -380,7 +380,7 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -388,6 +388,27 @@ TextureImporter:
       bones: []
       spriteID: dbd1c6e7aca36364f91f53b1a3ce48b4
       internalID: -406910286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Castle_Construction_11
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 106
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e259a40bceb39ea4a9896db4ebae93ee
+      internalID: 1204220022
       vertices: []
       indices: 
       edges: []
@@ -406,6 +427,7 @@ TextureImporter:
       Castle_Construction_0: 879026285
       Castle_Construction_1: 784634292
       Castle_Construction_10: -406910286
+      Castle_Construction_11: 1204220022
       Castle_Construction_2: -674515953
       Castle_Construction_3: -2091859704
       Castle_Construction_4: -1948086447
