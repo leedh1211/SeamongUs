@@ -36,6 +36,7 @@ namespace _02_Scripts.Mission
             {
                 case EventCodes.MissionsAssignedCompleted:
                     UpdateMissionList();
+                    GameManager.Instance.ChangeState(GameState.Playing);
                     break;
 
                 case EventCodes.MissionCompletedUIRefresh: // UI 전용 트리거

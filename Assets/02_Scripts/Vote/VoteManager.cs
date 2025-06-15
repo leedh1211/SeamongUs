@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon;
+using Photon.Pun;
 using UnityEngine;
 
-public class VoteManager : MonoBehaviour
+public class VoteManager : MonoBehaviourPunCallbacks
 {
     public static VoteManager Instance { get; private set; }
 
@@ -16,6 +18,18 @@ public class VoteManager : MonoBehaviour
     public IReadOnlyDictionary<string, string> VoteResults => voteResults;
 
     private System.Action onVoteEndCallback;
+    [SerializeField] private VoteUI voteUI;
+    
+    private void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    private void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
 
     void Awake()
     {
@@ -107,5 +121,21 @@ public class VoteManager : MonoBehaviour
         // 실제 제거 처리 로직 추가 요망
 
         voteResults.Clear();
+    }
+    
+
+    public void OnEvent(EventData photonEvent)
+    {
+        switch (photonEvent.Code)
+        {
+            case EventCodes.PlayerReport :
+                
+                break;
+        }
+    }
+
+    public void SetReportData(int SenderActorNumber, int findPeopleActorNum)
+    {
+        GameManager.Instance.ChangeState(GameState.Meeting);
     }
 }
