@@ -20,5 +20,4 @@ namespace _02_Scripts.Ung_Managers
             return null;
         }
     }
-
 }
