@@ -122,6 +122,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
             case EventCodes.PlayerDied:
                 controller = FindPlayerController(actorNumber);
                 controller.Die();
+                CheckEndGame();
                 break;
         }
     }
@@ -138,5 +139,36 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public PlayerController FindPlayerController(int actorNumber)
     {
         return playerGODict.TryGetValue(actorNumber, out var go) ? go.GetComponent<PlayerController>() : null;
+    }
+
+    public void CheckEndGame()
+    {
+        int AliveCrewmate = 0;
+        int AliveImposter = 0;
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            player.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object IsDead);
+            if (!(bool)IsDead)
+            {
+                player.CustomProperties.TryGetValue(PlayerPropKey.Role, out object role);
+                if ((int)role == 1)
+                {
+                    AliveCrewmate += 1;
+                }else if ((int)role == 2)
+                {
+                    AliveImposter += 1;
+                }
+            }
+        }
+
+        if (AliveCrewmate <= AliveImposter) // 임포스터 승리
+        {
+            GameManager.Instance.EndGame(EndGameCategory.ImpostorsWin);
+        }
+
+        if (AliveImposter == 0) // 생존자 승리
+        {
+            GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
+        }
     }
 }

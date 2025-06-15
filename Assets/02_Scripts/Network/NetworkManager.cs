@@ -88,8 +88,9 @@ namespace _02_Scripts.Lobby
                 { PlayerPropKey.Level, LoginSession.loginPlayerInfo.level }, // int
                 { PlayerPropKey.Gold , LoginSession.loginPlayerInfo.gold  }, // int
                 { PlayerPropKey.Spr  , 0               }, // int (스프라이트 인덱스만)
-                { PlayerPropKey.Dead , false           }, // bool
-                { PlayerPropKey.Role , (byte)0         }  // byte
+                { PlayerPropKey.IsDead , false           }, // bool
+                { PlayerPropKey.Role , (byte)0         },  // byte
+                { PlayerPropKey.IsReady , false         }  // bool
             };
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);

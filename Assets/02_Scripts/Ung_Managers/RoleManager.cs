@@ -42,7 +42,7 @@ public class RoleManager : MonoBehaviour
                 myGO.AddComponent<ImposterController>();
         }
 
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { "Role", roleInt } });
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.Role, roleInt } });
         GameManager.Instance.ChangeState(GameState.Playing);
     }
 

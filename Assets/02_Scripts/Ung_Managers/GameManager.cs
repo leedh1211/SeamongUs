@@ -126,6 +126,7 @@ public class GameManager : MonoBehaviour
             case GameState.Voting:
                 break;
             case GameState.Result:
+                PhotonNetwork.LoadLevel("WaitingScene");
                 break;
         }
     }

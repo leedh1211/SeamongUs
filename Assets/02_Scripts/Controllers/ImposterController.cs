@@ -83,9 +83,9 @@ public class ImposterController : MonoBehaviour
                 continue;
 
             // 조건: 크루메이트 + 살아있음
-            if ((int)(otherPlayer.CustomProperties["Role"] ?? 0) != (int)Role.Crewmate)
+            if ((int)(otherPlayer.CustomProperties[PlayerPropKey.Role] ?? 0) != (int)Role.Crewmate)
                 continue;
-            if ((bool)(otherPlayer.CustomProperties["IsDead"] ?? false))
+            if ((bool)(otherPlayer.CustomProperties[PlayerPropKey.IsDead] ?? false))
                 continue;
 
             float dist = Vector3.Distance(transform.position, playerGO.transform.position);
