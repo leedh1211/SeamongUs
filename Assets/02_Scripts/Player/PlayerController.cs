@@ -119,7 +119,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnInteractInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && photonView.IsMine)
         {
             OnInteractAction();
         }
@@ -207,7 +207,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnInventoryInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && photonView.IsMine)
         {
             OnOpenInventory?.Invoke();
         }
@@ -238,7 +238,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnReportInput(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && photonView.IsMine)
         {
             OnReportAction();
         }
@@ -246,7 +246,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnReportAction()
     {
-        VoteManager.Instance.StartVotingPhase(OnVotingEnd);
+        int deadBodyActorNum = DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
+        ReportManager.Instance.ReportBody(deadBodyActorNum);
     }
     
     private void OnVotingEnd()
@@ -288,6 +289,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (rb != null)
             rb.simulated = false;
 
+        DeadBodyManager.Instance.SpawnDeadBody(transform.position, PhotonNetwork.LocalPlayer.ActorNumber);
         isGhost = true;
     }
 }

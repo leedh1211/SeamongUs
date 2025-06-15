@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 public class VoteManager : MonoBehaviourPunCallbacks
@@ -14,8 +15,8 @@ public class VoteManager : MonoBehaviourPunCallbacks
     [SerializeField] private float voteTime = 30f; // 테스트용 시간 30초
     public float VoteTime => voteTime; // VoteUI에서 접근할 수 있도록 공개
 
-    private Dictionary<string, string> voteResults = new Dictionary<string, string>();
-    public IReadOnlyDictionary<string, string> VoteResults => voteResults;
+    private Dictionary<int, int> voteResults = new Dictionary<int, int>();
+    public IReadOnlyDictionary<int, int> VoteResults => voteResults;
 
     private System.Action onVoteEndCallback;
     [SerializeField] private VoteUI voteUI;
@@ -53,9 +54,6 @@ public class VoteManager : MonoBehaviourPunCallbacks
         // UI 띄우기
         UIManager.Instance.ShowVotingUI();
 
-        // 게임 상태 전환
-        GameManager.Instance.ChangeState(GameState.Voting);
-
         // 실제 투표 코루틴 시작
         StartCoroutine(VotingRoutine());
     }
@@ -78,10 +76,17 @@ public class VoteManager : MonoBehaviourPunCallbacks
     /// <summary>
     /// 한 플레이어가 다른 플레이어에게 투표
     /// </summary>
-    public void SubmitVote(string voterID, string targetID)
+    public void SubmitVote(int voterID, int targetID)
     {
         voteResults[voterID] = targetID;
+        CheckAllVotesReceived();
         Debug.Log($"{voterID} voted for {targetID}");
+    }
+    
+    public void OnVoteButtonClicked(int targetActorNumber)
+    {
+        object[] data = new object[] { PhotonNetwork.LocalPlayer.ActorNumber, targetActorNumber };
+        PhotonNetwork.RaiseEvent(EventCodes.PlayerVote, data, RaiseEventOptions.Default, SendOptions.SendReliable);
     }
 
     /// <summary>
@@ -89,38 +94,45 @@ public class VoteManager : MonoBehaviourPunCallbacks
     /// </summary>
     public void EndVote()
     {
-        if (voteResults.Count == 0)
-        {
-            Debug.Log("No votes submitted.");
-            return;
-        }
+        if (voteResults.Count == 0) return;
 
-        // 최다 득표수 찾기
-        var groups = voteResults
-            .GroupBy(keyValue => keyValue.Value)
-            .Select(g => new { PlayerID = g.Key, Count = g.Count() })
+        var grouped = voteResults
+            .GroupBy(kv => kv.Value)
+            .Select(g => new { Actor = g.Key, Count = g.Count() })
             .ToList();
 
-        int maxVotes = groups.Max(g => g.Count);
-        var top = groups
-            .Where(g => g.Count == maxVotes)
-            .Select(g => g.PlayerID)
-            .ToList();
+        int max = grouped.Max(g => g.Count);
+        var top = grouped.Where(g => g.Count == max).ToList();
 
-        // 동점이면 스킵
         if (top.Count > 1)
         {
-            Debug.Log("동점 / 스킵");
+            Debug.Log("투표 동점");
+            RaiseVoteResult(-1); // 스킵
             return;
         }
 
-        // 한명이 최다 득표할 경우 추방
-        string votedOut = voteResults.GroupBy(kv => kv.Value).OrderByDescending(g => g.Count()).First().Key;
-        Debug.Log($"Voted out player: {votedOut}");
-
-        // 실제 제거 처리 로직 추가 요망
-
+        int target = top[0].Actor;
+        Debug.Log($"추방 대상 ActorNum: {target}");
+        RaiseVoteResult(target);
         voteResults.Clear();
+    }
+    
+    private void RaiseVoteResult(int actorNum)
+    {
+        PhotonNetwork.RaiseEvent(
+            EventCodes.VoteResult,
+            actorNum,
+            RaiseEventOptions.Default,
+            SendOptions.SendReliable
+            );
+    }
+    
+    private void CheckAllVotesReceived()
+    {
+        if (voteResults.Count >= PhotonNetwork.CurrentRoom.PlayerCount)
+        {
+            EndVote();
+        }
     }
     
 
@@ -129,7 +141,18 @@ public class VoteManager : MonoBehaviourPunCallbacks
         switch (photonEvent.Code)
         {
             case EventCodes.PlayerReport :
-                
+                Debug.Log("신고이벤트 수신");
+                var data = (object[])photonEvent.CustomData;
+                int findPeopleActorNum = (int)data[0];
+                SetReportData(photonEvent.Sender, findPeopleActorNum);
+                break;
+            case EventCodes.PlayerVote:
+                Debug.Log("투표이벤트 수신");
+                var voteData = (object[])photonEvent.CustomData;
+                int voter = (int)voteData[0];
+                int target = (int)voteData[1];
+                if (PhotonNetwork.IsMasterClient)
+                    SubmitVote(voter, target);
                 break;
         }
     }

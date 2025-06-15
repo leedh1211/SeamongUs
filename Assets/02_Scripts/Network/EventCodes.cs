@@ -17,6 +17,7 @@ public static class EventCodes
     public const byte PlayerVote = 106;
     
     //----------------------GameManageCode----------------------//
+    public const byte VoteResult = 198;
     public const byte ChangeState = 199;
     
 }

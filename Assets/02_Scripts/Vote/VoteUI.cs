@@ -51,9 +51,9 @@ public class VoteUI : MonoBehaviour
 
             slot.Init
                 (
-                player.ActorNumber.ToString(), // 플레이어 ID
+                player.ActorNumber, // 플레이어 ID
                 player.NickName, // 플레이어 이름
-                Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber.ToString() // 로컬 플레이어 ID
+                Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber // 로컬 플레이어 ID
                 );
         }
     }

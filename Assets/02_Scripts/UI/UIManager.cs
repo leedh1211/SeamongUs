@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -74,5 +75,10 @@ public class UIManager : MonoBehaviour
     public void ShowMeetingUI()
     {
 
+    }
+
+    public void ShowVoteResultPopup(int targetActor, Action callback)
+    {
+        Debug.Log(targetActor);
     }
 }

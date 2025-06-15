@@ -58,7 +58,14 @@ public class GameManager : MonoBehaviour
             case GameState.PlayingStart:
                 MissionManager.Instance.Init();
                 break;
+            case GameState.Playing:
+                UIManager.Instance.HideVotingUI();
+                
+                break;
             case GameState.Meeting:
+                // 플레이어 위치 이동, 시체 신고팝업,
+                // 팝업 종료시 VoteUI활성화
+                GameManager.Instance.ChangeState(GameState.Voting);
                 break;
             case GameState.Voting:
                 VoteManager.Instance.StartVotingPhase(() =>
