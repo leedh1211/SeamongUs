@@ -52,7 +52,7 @@ public class RoleManager : MonoBehaviourPunCallbacks
             int role = (int)changedProps[PlayerPropKey.Role];
             Debug.Log($"[RoleManager] OnPlayerPropertiesUpdate 호출됨: {role}");
             PlayerUIManager.Instance.Init(); // 여기서 정확히 반영됨
-            GameManager.Instance.ChangeState(GameState.Playing);
+            GameManager.Instance.ChangeState(GameState.PlayingStart);
         }
     }
 
