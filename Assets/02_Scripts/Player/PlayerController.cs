@@ -43,7 +43,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [Header("Ghost Settings")]
     [SerializeField] private float ghostMoveSpeed = 3f;
     [SerializeField] private float ghostAlpha = 0.5f;
-    private bool isDead = false;
     private bool isGhost = false;
 
     private static readonly int DieHash = Animator.StringToHash("Die");
@@ -259,18 +258,15 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void Die()
+    public void Die(string Category = "killing")
     {
-        if (isDead) return;
-        isDead = true;
-
         if (animator != null)
             animator.SetTrigger(DieHash);
 
-        StartCoroutine(DeathSequence());
+        StartCoroutine(DeathSequence(Category));
     }
 
-    private IEnumerator DeathSequence()
+    private IEnumerator DeathSequence(string Category)
     {
         yield return new WaitForSeconds(1f);
         gameObject.layer = LayerMask.NameToLayer("Ghost");
@@ -289,7 +285,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (rb != null)
             rb.simulated = false;
 
-        DeadBodyManager.Instance.SpawnDeadBody(transform.position, PhotonNetwork.LocalPlayer.ActorNumber);
+        if (Category != "vote")
+        {
+            DeadBodyManager.Instance.SpawnDeadBody(transform.position, PhotonNetwork.LocalPlayer.ActorNumber);    
+        }
+        
         isGhost = true;
     }
 }

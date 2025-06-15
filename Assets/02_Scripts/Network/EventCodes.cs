@@ -16,7 +16,10 @@ public static class EventCodes
     public const byte PlayerReport = 105;
     public const byte PlayerVote = 106;
     
+    
     //----------------------GameManageCode----------------------//
+    
+    public const byte SetVoteTime = 197;
     public const byte VoteResult = 198;
     public const byte ChangeState = 199;
     

@@ -13,7 +13,7 @@ public class VoteUI : MonoBehaviour
     private void OnEnable()
     {
         // 타이머, 슬롯 초기화
-        StartCoroutine(StartTimer());
+        // StartCoroutine(StartTimer());
         PopulateSlots();
     }
 
@@ -33,6 +33,11 @@ public class VoteUI : MonoBehaviour
             yield return new WaitForSeconds(1f);
             time -= 1f;
         }
+    }
+
+    public void UpdateTimerUI(int currentVoteTime)
+    {
+        timeText.text = $"{Mathf.CeilToInt(currentVoteTime)}초 남았습니다...";
     }
 
     // contentParent에 배치된 자식 슬롯들 사용으로 변경

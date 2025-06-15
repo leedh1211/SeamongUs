@@ -24610,6 +24610,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerManager: {fileID: 6444560719775073502}
   playerPrefabName: Prefabs/Player
+  groundObject: {fileID: 779799347}
   fallbackSpawnPoint: {fileID: 866007888}
   groundLayer:
     serializedVersion: 2

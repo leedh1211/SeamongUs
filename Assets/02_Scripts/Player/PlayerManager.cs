@@ -123,23 +123,49 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 
                 break;
             case EventCodes.PlayerDied:
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
+                    if (targetPlayer != null)
+                    {
+                        targetPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.IsDead, true } });
+                    }
+                }
                 controller = FindPlayerController(actorNumber);
                 controller.Die();
-                CheckEndGame();
                 break;
             case EventCodes.VoteResult:
-                int targetActor = (int)photonEvent.CustomData;
-                if (targetActor != -1)
+            {
+                Debug.Log("투표 결과 들어옴");
+                // 1. 죽이기 (죽지 않는 값: -1)
+                if (actorNumber != -1)
                 {
-                    var player = FindPlayerController(targetActor);
-                    player.Die();
+                    var player = FindPlayerController(actorNumber);
+                    if (player != null)
+                    {
+                        player.Die("vote");
+                    }
                 }
-                // 투표결과 팝업 출력
-                UIManager.Instance.ShowVoteResultPopup(targetActor, () =>
+                // 2. 팝업 띄우고 → 끝나면 상태 전환
+                UIManager.Instance.ShowVoteResultPopup(actorNumber, () =>
                 {
                     GameManager.Instance.ChangeState(GameState.Playing);
                 });
+            }
                 break;
+            case EventCodes.PlayerReport:
+            {
+
+                break;
+            }
+        }
+    }
+    
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        if (changedProps.ContainsKey(PlayerPropKey.IsDead))
+        {
+            CheckEndGame();
         }
     }
 
@@ -149,7 +175,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                photonEvent.Code == EventCodes.PlayerJump ||
                photonEvent.Code == EventCodes.PlayerKill ||
                photonEvent.Code == EventCodes.PlayerAttacked ||
-               photonEvent.Code == EventCodes.PlayerDied;
+               photonEvent.Code == EventCodes.PlayerDied ||
+               photonEvent.Code == EventCodes.VoteResult ||
+               photonEvent.Code == EventCodes.PlayerReport
+               ;
+        
     }
 
     public PlayerController FindPlayerController(int actorNumber)
@@ -176,7 +206,9 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 }
             }
         }
-
+        
+        Debug.Log("살아있는 크루원:" + AliveCrewmate);
+        Debug.Log("살아있는 임포스터:" + AliveImposter);
         if (AliveCrewmate <= AliveImposter) // 임포스터 승리
         {
             GameManager.Instance.EndGame(EndGameCategory.ImpostorsWin);

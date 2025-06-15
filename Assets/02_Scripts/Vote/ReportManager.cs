@@ -20,7 +20,6 @@ public class ReportManager : MonoBehaviour
         List<DeadBody> deadBodyList = DeadBodyManager.Instance.GetDeadBodies();
         DeadBody deadBody = DeadBodyManager.Instance.GetDeadBody(deadPlayerActNum);
         int findPeopleActorNum = deadBody.PlayerActorNumber; // 시체의 주인 PlayerActorNumber
-        DeadBodyManager.Instance.RemoveAllDeadBody(); // 시체 삭제
         object[] eventData = new object[] {findPeopleActorNum};
         PhotonNetwork.RaiseEvent(
             EventCodes.PlayerReport,
