@@ -45,15 +45,22 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private float ghostMoveSpeed = 3f;
     [SerializeField] private float ghostAlpha = 0.5f;
     private bool isGhost = false;
+
     
-    private float killCooldown = 0f;
+
     
+
     private bool IsUIFocused()
     {
         var sel = EventSystem.current?.currentSelectedGameObject;
         if (sel == null) return false;
         return sel.GetComponent<TMPro.TMP_InputField>() != null;
-    }      
+
+    }
+
+    
+    private float killCooldown = 0f;
+
 
     private static readonly int DieHash = Animator.StringToHash("Die");
     private static readonly int SpeedHash = Animator.StringToHash("currentMoveSpeed");
