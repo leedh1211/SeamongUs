@@ -270,6 +270,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnReportAction()
     {
+        if (isGhost) return;
         int deadBodyActorNum = DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
         ReportManager.Instance.ReportBody(deadBodyActorNum);
     }
