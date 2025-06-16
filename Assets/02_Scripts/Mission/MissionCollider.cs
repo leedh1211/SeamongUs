@@ -1,3 +1,5 @@
+using Photon.Pun;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -25,6 +27,15 @@ public class MissionCollider : MonoBehaviour
 
     public void HandleInteract(string playerId)
     {
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
+        {
+            Role myRole = (Role)Convert.ToInt32(roleObj);
+            if (myRole == Role.Impostor)
+            {
+                Debug.Log("[MissionCollider] 임포스터는 미션을 수행할 수 없습니다.");
+                return;
+            }
+        }
         if (missionUI == null) return;
 
         var mission = MissionManager.Instance
