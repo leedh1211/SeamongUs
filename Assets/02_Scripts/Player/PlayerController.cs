@@ -108,21 +108,24 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (isGhost)
         {
             transform.position += (Vector3)(moveInput * ghostMoveSpeed * Time.fixedDeltaTime);
+            UpdateFacing();
             return;
         }
 
         rb.velocity = moveInput * currentMoveSpeed;
         animator.SetFloat(SpeedHash, rb.velocity.magnitude);
+        UpdateFacing();
+    }
+    private void UpdateFacing()
+    {
+        if (moveInput.x == 0 || playerSprite == null) return;
 
-        if (!jumping && moveInput.x != 0 && playerSprite != null)
+        bool nextFacingLeft = moveInput.x < 0;
+        if (nextFacingLeft != facingLeft)
         {
-            bool nextFacingLeft = moveInput.x < 0;
-            if (nextFacingLeft != facingLeft)
-            {
-                facingLeft = nextFacingLeft;
-                var sr = playerSprite.GetComponent<SpriteRenderer>();
-                if (sr) sr.flipX = facingLeft;          // 내 화면 즉시 반영
-            }
+            facingLeft = nextFacingLeft;
+            var sr = playerSprite.GetComponent<SpriteRenderer>();
+            if (sr) sr.flipX = facingLeft;
         }
     }
 
