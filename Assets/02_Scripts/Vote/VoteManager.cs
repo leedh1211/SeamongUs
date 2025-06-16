@@ -218,7 +218,11 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 // 투표 결과 -> 추방
                 voteUI.ShowBallotAnimation(finalCounts, () =>
                 {
-                    GameManager.Instance.ChangeState(GameState.Playing);
+                    // 2. 팝업 띄우고 → 끝나면 상태 전환
+                    UIManager.Instance.ShowVoteResultPopup(ejected, () =>
+                    {
+                        GameManager.Instance.ChangeState(GameState.Playing);
+                    });
                 });
 
                 // 다음 투표를 위해 초기화
