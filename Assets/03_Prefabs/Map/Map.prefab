@@ -12999,7 +12999,7 @@ Tilemap:
   - m_RefCount: 818
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   - m_RefCount: 1
-    m_Data: {r: 0.9457989, g: 0.53452665, b: 0.64752555, a: 1}
+    m_Data: {r: 0.82049054, g: 0.45519567, b: 0.5102894, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 0}
@@ -36763,7 +36763,7 @@ Animator:
   m_GameObject: {fileID: 8462633035170952084}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: -8830270823767172407, guid: fd95caada29d03a4bb380d7c6890f343, type: 3}
+  m_Controller: {fileID: 9100000, guid: 4e77c86521e5fa34faff900ac02f8286, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
