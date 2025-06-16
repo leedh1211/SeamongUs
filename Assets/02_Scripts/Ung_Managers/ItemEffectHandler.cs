@@ -17,9 +17,12 @@ public class ItemEffectHandler : MonoBehaviour
 
     public void UseItem(ItemSO item)
     {
+        Debug.Log($"[ItemEffectHandler] 아이템 사용: {item.name}, 효과: {item.effectType}, 값: {item.effectValue}");
+
         switch (item.effectType)
         {
             case ItemEffectType.HealHp:
+                Debug.Log($"[ItemEffectHandler] 체력 회복 시도: +{item.effectValue}");
                 statManager.Recover(StatType.CurHp, item.effectValue);
                 break;
 
