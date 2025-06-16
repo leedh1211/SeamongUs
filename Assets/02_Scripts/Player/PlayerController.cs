@@ -44,6 +44,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private float ghostMoveSpeed = 3f;
     [SerializeField] private float ghostAlpha = 0.5f;
     private bool isGhost = false;
+    
+    private float killCooldown = 0f;
 
     private static readonly int DieHash = Animator.StringToHash("Die");
     private static readonly int SpeedHash = Animator.StringToHash("currentMoveSpeed");
@@ -88,6 +90,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
                 transform.position = networkPosition;
             else
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.fixedDeltaTime * lerpSpeed);
+
+            if (killCooldown > 0)
+            {
+                killCooldown -= Time.fixedDeltaTime;
+            }
         }
         else
         {
@@ -147,6 +154,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void TryKill()
     {
+        if (killCooldown > 0) return;
         if (photonView.gameObject.TryGetComponent<ImposterController>(out ImposterController imposter))
         {
             imposter.TryKill();    
@@ -155,6 +163,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             Debug.Log("This Object is Not Imposter");
         }
+    }
+
+    public void SetKillCooldown(float cooldown)
+    {
+        this.killCooldown = cooldown;
     }
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
