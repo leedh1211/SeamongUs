@@ -16,5 +16,8 @@ public static class EventCodes
     
     //----------------------GameManageCode----------------------//
     public const byte ChangeState = 199;
-    
+
+    //----------------------PopupUICode----------------------//
+    public const byte BodyReported = 10;
+    public const byte GameEnded = 11;
 }
