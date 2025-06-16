@@ -24,12 +24,12 @@ public class ReportManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void ReportBody(int deadPlayerActNum)
     {
-        object[] eventData = new object[] { deadPlayerActNum };
+        object[] ev = new object[] { deadPlayerActNum };
         PhotonNetwork.RaiseEvent(
-            EventCodes.PlayerReport,
-            eventData,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            SendOptions.SendReliable
+          EventCodes.PlayerReport,
+          ev,
+          new RaiseEventOptions { Receivers = ReceiverGroup.All },
+          SendOptions.SendReliable
         );
     }
 

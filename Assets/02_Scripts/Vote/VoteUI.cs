@@ -18,25 +18,23 @@ public class VoteUI : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
 
-        slots = contentParent.GetComponentsInChildren<VoteUISlot>(true).ToList();
+        slots = contentParent
+            .GetComponentsInChildren<VoteUISlot>(includeInactive: true)
+            .ToList();
+    }
+
+    private void OnEnable()
+    {
+        PopulateSlots(); // 신고자 표시 포함해서 한 번에 초기화
     }
 
     // 투표 시간 업데이트
     public void UpdateTimerUI(int seconds)
     {
         timeText.text = $"투표 시간이 {seconds}초 남았습니다...";
-        return;
     }
 
     public void PopulateSlots()
@@ -44,25 +42,36 @@ public class VoteUI : MonoBehaviour
         var players = PhotonNetwork.PlayerList;
         int count = players.Length;
 
-        // 실제 플레이어 수만큼만 켜서 초기화
         for (int i = 0; i < slots.Count; i++)
         {
+            var slot = slots[i];
+
             if (i < count)
             {
                 var p = players[i];
-                slots[i].gameObject.SetActive(true);
+
+                // 슬롯 데이터 채우기
                 bool isDead = (bool)(p.CustomProperties[PlayerPropKey.IsDead] ?? false);
                 bool isReporter = p.ActorNumber == ReportManager.Instance.LastReporter;
                 bool hasVoted = VoteManager.Instance.VoteResults.ContainsKey(p.ActorNumber);
                 Sprite avatar = AvatarManager.Instance.GetSprite(p.ActorNumber);
 
-                // 슬롯 초기화
-                slots[i].Init(p.ActorNumber, p.NickName, avatar, isDead, isReporter, hasVoted);
+                slot.Init(
+                  p.ActorNumber,
+                  p.NickName,
+                  avatar,
+                  isDead,
+                  isReporter,
+                  hasVoted
+                );
+
+                // 활성화
+                slot.gameObject.SetActive(true);
             }
             else
             {
-                // 남는 슬롯들 비활성화
-                slots[i].gameObject.SetActive(false);
+                // 남는 슬롯은 비활성화
+                slot.gameObject.SetActive(false);
             }
         }
     }
