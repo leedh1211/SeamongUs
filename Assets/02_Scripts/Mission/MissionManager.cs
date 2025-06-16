@@ -4,6 +4,7 @@ using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -151,6 +152,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (GetTotalProgress() < 1f)
             return;
+        Debug.Log("[MissionManager] 모든 미션 완료! 승리 처리 호출");
         GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
     }
     
@@ -185,7 +187,22 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         foreach (var player in PhotonNetwork.PlayerList)
         {
             string playerKey = player.ActorNumber.ToString();
-            AssignMissions(playerKey, missionCount);
+            Role role = Role.UnManaged;
+            if (player.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
+            {
+                role = (Role)Convert.ToInt32(roleObj);
+            }
+
+            if (role == Role.Crewmate)
+            {
+                // 크루원은 미션 할당
+                AssignMissions(playerKey, missionCount);
+            }
+            else
+            {
+                // 임포스터(또는 기타)는 빈 리스트라도 만들기.
+                playerMissions[playerKey] = new List<Mission>();
+            }
         }
         PhotonNetwork.RaiseEvent(
             EventCodes.MissionsAssignedCompleted,
