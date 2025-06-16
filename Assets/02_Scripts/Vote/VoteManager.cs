@@ -22,13 +22,13 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private VoteUI voteUI;
     private float currentVoteTime;
 
-    private new void OnEnable()
+    public override void OnEnable()
     {
         base.OnEnable();
         PhotonNetwork.AddCallbackTarget(this);
     }
 
-    private new void OnDisable()
+    public override void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
         base.OnDisable();

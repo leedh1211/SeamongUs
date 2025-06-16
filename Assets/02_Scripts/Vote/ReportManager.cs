@@ -3,27 +3,30 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
-public class ReportManager : MonoBehaviour
+public class ReportManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static ReportManager Instance { get; private set; }
-
     public int LastReporter { get; private set; }
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
+        return;
+    }
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+    }
+
+    public override void OnDisable()
+    {
+        base.OnDisable();
     }
 
     public void ReportBody(int deadPlayerActNum)
     {
-        int reporterActorNum = PhotonNetwork.LocalPlayer.ActorNumber;
-        // LastReporter 에 기록
-        LastReporter = reporterActorNum;
-
-        // DeadBody 찾아서 신고 이벤트 전파
-        DeadBody deadBody = DeadBodyManager.Instance.GetDeadBody(deadPlayerActNum);
-        int findPeopleActorNum = deadBody.PlayerActorNumber;
-        object[] eventData = new object[] { findPeopleActorNum };
+        object[] eventData = new object[] { deadPlayerActNum };
         PhotonNetwork.RaiseEvent(
             EventCodes.PlayerReport,
             eventData,
@@ -34,10 +37,11 @@ public class ReportManager : MonoBehaviour
 
     public void OnEvent(EventData photonEvent)
     {
-        switch (photonEvent.Code)
+        if (photonEvent.Code == EventCodes.PlayerReport)
         {
-            case EventCodes.PlayerReport:
-                break;
+            // 신고 요청을 보낸 ActorNum을 그대로 저장
+            LastReporter = photonEvent.Sender;
+            VoteUI.Instance.PopulateSlots();
         }
     }
 }

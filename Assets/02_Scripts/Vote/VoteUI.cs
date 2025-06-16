@@ -1,25 +1,27 @@
 ﻿using _02_Scripts.Ung_Managers;
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
-using System;
 
 public class VoteUI : MonoBehaviour
 {
+    public static VoteUI Instance { get; private set; }
+
     [Header("UI 참조")]
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private Transform contentParent;
-    [SerializeField] private GameObject slotTemplate;
-
     private List<VoteUISlot> slots;
 
     private void Awake()
     {
-        slots = new List<VoteUISlot>();
-        foreach (var slot in contentParent.GetComponentsInChildren<VoteUISlot>(true))
-            slots.Add(slot);
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
+        slots = contentParent.GetComponentsInChildren<VoteUISlot>(includeInactive: true).ToList();
     }
 
     // 투표 시간 업데이트
@@ -32,26 +34,28 @@ public class VoteUI : MonoBehaviour
     public void PopulateSlots()
     {
         var players = PhotonNetwork.PlayerList;
-        int count = Mathf.Min(slots.Count, players.Length);
+        int count = players.Length;
 
-        // 우선 모든 슬롯 비활성화
-        foreach (var slot in slots)
-            slot.gameObject.SetActive(false);
-
-        for (int i = 0; i < count; i++)
+        // 실제 플레이어 수만큼만 켜서 초기화
+        for (int i = 0; i < slots.Count; i++)
         {
-            var slot = slots[i];
-            var p = players[i];
-            slot.gameObject.SetActive(true);
+            if (i < count)
+            {
+                var p = players[i];
+                slots[i].gameObject.SetActive(true);
+                bool isDead = (bool)(p.CustomProperties[PlayerPropKey.IsDead] ?? false);
+                bool isReporter = p.ActorNumber == ReportManager.Instance.LastReporter;
+                bool hasVoted = VoteManager.Instance.VoteResults.ContainsKey(p.ActorNumber);
+                Sprite avatar = AvatarManager.Instance.GetSprite(p.ActorNumber);
 
-            // 플레이어 정보 가져오기
-            bool isDead = (bool)(p.CustomProperties[PlayerPropKey.IsDead] ?? false);
-            bool isReporter = p.ActorNumber == ReportManager.Instance.LastReporter;
-            bool hasVoted = VoteManager.Instance.VoteResults.ContainsKey(p.ActorNumber);
-            Sprite avatar = AvatarManager.Instance.GetSprite(p.ActorNumber);
-
-            // 슬롯 초기화
-            slot.Init(p.ActorNumber, p.NickName, avatar, isDead, isReporter, hasVoted);
+                // 슬롯 초기화
+                slots[i].Init(p.ActorNumber, p.NickName, avatar, isDead, isReporter, hasVoted);
+            }
+            else
+            {
+                // 남는 슬롯들 비활성화
+                slots[i].gameObject.SetActive(false);
+            }
         }
     }
 
