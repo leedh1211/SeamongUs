@@ -79,7 +79,10 @@ public class VoteUI : MonoBehaviour
     // finalCounts: actor→득표수
     public void ShowBallotAnimation(Dictionary<int, int> finalCounts, Action onComplete)
     {
-        StartCoroutine(Ballot(finalCounts, onComplete));
+        if (this.gameObject.activeInHierarchy)
+        {
+            StartCoroutine(Ballot(finalCounts, onComplete));    
+        }
     }
 
     private IEnumerator Ballot(Dictionary<int, int> finalCounts, Action onComplete)
