@@ -15,9 +15,9 @@ public class SheepController : MonoBehaviour
     private float speed;
 
     /// <summary>
-    /// panelRect: HerdUI ÆÐ³ÎÀÇ RectTransform
-    /// goalArea:  ÆÐ³Î ±âÁØ ÁÂÇ¥°èÀÇ ¸ñÇ¥ ¿µ¿ª
-    /// obstacles: ÆÐ³Î ±âÁØ ÁÂÇ¥°è Àå¾Ö¹° ¸ñ·Ï
+    /// panelRect: HerdUI ï¿½Ð³ï¿½ï¿½ï¿½ RectTransform
+    /// goalArea:  ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
+    /// obstacles: ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½Ö¹ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     public void Initialize(
         RectTransform panelRect,
@@ -46,7 +46,7 @@ public class SheepController : MonoBehaviour
     {
         var rt = GetComponent<RectTransform>();
 
-        // (1) ¸¶¿ì½º ½ºÅ©¸° ÁÂÇ¥ ¡æ ÆÐ³Î ·ÎÄÃ ÁÂÇ¥
+        // (1) ï¿½ï¿½ï¿½ì½º ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥
         Vector2 mouseLocal;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             panelRect,
@@ -55,31 +55,26 @@ public class SheepController : MonoBehaviour
             out mouseLocal
         );
 
-        // (2) ºÎµå·´°Ô µû¶ó°¡±â
+        // (2) ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½ï¿½ó°¡±ï¿½
         rt.anchoredPosition = Vector2.Lerp(
             rt.anchoredPosition,
             mouseLocal,
             speed * Time.deltaTime
         );
 
-        // (3) °ñ ¿µ¿ª µµ´Þ Ã¼Å©
+        // (3) ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
         if (!inGoal && RectIntersects(rt, goalArea))
         {
-            inGoal = true;
-            mission.CollectOne();
-            if (mission.IsCompleted)
-            {
-                MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
-                ui.Hide();
-            }
+            MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
+            ui.Hide();
         }
 
-        // (4) Àå¾Ö¹° Ãæµ¹ Ã¼Å©
+        // (4) ï¿½ï¿½Ö¹ï¿½ ï¿½æµ¹ Ã¼Å©
         foreach (var obs in obstacles)
         {
             if (RectIntersects(rt, obs))
             {
-                // Ãæµ¹ Áï½Ã ¸®¼Â
+                // ï¿½æµ¹ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 rt.anchoredPosition = initialPos;
                 inGoal = false;
                 break;
@@ -87,7 +82,7 @@ public class SheepController : MonoBehaviour
         }
     }
 
-    // µÎ RectTransformÀÌ °°Àº ÆÐ³Î ÁÂÇ¥°è¿¡¼­ °ãÄ¡´ÂÁö °Ë»ç
+    // ï¿½ï¿½ RectTransformï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ ï¿½ï¿½Ç¥ï¿½è¿¡ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½
     private bool RectIntersects(RectTransform a, RectTransform b)
     {
         var ap = a.anchoredPosition;
