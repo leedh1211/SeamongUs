@@ -133,7 +133,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
                 break;
             case EventCodes.PlayerKill: //임포스터 actorNum = data[0]
-                
+                controller = FindPlayerController(actorNumber);
+                controller.SetKillCooldown(30f);
                 break;
             case EventCodes.PlayerDied:
                 if (PhotonNetwork.IsMasterClient)
