@@ -295,6 +295,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (isGhost) return;
         int deadBodyActorNum = DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);
+        if (deadBodyActorNum == 0) return;
         ReportManager.Instance.ReportBody(deadBodyActorNum);
     }
     

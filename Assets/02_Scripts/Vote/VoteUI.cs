@@ -132,7 +132,7 @@ public class VoteUI : MonoBehaviour
             }
             yield return new WaitForSeconds(1f);
         }
-
+        yield return new WaitForSeconds(1f);
         UIManager.Instance.HideVotingUI();
         onComplete?.Invoke();
     }
