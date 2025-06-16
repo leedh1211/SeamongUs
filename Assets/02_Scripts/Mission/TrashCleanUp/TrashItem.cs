@@ -19,10 +19,11 @@ public class TrashItem : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        mission.CollectOne();
-        if (mission.IsCompleted)
-            MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
-
+        bool result = mission.CollectOne();
+        if (result)
+        {
+            MissionManager.Instance.CompleteMission(playerId, mission.MissionID);   
+        }
         Destroy(gameObject);
 
         if (mission.IsCompleted)

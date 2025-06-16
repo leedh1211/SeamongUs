@@ -19,17 +19,18 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField]
     private PlayerController playerController;
 
+    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
+    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
+    
+
     private void Awake()
     {
-        Debug.Log("[MissionManager] Awake() 호출됨");
         Instance = this;
-        PhotonNetwork.AddCallbackTarget(this);
         LoadAllMissions();
     }
 
     private void OnDestroy()
     {
-        PhotonNetwork.RemoveCallbackTarget(this);
         if (playerController != null)
             playerController.OnInteract -= HandlePlayerInteract;
     }
@@ -122,12 +123,14 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             case EventCodes.MissionsAssigned:
                 var dataA = (object[])photonEvent.CustomData;
-                string pidA = (string)dataA[0];
-                string[] mids = (string[])dataA[1];
-                var clones = mids
+                string playerId = (string)dataA[0];
+                string[] missionList = (string[])dataA[1];
+                var clones = missionList
                     .Select(mid => allMissions.First(m => m.MissionID == mid).Clone())
                     .ToList();
-                playerMissions[pidA] = clones;
+                Debug.Log("테스트 이벤트 할당 중 플레이어는 : "+playerId);
+                playerMissions[playerId] = clones;
+                Debug.Log("테스트 이벤트 할당 중"+playerMissions[playerId]);
                 break;
 
             case EventCodes.MissionCompleted:
@@ -170,7 +173,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (totalMissions == 0)
             return 0f;
-        
+        Debug.Log("totalCompleted : "+totalCompleted+"totalMissions"+totalMissions);
         return (float)totalCompleted / totalMissions;
     }
 
@@ -192,16 +195,11 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
             {
                 role = (Role)Convert.ToInt32(roleObj);
             }
-
+            Debug.Log("미션할당 직전 플레이어의 ActorNumber : " + player.ActorNumber + "플레이어의 role" + role.ToString());
             if (role == Role.Crewmate)
             {
                 // 크루원은 미션 할당
                 AssignMissions(playerKey, missionCount);
-            }
-            else
-            {
-                // 임포스터(또는 기타)는 빈 리스트라도 만들기.
-                playerMissions[playerKey] = new List<Mission>();
             }
         }
         PhotonNetwork.RaiseEvent(

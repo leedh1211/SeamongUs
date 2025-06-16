@@ -3,21 +3,21 @@ using UnityEngine;
 
 public class TrashCleanup : Mission
 {
-    private int totalTrash;    // ÃÑ »Ñ¸° ¾²·¹±â °³¼ö
-    private int collected;     // Áö±Ý±îÁö ÁÖ¿î °³¼ö
+    private int totalTrash;    // ï¿½ï¿½ ï¿½Ñ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    private int collected;     // ï¿½ï¿½ï¿½Ý±ï¿½ï¿½ï¿½ ï¿½Ö¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     public TrashCleanup()
-        : base("TrashCleanup", "Èð¾îÁø ¾²·¹±â¸¦ ¸ðµÎ Ä¡¿öÁÖ¼¼¿ä.")
+        : base("TrashCleanup", "ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ Ä¡ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.")
     { }
 
     public override Mission Clone()
     {
-        // »õ ÀÎ½ºÅÏ½º »ý¼º (ÃÑ·®°ú ¼ö°Å °¹¼ö´Â UI ÂÊ¿¡¼­ ¼³Á¤)
+        // ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UI ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         return new TrashCleanup();
     }
 
     /// <summary>
-    /// ¾²·¹±â ÃÑ·®À» ¼³Á¤ÇÕ´Ï´Ù. UI¿¡¼­ Show ½Ã¿¡ È£ÃâÇØÁÖ¼¼¿ä.
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. UIï¿½ï¿½ï¿½ï¿½ Show ï¿½Ã¿ï¿½ È£ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.
     /// </summary>
     public void SetTotalTrash(int count)
     {
@@ -26,14 +26,15 @@ public class TrashCleanup : Mission
     }
 
     /// <summary>
-    /// ¾²·¹±â ÇÏ³ª¸¦ ¼ö°ÅÇßÀ½À» ¾Ë¸³´Ï´Ù.
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½Ï´ï¿½.
     /// </summary>
-    public void CollectOne()
+    public bool CollectOne()
     {
-        if (IsCompleted) return;
+        if (IsCompleted) return false;
 
         collected++;
-        if (collected >= totalTrash)
-            Complete();  // Mission º£ÀÌ½º Å¬·¡½º ³»ºÎ¿¡¼­ IsCompleted=true Ã³¸®
+        if (collected < totalTrash) return false;
+        
+        return true;  // Mission ï¿½ï¿½ï¿½Ì½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ IsCompleted=true Ã³ï¿½ï¿½
     }
 }
