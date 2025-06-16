@@ -228,6 +228,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void SetReportData(int SenderActorNumber, int findPeopleActorNum)
     {
+        GameManager.Instance.SetLastDeadActor(findPeopleActorNum);
         GameManager.Instance.ChangeState(GameState.Meeting);
     }
 }
