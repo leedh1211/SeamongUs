@@ -7,5 +7,6 @@ namespace _02_Scripts.Login.Player
         public string id;
         public int gold;
         public int level;
+        public int current_character;
     }
 }

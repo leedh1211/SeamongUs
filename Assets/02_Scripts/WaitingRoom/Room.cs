@@ -77,7 +77,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         bool currentReady = GetIsReady();
         bool nextReady = !currentReady;
 
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable { { "IsReady", nextReady } };
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable { { PlayerPropKey.IsReady, nextReady } };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
         string buttonText = nextReady ? "Wait" : "Ready";
@@ -97,12 +97,12 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         foreach (Player p in PhotonNetwork.PlayerList)
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (p.IsMasterClient) continue;
+
+            if (!p.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object isReady) || !(bool)isReady)
             {
-                if (!p.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object isReady) || !(isReady is bool ready && ready))
-                {
-                    return false;
-                }
+                Debug.Log(p.ActorNumber+" is ready : "+isReady.ToString());
+                return false;
             }
         }
         return true;
