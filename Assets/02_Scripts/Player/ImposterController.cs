@@ -44,12 +44,45 @@ public class ImposterController : MonoBehaviour
         GameObject targetGO = FindKillablePlayer();
         if (targetGO != null)
         {
-            int actorNumber = targetGO.GetComponent<PhotonView>().OwnerActorNr;
-            Player targetPlayer = FindPlayerByActorNumber(actorNumber);
-            if (targetPlayer != null)
+            PhotonView targetView = targetGO.GetComponent<PhotonView>();
+            int actorNumber = targetView.OwnerActorNr;
+
+            Debug.Log($"{localPlayer.NickName}가 Actor#{actorNumber}를 공격합니다.");
+
+            if (!targetView.IsMine)
             {
-                Debug.Log($"{localPlayer.NickName}가 {targetPlayer.NickName}를 살해했습니다.");
-                RaiseKillEvent(actorNumber); // 서버 전체에 킬 이벤트 전송
+                Debug.Log("[TryKill] 대상은 타인입니다. RPC 전송 중...");
+                // 타인 소유의 뷰에 RPC 호출
+                if (targetView.Owner != null)
+                {
+                    if (!targetView.IsMine)
+                    {
+                        Debug.Log($"[TryKill] 대상은 타인입니다. {targetView.Owner.NickName}에게 RPC 전송 시도");
+                        targetView.RPC("RPC_ReceiveDamage", targetView.Owner, 50f, localPlayer.ActorNumber);
+                    }
+                    else
+                    {
+                        Debug.Log("[TryKill] 자기 자신을 공격합니다.");
+                        PlayerDamageReceiver damageReceiver = targetGO.GetComponent<PlayerDamageReceiver>();
+                        if (damageReceiver != null)
+                        {
+                            damageReceiver.RPC_ReceiveDamage(50f, localPlayer.ActorNumber);
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[TryKill] targetView.Owner가 null입니다. ViewID: " + targetView.ViewID);
+                }
+            }
+            else
+            {
+                // 본인 테스트용: 자기 자신에게 데미지 처리
+                PlayerDamageReceiver damageReceiver = targetGO.GetComponent<PlayerDamageReceiver>();
+                if (damageReceiver != null)
+                {
+                    damageReceiver.RPC_ReceiveDamage(50f, localPlayer.ActorNumber);
+                }
             }
         }
         else
@@ -57,6 +90,10 @@ public class ImposterController : MonoBehaviour
             Debug.Log("살해 가능한 플레이어가 없습니다.");
         }
     }
+
+
+
+
 
     // void TryReportBody()
     // {
@@ -96,23 +133,6 @@ public class ImposterController : MonoBehaviour
         }
 
         return null;
-    }
-
-    void RaiseKillEvent(int targetActorNumber)
-    {
-        object[] content = new object[] { localPlayer.ActorNumber };
-        PhotonNetwork.RaiseEvent(
-            EventCodes.PlayerKill,
-            content,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            ExitGames.Client.Photon.SendOptions.SendReliable
-        );
-        PhotonNetwork.RaiseEvent(
-            EventCodes.PlayerDied,
-            new object[] { targetActorNumber },
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            ExitGames.Client.Photon.SendOptions.SendReliable
-        );
     }
 
     Player FindPlayerByActorNumber(int actorNumber)

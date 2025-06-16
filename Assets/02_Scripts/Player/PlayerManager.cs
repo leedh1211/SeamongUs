@@ -130,14 +130,34 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
             case EventCodes.PlayerDied:
                 if (PhotonNetwork.IsMasterClient)
                 {
+                    object[] datas = photonEvent.CustomData as object[];
+                    if (datas == null || data.Length == 0)
+                    {
+                        Debug.LogWarning("[Event] PlayerDied 이벤트에 데이터가 없음");
+                        break;
+                    }
+
+                    int actorNumbers = (int)data[0];
+                    Debug.Log($"[Event] PlayerDied 수신: Actor#{actorNumbers}");
                     Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
                     if (targetPlayer != null)
                     {
+                        Debug.Log($"[Event] MasterClient: {targetPlayer.NickName} 사망 표시 설정 중");
                         targetPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.IsDead, true } });
                     }
                 }
-                controller = FindPlayerController(actorNumber);
-                controller.Die();
+
+                PlayerController playerController = FindPlayerController(actorNumber);
+                if (playerController != null)
+                {
+                    Debug.Log($"[Event] PlayerController 찾음: {playerController.name}, 사망 처리 시작");
+                    playerController.Die();
+                }
+                else
+                {
+                    Debug.LogWarning($"[Event] PlayerController를 찾지 못함 (Actor#{actorNumber})");
+                }
+
                 break;
             case EventCodes.VoteResult:
             {
