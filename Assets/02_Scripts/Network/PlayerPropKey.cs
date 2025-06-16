@@ -11,4 +11,6 @@ public static class PlayerPropKey
     public const string IsDead  = "ISDEAD";  // bool
     public const string Role  = "ROLE";  // int
     public const string IsReady  = "ISREADY";  // byte
+    public const string HP  = "HP";  // byte
+    public const string Stamina  = "STAMINA";  // byte
 }

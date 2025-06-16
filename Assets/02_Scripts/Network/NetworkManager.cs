@@ -90,7 +90,9 @@ namespace _02_Scripts.Lobby
                 { PlayerPropKey.Spr  , 0               }, // int (스프라이트 인덱스만)
                 { PlayerPropKey.IsDead , false           }, // bool
                 { PlayerPropKey.Role , (byte)0         },  // byte
-                { PlayerPropKey.IsReady , false         }  // bool
+                { PlayerPropKey.IsReady , false         },  // bool
+                { PlayerPropKey.HP , 100         },  // bool
+                { PlayerPropKey.Stamina , 100         }  // bool
             };
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
