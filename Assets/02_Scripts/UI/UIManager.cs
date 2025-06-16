@@ -48,6 +48,8 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     [Header("팝업을 띄울 부모(Canvas)")]
     [SerializeField] private RectTransform popupParent;
+    
+    private Action voteResultCallback;
 
     bool popupActive = false;
 
@@ -191,15 +193,14 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void ShowVoteResultPopup(int targetActor, Action callback)
     {
+        voteResultCallback = callback; // 저장
         Debug.Log("팝업띄움");
         Debug.Log(targetActor);
         //팝업을 킴
         votingUI.SetActive(false);
         voteResult.SetActive(true);
 
-
-
-        Photon.Realtime.Player player = PhotonNetwork.PlayerList[targetActor];
+        Photon.Realtime.Player player = PhotonNetwork.CurrentRoom.Players[targetActor];
         Debug.Log(player);
         playerImage.rectTransform.localEulerAngles = Vector3.zero;
 
@@ -214,8 +215,11 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         else if ((int)role == 2)//임포스터일 경우
         {
             roletext = ($"{(string)nick}은 임포스터가 맞습니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
+        }else
+        {
+            roletext = ($"nickname은 임포스터가 맞습니다. \n 남은 임포스터는 n명입니다.");    
         }
-        roletext = ($"nickname은 임포스터가 맞습니다. \n 남은 임포스터는 n명입니다.");
+        
         StartCoroutine(TextEffect(roletext, 0.1f));
     }
     IEnumerator StartRotateImage(RectTransform target, float speed)
@@ -271,5 +275,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
         yield return new WaitForSeconds(2f);
         voteResult.SetActive(false);
+        voteResultCallback?.Invoke();
+        voteResultCallback = null;
     }
 }

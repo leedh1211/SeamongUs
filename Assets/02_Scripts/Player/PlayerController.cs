@@ -99,17 +99,17 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void FixedUpdate()
     {
+        if (killCooldown > 0)
+        {
+            killCooldown -= Time.fixedDeltaTime;
+        }
+        
         if (!photonView.IsMine)
         {
             if (Vector3.Distance(transform.position, networkPosition) > 2f)
                 transform.position = networkPosition;
             else
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.fixedDeltaTime * lerpSpeed);
-
-            if (killCooldown > 0)
-            {
-                killCooldown -= Time.fixedDeltaTime;
-            }
         }
         else
         {
@@ -174,6 +174,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void TryKill()
     {
+        Debug.Log(killCooldown);
         if (killCooldown > 0) return;
         if (photonView.gameObject.TryGetComponent<ImposterController>(out ImposterController imposter))
         {
