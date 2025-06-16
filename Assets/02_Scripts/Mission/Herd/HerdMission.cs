@@ -8,7 +8,7 @@ public class HerdMission : Mission
     private int collected;
 
     public HerdMission()
-        : base("HerdMission", "¾ç¶¼¸¦ ¿ì¸®±îÁö ¸ô¾ÆÁÖ¼¼¿ä.")
+        : base("HerdMission", "ï¿½ç¶¼ï¿½ï¿½ ï¿½ì¸®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.")
     { }
 
     public override Mission Clone()
@@ -16,19 +16,21 @@ public class HerdMission : Mission
         return new HerdMission();
     }
 
-    // ¾ç ¼ö¸¦ ¼³Á¤
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void SetTotalSheep(int count)
     {
         totalSheep = count;
         collected = 0;
     }
 
-    // ¾ç ÇÏ³ª°¡ ¸ñÇ¥ ÁöÁ¡¿¡ µµ´ÞÇßÀ» ¶§ È£Ãâ
-    public void CollectOne()
+    // ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ È£ï¿½ï¿½
+    public bool CollectOne()
     {
-        if (IsCompleted) return;
+        if (IsCompleted) return false;
+
         collected++;
-        if (collected >= totalSheep)
-            Complete();
+        if (collected < totalSheep) return false;
+        
+        return true; 
     }
 }
