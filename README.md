@@ -74,12 +74,12 @@
 ## 2. 👥 팀소개
 | 이름 | 역할 | 담당 업무| GitHub | Blog |
 |------|------|--------|-------|-------|
-| 김웅진 | 팀장 | *김웅진 담당 업무* | [github.com/hong](https://github.com/KUJ1031) | https://thsusekdnlt1.tistory.com/ |
-| 이동헌 | 팀원 | *이동헌 담당 업무* | [github.com/devkim](https://github.com/leedh1211) | https://leedh12.tistory.com/ |
-| 강민성 | 팀원 | *강민성 담당 업무* | [github.com/devkim](https://github.com/mcas0215) | https://mcas0215.tistory.com/ |
-| 최진안 | 팀원 | *최진안 담당 업무* | [github.com/devkim](https://github.com/hhd14725) | https://muchmercy.tistory.com/manage/posts |
-| 이선량 | 팀원 | *이선량 담당 업무* | [github.com/devkim](https://github.com/AgathaYi) | https://05cm.tistory.com/ |
-| 손양복 | 팀원 | *손양복 담당 업무* | [github.com/devkim](https://github.com/YBdhhh) | https://97926.tistory.com/ |
+| 김웅진 | 팀장 | *김웅진 담당 업무* | [https://github.com/KUJ1031](https://github.com/KUJ1031) | https://thsusekdnlt1.tistory.com/ |
+| 이동헌 | 팀원 | *이동헌 담당 업무* | [https://github.com/leedh1211](https://github.com/leedh1211) | https://leedh12.tistory.com/ |
+| 강민성 | 팀원 | *강민성 담당 업무* | [https://github.com/mcas0215](https://github.com/mcas0215) | https://mcas0215.tistory.com/ |
+| 최진안 | 팀원 | *최진안 담당 업무* | [https://github.com/hhd14725](https://github.com/hhd14725) | https://muchmercy.tistory.com/manage/posts |
+| 이선량 | 팀원 | *이선량 담당 업무* | [https://github.com/AgathaYi](https://github.com/AgathaYi) | https://05cm.tistory.com/ |
+| 손양복 | 팀원 | *손양복 담당 업무* | [https://github.com/YBdhhh](https://github.com/YBdhhh) | https://97926.tistory.com/ |
 
 <br>
 
