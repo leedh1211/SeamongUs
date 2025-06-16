@@ -46,11 +46,18 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         Vector2 spawnPos = GetValidGroundPosition();
 
         GameObject player = PhotonNetwork.Instantiate(playerPrefabName, spawnPos, Quaternion.identity);
+
+        //  1) PhotonView 가져오기
+        PhotonView view = player.GetComponent<PhotonView>();
+
+        //  2) 이 뷰의 Owner(TagObject)에 자기 GameObject를 등록
+        view.Owner.TagObject = player;               // ★ 핵심 한 줄
+
+        // 기존 RaiseEvent 로직
         if (playerManager != null)
-        {
             BroadcastPlayerSpawn(player);
-        }
     }
+
     
     private void BroadcastPlayerSpawn(GameObject playerObject)
     {

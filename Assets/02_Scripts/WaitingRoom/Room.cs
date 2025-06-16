@@ -20,7 +20,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     private Dictionary<int, GameObject> playerSlots = new Dictionary<int, GameObject>();
 
     [SerializeField] private Button[] spriteButtons; // 9개 버튼 배열
-    
+
     void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
@@ -43,32 +43,21 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         // 각 버튼에 클릭 이벤트 등록
         for (int i = 0; i < spriteButtons.Length; i++)
         {
-            int index = i + 1; // 1 ~ 9
+            int index = i; // 0 ~ 8
             spriteButtons[i].onClick.AddListener(() =>
             {
-                ChangeMySprite("CharacterSprite0" + index);
+                ChangeMySprite(index);
             });
         }
     }
 
-    public void ChangeMySprite(string spriteName)
+    public void ChangeMySprite(int avatarIndex)
     {
-        GameObject localPlayerObj = PhotonNetwork.LocalPlayer.TagObject as GameObject;
-        if (localPlayerObj == null)
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
-            Debug.LogError("Local player GameObject is null!");
-            return;
-        }
-
-        PhotonView pv = PhotonView.Get(localPlayerObj);
-        if (pv == null)
-        {
-            Debug.LogError("PhotonView of local player not found!");
-            return;
-        }
-
-        // 내 PhotonView에 RPC 호출 -> 네트워크상의 모든 클라이언트에 동기화됨
-        pv.RPC("SetSprite", RpcTarget.AllBuffered, spriteName);
+            { PlayerPropKey.Spr, avatarIndex }
+        };
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
     void SetupUIByHost()
@@ -80,89 +69,64 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void RefreshPlayerSlots()
     {
-        //foreach (Transform child in playerSlotContainer)
-        //{
-        //    Destroy(child.gameObject);
-        //}
-
-        //playerSlots.Clear();
-
-        //foreach (Player p in PhotonNetwork.PlayerList)
-        //{
-        //    GameObject slot = Instantiate(playerSlotPrefab, playerSlotContainer);
-        //    slot.GetComponentInChildren<TextMeshProUGUI>().text = p.NickName + (p.IsMasterClient ? " (Host)" : "");
-        //    playerSlots[p.ActorNumber] = slot;
-        //}
+        // 필요한 경우 플레이어 슬롯 UI 업데이트 코드 작성
     }
 
     void OnClickReady()
     {
-        bool currentReady = GetIsReady(); // 현재 상태
-        bool nextReady = !currentReady;   // 토글된 상태
+        bool currentReady = GetIsReady();
+        bool nextReady = !currentReady;
 
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable { { "IsReady", nextReady } };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
-        // UI 업데이트 예시
         string buttonText = nextReady ? "Wait" : "Ready";
-        readyButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = buttonText;
+        readyButton.GetComponentInChildren<TextMeshProUGUI>().text = buttonText;
     }
+
     bool GetIsReady()
     {
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object ready))
         {
-            Debug.Log($"IsReady for {PhotonNetwork.LocalPlayer.NickName}: {ready}");
             return (bool)ready;
         }
         return false;
     }
+
     bool IsAllPlayersReady()
     {
-        Debug.Log("count - "+PhotonNetwork.PlayerList.Length);
         foreach (Player p in PhotonNetwork.PlayerList)
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                p.CustomProperties.TryGetValue(PlayerPropKey.Nick, out object playerName);
-                Debug.Log($"NickName: {playerName}");
                 if (!p.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object isReady) || !(isReady is bool ready && ready))
                 {
-                    if (playerName is string)
-                    {
-                        Debug.LogWarning($"Player {playerName} is not ready.");    
-                    }
                     return false;
-                }    
+                }
             }
         }
         return true;
     }
+
     void OnClickStart()
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
         if (IsAllPlayersReady())
         {
-            Debug.Log("All players ready. Starting game...");
             PhotonNetwork.RaiseEvent(
-                eventCode: EventCodes.ChangeState, // 커스텀 코드. 100번 예시
+                eventCode: EventCodes.ChangeState,
                 eventContent: null,
                 raiseEventOptions: new RaiseEventOptions { Receivers = ReceiverGroup.All },
                 sendOptions: SendOptions.SendReliable
             );
         }
-        else
-        {
-            Debug.LogWarning("Not all players are ready.");
-        }
     }
-
 
     public void OnChatSubmit(string message)
     {
         if (!string.IsNullOrWhiteSpace(message))
         {
-            Debug.Log($"[Chat] Submitted message: {message}");
             photonView.RPC("ReceiveChatMessage", RpcTarget.All, PhotonNetwork.NickName, message);
             chatInput.text = "";
         }
@@ -171,7 +135,6 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     [PunRPC]
     void ReceiveChatMessage(string sender, string message)
     {
-        Debug.Log($"[RPC] {sender}: {message}");
         AddChatMessage(sender, message);
     }
 
@@ -186,16 +149,11 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         text.text = $"<b>{sender}:</b> {message}";
         StartCoroutine(ScrollToBottom());
     }
+
     private IEnumerator ScrollToBottom()
     {
-        yield return null; // 한 프레임 대기
+        yield return null;
         scrollRect.verticalNormalizedPosition = 0f;
-    }
-
-    public void UpdateCharacterSelection(string selectedCharacter)
-    {
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable { { "SelectedCharacter", selectedCharacter } };
-        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -218,13 +176,13 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         SetupUIByHost();
         RefreshPlayerSlots();
     }
-    
+
     public void OnEvent(EventData photonEvent)
     {
         switch (photonEvent.Code)
         {
-            case EventCodes.ChangeState: // Start Game State 변경 이벤트
-                GameManager.Instance.ChangeState(GameState.RoleAssignment); // 각 클라이언트에서 실행됨
+            case EventCodes.ChangeState:
+                GameManager.Instance.ChangeState(GameState.RoleAssignment);
                 break;
         }
     }

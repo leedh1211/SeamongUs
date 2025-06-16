@@ -49,8 +49,13 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         PhotonView view = PhotonView.Find(viewID);
         GameObject playerGO = view.gameObject;
+
         playerGODict[actorNumber] = playerGO;
+
+        // ★ 추가
+        view.Owner.TagObject = playerGO;   // 혹시 빠졌던 경우를 대비
     }
+
 
     public Dictionary<int, GameObject> GetAllPlayers()
     {
