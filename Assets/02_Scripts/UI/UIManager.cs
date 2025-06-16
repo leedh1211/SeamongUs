@@ -5,6 +5,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -25,12 +26,17 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     //public GameObject meetingUI;
     public GameObject votingUI;
 
+    public event Action OnReportPopupClosed;
+    public event Action OnEndGamePopupClosed;
+
     [Header("엔딩팝업")]
     [SerializeField] private GameObject crewWinPopupPrefab;
     [SerializeField] private GameObject imposterWinPopupPrefab;
 
     [Header("시체 발견 팝업")]
     [SerializeField] private GameObject reportPopupPrefab;
+
+    bool popupActive = false;
 
     private void Awake()
     {
@@ -48,8 +54,6 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         votingUI.SetActive(false);
     }
 
-    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
-    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
 
     // Start is called before the first frame update
     void Start()
@@ -92,43 +96,60 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void OnEvent(EventData ev)
     {
+        if (popupActive) return;
         byte code = (byte)ev.Code;
 
-        if(code == EventCodes.BodyReported) // OnBodyReportedPopup을 호출 // ChangeState는 콜백으로 처리하고 일단은 안에 함수넣지말기.
+        if (code == EventCodes.GameEnded)
         {
-            var data = ev.CustomData as object[];
-            string reporter = (string)data[0];
-            string deadBody = (string)data[1];
-
-            //StartCoroutine(ReportPopupCoroutine)
-        }
-        else if (code == EventCodes.GameEnded)
-        {
-          
             byte winner = (byte)ev.CustomData;
             GameObject prefab = (winner == (byte)EndGameCategory.CitizensWin)
                 ? crewWinPopupPrefab
                 : imposterWinPopupPrefab;
-
-            StartCoroutine(EndGamePopupRoutine(prefab,10f));
+            StartCoroutine(DoEndGamePopup(prefab, 3f));
         }
     }
-
-
-    private IEnumerator EndGamePopupRoutine(GameObject prefab, float displaySec)
+    public void RaiseLocalReportPopup(int deadActorNumber)
     {
-        var go = Instantiate(prefab, transform);
+        if (popupActive) return;
+        StartCoroutine(DoReportPopup(deadActorNumber, 2f));
+    }
+
+    IEnumerator DoReportPopup(int deadActorNumber, float duration)
+    {
+        popupActive = true;
+        var go = Instantiate(reportPopupPrefab, transform);
+        var txt = go.GetComponentInChildren<TMP_Text>();
+        string deadName = PhotonNetwork.CurrentRoom.Players[deadActorNumber].NickName;
+        txt.text = $"{deadName}님의 시체가 발견되었습니다.";
+
         var anim = go.GetComponent<Animator>();
         if (anim) anim.SetTrigger("Enter");
 
-        yield return new WaitForSeconds(displaySec);
+        yield return new WaitForSeconds(duration);
 
         if (anim) anim.SetTrigger("Exit");
         yield return new WaitForSeconds(0.5f);
 
         Destroy(go);
-    
-        //GameManager.Instance.ChangeState(GameState.Result);
+        popupActive = false;
+        OnReportPopupClosed?.Invoke();
+    }
+
+    IEnumerator DoEndGamePopup(GameObject prefab, float duration)
+    {
+        popupActive = true;
+        var go = Instantiate(prefab, transform);
+        var anim = go.GetComponent<Animator>();
+        if (anim) anim.SetTrigger("Enter");
+
+        yield return new WaitForSeconds(duration);
+
+        if (anim) anim.SetTrigger("Exit");
+        yield return new WaitForSeconds(0.5f);
+
+        Destroy(go);
+        popupActive = false;
+        OnEndGamePopupClosed?.Invoke();
     }
 
 

@@ -23,7 +23,6 @@ public static class EventCodes
     public const byte VoteResult = 198;
     public const byte ChangeState = 199;
 
-    //----------------------PopupUICode----------------------//
-    public const byte BodyReported = 10;
+    //----------------------PopupUICode----------------------// 
     public const byte GameEnded = 11;
 }
