@@ -26,8 +26,10 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     //public GameObject meetingUI;
     public GameObject votingUI;
 
-    public event Action OnReportPopupClosed;
-    public event Action OnEndGamePopupClosed;
+    public event Action OnReportPopupClosed; //이게 게임매니저에 아까 콜백 구독한애들 
+    public event Action OnEndGamePopupClosed; //마찬가지
+    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
+    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
 
     [Header("엔딩팝업")]
     [SerializeField] private GameObject crewWinPopupPrefab;
@@ -35,6 +37,9 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     [Header("시체 발견 팝업")]
     [SerializeField] private GameObject reportPopupPrefab;
+
+    [Header("팝업을 띄울 부모(Canvas)")]
+    [SerializeField] private RectTransform popupParent;
 
     bool popupActive = false;
 
@@ -94,18 +99,23 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     }
 
-    public void OnEvent(EventData ev)
+    public void OnEvent(EventData ev) 
     {
         if (popupActive) return;
         byte code = (byte)ev.Code;
 
-        if (code == EventCodes.GameEnded)
+        if (code == EventCodes.GameEnded) 
         {
-            byte winner = (byte)ev.CustomData;
-            GameObject prefab = (winner == (byte)EndGameCategory.CitizensWin)
+            // ev.CustomData 에서 승자 카테고리를 꺼냅니다
+            EndGameCategory winner = (EndGameCategory)(byte)ev.CustomData;
+
+            // 팝업용 prefab 선택
+            GameObject prefab = (winner == EndGameCategory.CitizensWin)
                 ? crewWinPopupPrefab
                 : imposterWinPopupPrefab;
-            StartCoroutine(DoEndGamePopup(prefab, 3f));
+
+          
+            StartCoroutine(DoEndGamePopup(prefab, winner, 3f));
         }
     }
     public void RaiseLocalReportPopup(int deadActorNumber)
@@ -117,34 +127,46 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     IEnumerator DoReportPopup(int deadActorNumber, float duration)
     {
         popupActive = true;
-        var go = Instantiate(reportPopupPrefab, transform);
-        var txt = go.GetComponentInChildren<TMP_Text>();
-        string deadName = PhotonNetwork.CurrentRoom.Players[deadActorNumber].NickName;
-        txt.text = $"{deadName}님의 시체가 발견되었습니다.";
 
-        var anim = go.GetComponent<Animator>();
-        if (anim) anim.SetTrigger("Enter");
+        // 1) 인스턴스화
+        var go = Instantiate(reportPopupPrefab, popupParent);
 
+        // 2) 컨트롤러 가져오기
+        var controller = go.GetComponent<ReportPopupController>();
+
+        // 3) Init + Enter 애니
+        string deadName = PhotonNetwork.CurrentRoom
+                               .Players[deadActorNumber]
+                               .NickName;
+        controller.Init(deadName);
+        controller.PlayEnter();
+
+        // 4) 대기
         yield return new WaitForSeconds(duration);
 
-        if (anim) anim.SetTrigger("Exit");
+        // 5) Exit 애니
+        controller.PlayExit();
         yield return new WaitForSeconds(0.5f);
 
+        // 6) 정리
         Destroy(go);
         popupActive = false;
         OnReportPopupClosed?.Invoke();
     }
 
-    IEnumerator DoEndGamePopup(GameObject prefab, float duration)
+    IEnumerator DoEndGamePopup(GameObject prefab, EndGameCategory winner, float duration) 
     {
         popupActive = true;
-        var go = Instantiate(prefab, transform);
-        var anim = go.GetComponent<Animator>();
-        if (anim) anim.SetTrigger("Enter");
+        var go = Instantiate(prefab, popupParent);
+        var controller = go.GetComponent<EndingPopupController>();
+
+        // 이제 받은 winner 를 Init 에 넘겨줍니다
+        controller.Init(winner);
+        controller.PlayEnter();
 
         yield return new WaitForSeconds(duration);
 
-        if (anim) anim.SetTrigger("Exit");
+        controller.PlayExit();
         yield return new WaitForSeconds(0.5f);
 
         Destroy(go);

@@ -45,3 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   votingUI: {fileID: 0}
+  crewWinPopupPrefab: {fileID: 5393066905194326459, guid: de6393e47e9874c4599eee5a00918346, type: 3}
+  imposterWinPopupPrefab: {fileID: 619907442638203958, guid: 1beb85fd54ff2b644bb1c5665a8760a0, type: 3}
+  reportPopupPrefab: {fileID: 4571373127373592941, guid: 150fa6ee925b6e4409eb8ea225660efa, type: 3}
+  popupParent: {fileID: 0}
