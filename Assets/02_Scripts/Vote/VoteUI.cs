@@ -84,15 +84,18 @@ public class VoteUI : MonoBehaviour
 
     private IEnumerator Ballot(Dictionary<int, int> finalCounts, Action onComplete)
     {
+        Debug.Log("Ballot 실행");
         // 모든 슬롯 초기화
         foreach (var slot in slots)
             if (slot.gameObject.activeSelf)
                 slot.PrepareForBallot();
 
         // 최대 득표수만큼 애니메이션 진행
-        int max = 0;
-        foreach (var voted in finalCounts.Values)
-            if (voted > max) max = voted;
+        int max = finalCounts.Values
+            .GroupBy(v => v)
+            .Max(g => g.Count());
+        
+        Debug.Log("Ballot Max : " + max);
 
         for (int round = 1; round <= max; round++)
         {
