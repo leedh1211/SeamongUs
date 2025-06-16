@@ -38,7 +38,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 
         readyButton.onClick.AddListener(OnClickReady);
         startButton.onClick.AddListener(OnClickStart);
-        chatInput.onSubmit.AddListener(OnChatSubmit);
+        
 
         // 각 버튼에 클릭 이벤트 등록
         for (int i = 0; i < spriteButtons.Length; i++)
@@ -123,38 +123,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-    public void OnChatSubmit(string message)
-    {
-        if (!string.IsNullOrWhiteSpace(message))
-        {
-            photonView.RPC("ReceiveChatMessage", RpcTarget.All, PhotonNetwork.NickName, message);
-            chatInput.text = "";
-        }
-    }
-
-    [PunRPC]
-    void ReceiveChatMessage(string sender, string message)
-    {
-        AddChatMessage(sender, message);
-    }
-
-    [SerializeField] private Transform chatContentParent;
-    [SerializeField] private GameObject chatMessagePrefab;
-    [SerializeField] private ScrollRect scrollRect;
-
-    public void AddChatMessage(string sender, string message)
-    {
-        GameObject chatObj = Instantiate(chatMessagePrefab, chatContentParent);
-        TextMeshProUGUI text = chatObj.GetComponent<TextMeshProUGUI>();
-        text.text = $"<b>{sender}:</b> {message}";
-        StartCoroutine(ScrollToBottom());
-    }
-
-    private IEnumerator ScrollToBottom()
-    {
-        yield return null;
-        scrollRect.verticalNormalizedPosition = 0f;
-    }
+    
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {

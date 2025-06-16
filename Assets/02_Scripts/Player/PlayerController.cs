@@ -260,6 +260,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnReportInput(InputAction.CallbackContext context)
     {
+        if (IsUIFocused())
+            return;
         if (context.performed && photonView.IsMine)
         {
             OnReportAction();
