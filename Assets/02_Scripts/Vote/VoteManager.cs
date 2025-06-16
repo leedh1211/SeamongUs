@@ -218,7 +218,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 // 투표 결과 -> 추방
                 UIManager.Instance.HideVotingUI();
                 // 결과 애니메이션 + 추방 팝업 보여주기
-                VoteResultUI.Instance.ShowResult(finalCounts, ejected);
+                VoteCountUI.Instance.ShowCount(finalCounts);
 
                 // 다음 투표를 위해 초기화
                 voteResults.Clear();
