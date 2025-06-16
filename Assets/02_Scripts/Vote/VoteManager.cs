@@ -75,11 +75,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
 
         if (PhotonNetwork.IsMasterClient)
-        {
             EndVote();
-        }
-        UIManager.Instance.HideVotingUI();
-        onVoteEndCallback?.Invoke();
     }
 
     /// <summary>
@@ -155,10 +151,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
             RaiseVoteResult(top[0].Actor);
         }
 
-        //int target = top[0].Actor;
-        //Debug.Log($"추방 대상 ActorNum: {target}");
-        //RaiseVoteResult(target);
-
         // 6. 기록 초기화
         voteResults.Clear();
     }
@@ -218,14 +210,17 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 }
                 break;
             case EventCodes.VoteResult:
-                var datas = (object[])photonEvent.CustomData;
-                int ejected = (int)datas[0];
-                // 집계된 딕셔너리 복사
-                var finalResults = new Dictionary<int, int>(voteResults);
-                // 투표창 숨기기
+                // 투표 집계
+                var customData = (object[])photonEvent.CustomData;
+                int ejected = (int)customData[0];
+                var finalCounts = new Dictionary<int, int>(voteResults);
+
+                // 투표 결과 -> 추방
                 UIManager.Instance.HideVotingUI();
-                // TODO: 결과 애니메이션 + 추방 UI
-                // 다음 투표 대비 집계 초기화
+                // 결과 애니메이션 + 추방 팝업 보여주기
+                VoteResultUI.Instance.ShowResult(finalCounts, ejected);
+
+                // 다음 투표를 위해 초기화
                 voteResults.Clear();
                 break;
         }
