@@ -28,7 +28,7 @@ public class PlayerDamageReceiver : MonoBehaviourPunCallbacks
 
         if (stat.GetValue(StatType.CurHp) <= 0 && !stat.isDead)
         {
-            stat.Die();
+            // stat.Die();
 
             // 공격자와 피해자 정보를 모두 RaiseKillEvent에 전달
             RaiseKillEvent(attackerActorNumber, photonView.Owner.ActorNumber);

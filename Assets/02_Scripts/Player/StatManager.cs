@@ -127,7 +127,7 @@ public class StatManager : MonoBehaviour
             if (type == StatType.CurHp && stat.CurrentValue <= 0)
             {
                 Debug.Log("[StatManager] 플레이어 사망 처리");
-                Die();
+                // Die();
             }
         }
     }
@@ -159,53 +159,42 @@ public class StatManager : MonoBehaviour
     }
     public bool isDead = false;
 
-    public void Die()
-    {
-        if (isDead)
-        {
-            Debug.Log("[StatManager] 이미 사망 처리된 플레이어입니다.");
-            return;
-        }
-
-        isDead = true;
-        Debug.Log("[StatManager] 플레이어 사망 처리 호출");
-
-        if (animator != null)
-        {
-            animator.SetTrigger("Die");
-        }
-
-        // PlayerController 찾기
-        controller ??= GetComponent<PlayerController>();
-        if (controller == null)
-        {
-            PlayerManager pm = FindObjectOfType<PlayerManager>();
-            if (pm != null)
-            {
-                Debug.Log("사망 플레이어 : " + $"actorNumber: {actorNumber}");
-                controller = pm.FindPlayerController(actorNumber);
-            }
-        }
-
-        // 실제 사망 처리
-        if (controller != null)
-        {
-            controller.Die();
-        }
-        else
-        {
-            Debug.LogWarning("[StatManager] PlayerController를 찾을 수 없습니다.");
-        }
-        PhotonView photonView = GetComponent<PhotonView>();
-
-        // 체력 소진으로 인한 사망 시 호출 (임포스터가 연결한 콜백)
-        if (!photonView.IsMine && OnDeathByAttack != null)
-        {
-            Debug.Log("[StatManager] 공격자에게 사망 콜백 전달");
-            OnDeathByAttack.Invoke(photonView.OwnerActorNr);
-            OnDeathByAttack = null; // 중복 호출 방지
-        }
-    }
-
-
+    // public void Die()
+    // {
+    //     if (isDead)
+    //     {
+    //         Debug.Log("[StatManager] 이미 사망 처리된 플레이어입니다.");
+    //         return;
+    //     }
+    //
+    //     isDead = true;
+    //     Debug.Log("[StatManager] 플레이어 사망 처리 호출");
+    //
+    //     if (animator != null)
+    //     {
+    //         animator.SetTrigger("Die");
+    //     }
+    //
+    //     // PlayerController 찾기
+    //     controller ??= GetComponent<PlayerController>();
+    //     if (controller == null)
+    //     {
+    //         PlayerManager pm = FindObjectOfType<PlayerManager>();
+    //         if (pm != null)
+    //         {
+    //             Debug.Log("사망 플레이어 : " + $"actorNumber: {actorNumber}");
+    //             controller = pm.FindPlayerController(actorNumber);
+    //         }
+    //     }
+    //
+    //     // 실제 사망 처리
+    //     if (controller != null)
+    //     {
+    //         controller.Die();
+    //     }
+    //     else
+    //     {
+    //         Debug.LogWarning("[StatManager] PlayerController를 찾을 수 없습니다.");
+    //     }
+    // }
 }

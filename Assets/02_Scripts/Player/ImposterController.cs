@@ -24,22 +24,6 @@ public class ImposterController : MonoBehaviour
             this.enabled = false;
         }
     }
-
-    // void Update()
-    // {
-    //     if (!view.IsMine) return;
-    //
-    //     if (Input.GetKeyDown(KeyCode.F))
-    //     {
-    //         TryKill();
-    //     }
-    //
-    //     if (Input.GetKeyDown(KeyCode.R))
-    //     {
-    //         TryReportBody();
-    //     }
-    // }
-
     public void TryKill()
     {
         GameObject targetGO = FindKillablePlayer();
