@@ -27,6 +27,7 @@ public class MissionCollider : MonoBehaviour
 
     public void HandleInteract(string playerId)
     {
+
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
         {
             Role myRole = (Role)Convert.ToInt32(roleObj);
