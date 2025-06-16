@@ -1001,7 +1001,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8298875591314448989
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1757,7 +1757,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1234837264463461451}
   - component: {fileID: 2556109088621071269}
-  - component: {fileID: 6047649882960400276}
   m_Layer: 0
   m_Name: MapCamera
   m_TagString: Untagged
@@ -1831,11 +1830,3 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &6047649882960400276
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8626758272527403038}
-  m_Enabled: 1
