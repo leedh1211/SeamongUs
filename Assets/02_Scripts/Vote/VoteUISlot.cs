@@ -16,19 +16,10 @@ public class VoteUISlot : MonoBehaviour
     [SerializeField] private GameObject votedMark; // 투표 참여완료 표시용
 
     [Header("개표")]
-    private Transform markParent;
+    [SerializeField] private Transform markParent;
     [SerializeField] private GameObject markPrefab;
 
     public int TargetPlayerId { get; private set; }
-
-    private void Awake()
-    {
-        markParent = transform.Find("ResultContent");
-        if (markParent == null)
-        {
-            Debug.LogError("Mark parent not found in VoteUISlot!");
-        }
-    }
 
     /// <summary>
     /// playerId  : 이 슬롯이 가리키는 ActorNumber  

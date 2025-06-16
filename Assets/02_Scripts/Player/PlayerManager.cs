@@ -180,11 +180,6 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                         player.Die("vote");
                     }
                 }
-                // 2. 팝업 띄우고 → 끝나면 상태 전환
-                UIManager.Instance.ShowVoteResultPopup(actorNumber, () =>
-                {
-                    GameManager.Instance.ChangeState(GameState.Playing);
-                });
             }
                 break;
             case EventCodes.PlayerReport:
