@@ -13,8 +13,6 @@ public class VoteUI : MonoBehaviour
 
     private void OnEnable()
     {
-        // 타이머, 슬롯 초기화
-        // StartCoroutine(StartTimer());
         PopulateSlots();
     }
 
@@ -30,7 +28,7 @@ public class VoteUI : MonoBehaviour
         float time = VoteManager.Instance.VoteTime;
         while (time > 0)
         {
-            timeText.text = $"{Mathf.CeilToInt(time)}초 남았습니다...";
+            timeText.text = $"회의 및 투표시간이 {Mathf.CeilToInt(time)}초 남았습니다...";
             yield return new WaitForSeconds(1f);
             time -= 1f;
         }
@@ -42,7 +40,7 @@ public class VoteUI : MonoBehaviour
     }
 
     // contentParent에 배치된 자식 슬롯들 사용으로 변경
-    private void PopulateSlots()
+    public void PopulateSlots()
     {
         var slots = contentParent.GetComponentsInChildren<VoteUISlot>(includeInactive: true);
         var players = PhotonNetwork.PlayerList;
@@ -66,6 +64,9 @@ public class VoteUI : MonoBehaviour
             // 신고자 확인
             bool isReporter = (player.ActorNumber == reporterID);
 
+            // 투표참여여부 확인
+            bool hasVoted = VoteManager.Instance.VoteResults.ContainsKey(player.ActorNumber);
+
             // 슬롯 초기화 호출
             // 스프라이트 가져오도록 추가 연결
             Sprite avatar = AvatarManager.Instance.GetSprite(player.ActorNumber);
@@ -74,7 +75,8 @@ public class VoteUI : MonoBehaviour
             player.NickName,
             avatar,
             isDead,
-            isReporter
+            isReporter,
+            hasVoted
             );
         }
     }

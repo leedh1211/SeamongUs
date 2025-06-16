@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -14,7 +13,7 @@ public class ReportManager : MonoBehaviour
     {
         Instance = this;
     }
-    
+
     public void ReportBody(int deadPlayerActNum)
     {
         int reporterActorNum = PhotonNetwork.LocalPlayer.ActorNumber;
