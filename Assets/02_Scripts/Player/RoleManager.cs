@@ -10,6 +10,7 @@ public class RoleManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private PlayerManager playerManager;
     public static RoleManager Instance { get; private set; }
+    private HashSet<int> playersWithRole = new HashSet<int>();
 
     private void Awake() => Instance = this;
 
@@ -47,12 +48,27 @@ public class RoleManager : MonoBehaviourPunCallbacks
     
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
-        if (targetPlayer.IsLocal && changedProps.ContainsKey(PlayerPropKey.Role))
+        if (changedProps.ContainsKey(PlayerPropKey.Role))
         {
-            int role = (int)changedProps[PlayerPropKey.Role];
-            Debug.Log($"[RoleManager] OnPlayerPropertiesUpdate 호출됨: {role}");
-            PlayerUIManager.Instance.Init(); // 여기서 정확히 반영됨
-            GameManager.Instance.ChangeState(GameState.PlayingStart);
+            int actorNumber = targetPlayer.ActorNumber;
+            Debug.Log($"[RoleManager] RoleSet: {targetPlayer.NickName} / Actor#{actorNumber}");
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if (!playersWithRole.Contains(actorNumber))
+                    playersWithRole.Add(actorNumber);
+
+                Debug.Log($"[RoleManager] 현재 역할 설정된 인원 수: {playersWithRole.Count} / 전체: {PhotonNetwork.PlayerList.Length}");
+            }
+            if (playersWithRole.Count == PhotonNetwork.PlayerList.Length)
+            {
+                Debug.Log("[RoleManager] 모든 인원이 역할을 수락했으므로 PlayingStart로 전환");
+                GameManager.Instance.ChangeState(GameState.PlayingStart);
+            }
+            if (targetPlayer.IsLocal)
+            {
+                PlayerUIManager.Instance.Init(); // 로컬 UI 초기화
+            }
         }
     }
 

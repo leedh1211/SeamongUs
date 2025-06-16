@@ -25,16 +25,13 @@ namespace _02_Scripts.Mission
             PhotonNetwork.RemoveCallbackTarget(this);
         }
 
-        private void Awake()
-        {
-            playerKey = PhotonNetwork.LocalPlayer.ActorNumber.ToString();
-        }
-
         public void OnEvent(EventData photonEvent)
         {
             switch (photonEvent.Code)
             {
                 case EventCodes.MissionsAssignedCompleted:
+                    playerKey = PhotonNetwork.LocalPlayer.ActorNumber.ToString();
+                    Debug.Log("미션유아이매니저의 플레이어키는"+playerKey);
                     UpdateMissionList();
                     GameManager.Instance.ChangeState(GameState.Playing);
                     break;
@@ -48,6 +45,12 @@ namespace _02_Scripts.Mission
 
         public void UpdateMissionList()
         {
+            Role role = Role.UnManaged;
+            if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
+            {
+                role = (Role)Convert.ToInt32(roleObj);
+            }
+            if (role != Role.Crewmate) return;
             foreach (Transform child in missionUIListContent.transform)
             {
                 GameObject.Destroy(child.gameObject);
