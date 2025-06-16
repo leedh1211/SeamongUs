@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using Photon.Pun;
+using _02_Scripts.Ung_Managers;
 
 public class VoteUI : MonoBehaviour
 {
@@ -44,22 +45,37 @@ public class VoteUI : MonoBehaviour
     private void PopulateSlots()
     {
         var slots = contentParent.GetComponentsInChildren<VoteUISlot>(includeInactive: true);
-        var players = Photon.Pun.PhotonNetwork.PlayerList;
+        var players = PhotonNetwork.PlayerList;
         int count = Mathf.Min(slots.Length, players.Length);
+
+        int reporterID = ReportManager.Instance.LastReporter;
 
         for (int i = 0; i < count; i++)
         {
             var slot = slots[i];
-            slot.gameObject.SetActive(true);
-
             var player = players[i];
 
-            slot.Init
-                (
-                player.ActorNumber, // 플레이어 ID
-                player.NickName, // 플레이어 이름
-                Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber // 로컬 플레이어 ID
-                );
+            // 슬롯 활성화
+            slot.gameObject.SetActive(true);
+
+            // 사망여부
+            bool isDead = false;
+            if (player.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out var deadObj))
+                isDead = (bool)deadObj;
+
+            // 신고자 확인
+            bool isReporter = (player.ActorNumber == reporterID);
+
+            // 슬롯 초기화 호출
+            // 스프라이트 가져오도록 추가 연결
+            Sprite avatar = AvatarManager.Instance.GetSprite(player.ActorNumber);
+            slot.Init(
+            player.ActorNumber,
+            player.NickName,
+            avatar,
+            isDead,
+            isReporter
+            );
         }
     }
 }
