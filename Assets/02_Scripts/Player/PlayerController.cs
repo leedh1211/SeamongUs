@@ -3,6 +3,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -44,8 +45,22 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private float ghostMoveSpeed = 3f;
     [SerializeField] private float ghostAlpha = 0.5f;
     private bool isGhost = false;
+
+    
+
+    
+
+    private bool IsUIFocused()
+    {
+        var sel = EventSystem.current?.currentSelectedGameObject;
+        if (sel == null) return false;
+        return sel.GetComponent<TMPro.TMP_InputField>() != null;
+
+    }
+
     
     private float killCooldown = 0f;
+
 
     private static readonly int DieHash = Animator.StringToHash("Die");
     private static readonly int SpeedHash = Animator.StringToHash("currentMoveSpeed");
@@ -107,26 +122,31 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (isGhost)
         {
             transform.position += (Vector3)(moveInput * ghostMoveSpeed * Time.fixedDeltaTime);
+            UpdateFacing();
             return;
         }
 
         rb.velocity = moveInput * currentMoveSpeed;
         animator.SetFloat(SpeedHash, rb.velocity.magnitude);
+        UpdateFacing();
+    }
+    private void UpdateFacing()
+    {
+        if (moveInput.x == 0 || playerSprite == null) return;
 
-        if (!jumping && moveInput.x != 0 && playerSprite != null)
+        bool nextFacingLeft = moveInput.x < 0;
+        if (nextFacingLeft != facingLeft)
         {
-            bool nextFacingLeft = moveInput.x < 0;
-            if (nextFacingLeft != facingLeft)
-            {
-                facingLeft = nextFacingLeft;
-                var sr = playerSprite.GetComponent<SpriteRenderer>();
-                if (sr) sr.flipX = facingLeft;          // 내 화면 즉시 반영
-            }
+            facingLeft = nextFacingLeft;
+            var sr = playerSprite.GetComponent<SpriteRenderer>();
+            if (sr) sr.flipX = facingLeft;
         }
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (IsUIFocused())
+            return;
         moveInput = context.ReadValue<Vector2>();
     }
 
@@ -172,6 +192,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
     {
+        if (IsUIFocused()) return;
         if (photonView.IsMine && ctx.performed)
         {
             PhotonNetwork.RaiseEvent(
@@ -262,6 +283,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnReportInput(InputAction.CallbackContext context)
     {
+        if (IsUIFocused())
+            return;
         if (context.performed && photonView.IsMine)
         {
             OnReportAction();
