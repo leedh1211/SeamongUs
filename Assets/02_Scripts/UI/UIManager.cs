@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Photon.Pun;
+using System;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Text;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -25,6 +28,11 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     //public GameObject missionUI;    //list?
     //public GameObject meetingUI;
     public GameObject votingUI;
+    public GameObject voteResult;
+    public PlayerManager playerManager;
+    public TextMeshProUGUI voteText;
+    public Image playerImage;
+    public string roletext;
 
     public event Action OnReportPopupClosed; //이게 게임매니저에 아까 콜백 구독한애들 
     public event Action OnEndGamePopupClosed; //마찬가지
@@ -63,7 +71,10 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // Start is called before the first frame update
     void Start()
     {
-
+        //ShowVoteResultPopup(0, () =>
+        //{
+        //    GameManager.Instance.ChangeState(GameState.Playing);
+        //});
     }
 
     // Update is called once per frame
@@ -178,10 +189,87 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         OnEndGamePopupClosed?.Invoke();
     }
 
-
     public void ShowVoteResultPopup(int targetActor, Action callback)
     {
         
         Debug.Log(targetActor);
+        //팝업을 킴
+        votingUI.SetActive(false);
+        voteResult.SetActive(true);
+
+
+
+        Photon.Realtime.Player player = PhotonNetwork.PlayerList[targetActor];
+        Debug.Log(player);
+        playerImage.rectTransform.localEulerAngles = Vector3.zero;
+
+
+        //임포스터 아닐경우
+        player.CustomProperties.TryGetValue(PlayerPropKey.Nick, out object nick);
+        player.CustomProperties.TryGetValue(PlayerPropKey.Role, out object role);
+        if ((int)role == 1)
+        {
+            roletext = ($"{(string)nick}은 임포스터가 아닙니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
+        }
+        else if ((int)role == 2)//임포스터일 경우
+        {
+            roletext = ($"{(string)nick}은 임포스터가 맞습니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
+        }
+        roletext = ($"nickname은 임포스터가 맞습니다. \n 남은 임포스터는 n명입니다.");
+        StartCoroutine(TextEffect(roletext, 0.1f));
+    }
+    IEnumerator StartRotateImage(RectTransform target, float speed)
+    {
+        while (true)
+        {
+            target.Rotate(0f, speed * Time.deltaTime, 0f);
+            yield return null;
+        }
+    }
+    public int CountImposter()
+    {
+        int AliveImposter = 0;
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            player.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object IsDead);
+            if (!(bool)IsDead)
+            {
+                player.CustomProperties.TryGetValue(PlayerPropKey.Role, out object role);
+                if ((int)role == 2)
+                {
+                    AliveImposter += 1;
+                }
+            }
+        }
+        return AliveImposter;
+    }
+
+    IEnumerator TextEffect(string text, float delay)
+    {
+        Coroutine rotate = StartCoroutine(StartRotateImage(playerImage.rectTransform, 360f));
+        voteText.text = string.Empty;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.Length; i++)
+        {
+            sb.Append(text[i]);
+            voteText.text = sb.ToString();
+            float currentDelay;
+            if (i == text.LastIndexOf("가"))
+            {
+                currentDelay = 1f;
+            }
+            else if (i == text.LastIndexOf("가") + 6)
+            {
+                StopCoroutine(rotate);
+                currentDelay = 0.5f;
+            }
+            else
+            {
+                currentDelay = delay;
+            }
+            yield return new WaitForSeconds(currentDelay);
+        }
+        yield return new WaitForSeconds(2f);
+        voteResult.SetActive(false);
     }
 }
