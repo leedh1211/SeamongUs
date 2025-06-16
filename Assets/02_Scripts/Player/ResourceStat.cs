@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 public class ResourceStat
@@ -18,7 +18,10 @@ public class ResourceStat
 
     public void Recover(float amount)
     {
+        float oldValue = CurrentValue;
         CurrentValue = Mathf.Min(CurrentValue + amount, MaxValue);
+        Debug.Log($"[ResourceStat] {Type} 회복됨: {oldValue} → {CurrentValue}");
+
         OnValueChanged?.Invoke(CurrentValue);
     }
 

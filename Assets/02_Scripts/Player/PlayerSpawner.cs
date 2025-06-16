@@ -46,6 +46,18 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         Vector2 spawnPos = GetValidGroundPosition();
 
         GameObject player = PhotonNetwork.Instantiate(playerPrefabName, spawnPos, Quaternion.identity);
+
+        // 플레이어가 생성된 후 StatManager 가져오기
+        StatManager statMgr = player.GetComponent<StatManager>();
+        if (statMgr != null)
+        {
+            PlayerUIManager.Instance.Initialize(statMgr);
+        }
+        else
+        {
+            Debug.LogWarning("[SpawnPlayer] 생성된 플레이어에 StatManager가 없습니다.");
+        }
+
         if (playerManager != null)
         {
             BroadcastPlayerSpawn(player);

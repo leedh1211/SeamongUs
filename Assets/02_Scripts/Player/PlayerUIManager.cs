@@ -14,6 +14,10 @@ public class PlayerUIManager : MonoBehaviour
     [SerializeField] private Button inventoryBtn;
     [SerializeField] private PlayerManager playerManager;
     private PlayerController player;
+
+    [SerializeField] private Slider hpSlider;
+    [SerializeField] private Slider staminaSlider;
+    [SerializeField] private StatManager statManager;
     public static PlayerUIManager Instance { get; private set; }
 
     private Dictionary<int, UIInventory> playerInventories = new();
@@ -21,6 +25,14 @@ public class PlayerUIManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+    private void Start()
+    {
+        hpSlider.maxValue = statManager.GetMaxValue(StatType.CurHp);
+        staminaSlider.maxValue = statManager.GetMaxValue(StatType.Stamina);
+
+        statManager.SubscribeToStatChange(StatType.CurHp, val => hpSlider.value = val);
+        statManager.SubscribeToStatChange(StatType.Stamina, val => staminaSlider.value = val);
     }
     public void Init()
     {
@@ -53,5 +65,21 @@ public class PlayerUIManager : MonoBehaviour
 
         // inventoryBtn.onClick.RemoveAllListeners();
         // inventoryBtn.onClick.AddListener(() => player.OnInventoryInputWrapper());
+
+
+    }
+
+    public void Initialize(StatManager statManager)
+    {
+        this.statManager = statManager;
+
+        hpSlider.maxValue = statManager.GetMaxValue(StatType.CurHp);
+        hpSlider.value = statManager.GetValue(StatType.CurHp);
+
+        statManager.SubscribeToStatChange(StatType.CurHp, val =>
+        {
+            hpSlider.value = val;
+            Debug.Log($"[UIStatDisplay] 체력 UI 갱신: {val}");
+        });
     }
 }
