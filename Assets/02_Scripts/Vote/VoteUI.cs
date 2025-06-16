@@ -18,10 +18,18 @@ public class VoteUI : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
-        slots = contentParent.GetComponentsInChildren<VoteUISlot>(includeInactive: true).ToList();
+        slots = contentParent.GetComponentsInChildren<VoteUISlot>(true).ToList();
     }
 
     // 투표 시간 업데이트

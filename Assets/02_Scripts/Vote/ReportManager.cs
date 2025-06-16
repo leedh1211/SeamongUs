@@ -1,7 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine;
 
 public class ReportManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -11,7 +10,6 @@ public class ReportManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private void Awake()
     {
         Instance = this;
-        return;
     }
 
     public override void OnEnable()
@@ -41,7 +39,7 @@ public class ReportManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             // 신고 요청을 보낸 ActorNum을 그대로 저장
             LastReporter = photonEvent.Sender;
-            VoteUI.Instance.PopulateSlots();
+            VoteUI.Instance?.PopulateSlots();
         }
     }
 }
