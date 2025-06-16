@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Resources;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.UI;
 
@@ -23,11 +24,14 @@ public class StatManager : MonoBehaviour
 
     private int actorNumber;
 
+    public System.Action<int> OnDeathByAttack; // 임포스터가 설정한 콜백 (actorNumber 인자로 전달)
+
     private void Awake()
     {
         stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 100);
         stats[StatType.Stamina] = new ResourceStat(StatType.Stamina, 100);
-        Consume(StatType.CurHp, 20f);
+        Consume(StatType.CurHp, stats[StatType.CurHp].MaxValue / 2);
+
     }
 
     private void Start()
@@ -79,6 +83,22 @@ public class StatManager : MonoBehaviour
         if (stats.TryGetValue(type, out var stat))
         {
             stat.Recover(amount);
+
+            // 네트워크에 회복 값 반영
+            if (PhotonNetwork.InRoom && PhotonNetwork.LocalPlayer != null)
+            {
+                object networkValue = Mathf.RoundToInt(stat.CurrentValue); // float → int 변환
+                string key = ConvertStatTypeToPlayerPropKey(type);
+
+                if (key != null)
+                {
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+                {
+                    { key, networkValue }
+                });
+                }
+            }
+            Debug.Log($"[StatManager] {type} 회복: {amount}, 현재 값: {stat.CurrentValue}");
         }
     }
 
@@ -88,13 +108,37 @@ public class StatManager : MonoBehaviour
         {
             stat.Consume(amount);
 
-           // Debug.Log($"[StatManager] {type} 소모: -{amount} → {stat.CurrentValue}/{stat.MaxValue}");
+            // 네트워크에 소모 값 반영
+            if (PhotonNetwork.InRoom && PhotonNetwork.LocalPlayer != null)
+            {
+                object networkValue = Mathf.RoundToInt(stat.CurrentValue);
+                string key = ConvertStatTypeToPlayerPropKey(type);
 
+                if (key != null)
+                {
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+                {
+                    { key, networkValue }
+                });
+                }
+            }
+
+            // 체력 소모로 사망 시 처리
             if (type == StatType.CurHp && stat.CurrentValue <= 0)
             {
                 Debug.Log("[StatManager] 플레이어 사망 처리");
                 Die();
             }
+        }
+    }
+
+    private string ConvertStatTypeToPlayerPropKey(StatType type)
+    {
+        switch (type)
+        {
+            case StatType.CurHp: return PlayerPropKey.Hp;
+            case StatType.Stamina: return PlayerPropKey.Stamina;
+            default: return null;
         }
     }
 
@@ -113,7 +157,7 @@ public class StatManager : MonoBehaviour
             stat.OnValueChanged += callback;
         }
     }
-    private bool isDead = false;
+    public bool isDead = false;
 
     public void Die()
     {
@@ -124,7 +168,6 @@ public class StatManager : MonoBehaviour
         }
 
         isDead = true;
-
         Debug.Log("[StatManager] 플레이어 사망 처리 호출");
 
         if (animator != null)
@@ -132,8 +175,8 @@ public class StatManager : MonoBehaviour
             animator.SetTrigger("Die");
         }
 
+        // PlayerController 찾기
         controller ??= GetComponent<PlayerController>();
-
         if (controller == null)
         {
             PlayerManager pm = FindObjectOfType<PlayerManager>();
@@ -144,6 +187,7 @@ public class StatManager : MonoBehaviour
             }
         }
 
+        // 실제 사망 처리
         if (controller != null)
         {
             controller.Die();
@@ -151,6 +195,15 @@ public class StatManager : MonoBehaviour
         else
         {
             Debug.LogWarning("[StatManager] PlayerController를 찾을 수 없습니다.");
+        }
+        PhotonView photonView = GetComponent<PhotonView>();
+
+        // 체력 소진으로 인한 사망 시 호출 (임포스터가 연결한 콜백)
+        if (!photonView.IsMine && OnDeathByAttack != null)
+        {
+            Debug.Log("[StatManager] 공격자에게 사망 콜백 전달");
+            OnDeathByAttack.Invoke(photonView.OwnerActorNr);
+            OnDeathByAttack = null; // 중복 호출 방지
         }
     }
 

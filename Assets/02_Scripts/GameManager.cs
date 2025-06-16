@@ -24,7 +24,7 @@ public enum EndGameCategory
     ImpostorsWin
 }
 
-public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
+public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public GameState CurrentState { get; private set; }
@@ -36,21 +36,25 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Instance = this;
         CurrentState = GameState.Lobby;
         DontDestroyOnLoad(this);
+        StartCoroutine(SubscribeToUI());
     }
-
-    void OnEnable() // 시체발견,게임엔딩팝업 콜백 구독
+    IEnumerator SubscribeToUI()
     {
-        base.OnEnable();
+        // UIManager 인스턴스가 생성될 때까지 대기
+        yield return new WaitUntil(() => UIManager.Instance != null);
         UIManager.Instance.OnReportPopupClosed += HandleReportClosed;
         UIManager.Instance.OnEndGamePopupClosed += HandleEndGameClosed;
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
-        UIManager.Instance.OnReportPopupClosed -= HandleReportClosed;
-        UIManager.Instance.OnEndGamePopupClosed -= HandleEndGameClosed;
-        base.OnDisable();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.OnReportPopupClosed -= HandleReportClosed;
+            UIManager.Instance.OnEndGamePopupClosed -= HandleEndGameClosed;
+        }
     }
+
  
 
     public void ChangeState(GameState newState)
@@ -98,19 +102,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
 
-    public void OnEvent(EventData ev)
-    {
-        byte code = (byte)ev.Code;
-
-        if (code == EventCodes.PlayerReport)
-        {
-            lastDeadActorNumber = (int)((object[])ev.CustomData)[0];
-            ChangeState(GameState.Meeting);
-        }
-        // GameEnded 팝업은 UIManager.OnEvent에서 처리
-        // ReportManager에서 신고이벤트를 일으키기에 일단 여기서 받았습니다, 이걸통해 meeting 전환후 시체신고팝업을 전체에 띄우려고요.
-    }
-
     public void EndGame(EndGameCategory category)
     {
         PhotonNetwork.RaiseEvent(
@@ -128,5 +119,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private void HandleEndGameClosed()
     {
         ChangeState(GameState.Result);
+    }
+
+    public void SetLastDeadActor(int actorNumber)
+    {
+        lastDeadActorNumber = actorNumber;
     }
 }

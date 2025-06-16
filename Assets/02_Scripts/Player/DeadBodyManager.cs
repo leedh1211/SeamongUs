@@ -18,7 +18,7 @@ public class DeadBodyManager : MonoBehaviour
 
         DeadBody deadBodyComponent = body.GetComponent<DeadBody>();
         deadBodyComponent.Initialize(actorNumber);
-
+        
         deadBodies.Add(deadBodyComponent); // 누락되어 있었다면 리스트에 추가
     }
 
@@ -51,6 +51,7 @@ public class DeadBodyManager : MonoBehaviour
     {
         foreach (var deadBody in deadBodies)
         {
+            Debug.Log(deadBody.PlayerActorNumber);
             deadBody.PlayerActorNumber = actorNum;
             return deadBody;
         }

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using _02_Scripts.Alert;
 using _02_Scripts.Login;
@@ -90,7 +90,10 @@ namespace _02_Scripts.Lobby
                 { PlayerPropKey.Spr  , 0               }, // int (스프라이트 인덱스만)
                 { PlayerPropKey.IsDead , false           }, // bool
                 { PlayerPropKey.Role , (byte)0         },  // byte
-                { PlayerPropKey.IsReady , false         }  // bool
+                { PlayerPropKey.IsReady , false         },  // bool
+                { PlayerPropKey.Hp, 100 }, // int (체력)
+                { PlayerPropKey.Stamina, 100 } // int (스태미나)
+
             };
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);

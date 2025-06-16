@@ -18,8 +18,8 @@ TagManager:
   - Jumpable
   - Ghost
   - Ground
-  - 
-  - 
+  - MapObject
+  - MapOnly
   - 
   - 
   - 

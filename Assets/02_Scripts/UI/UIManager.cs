@@ -126,6 +126,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     IEnumerator DoReportPopup(int deadActorNumber, float duration)
     {
+       
         popupActive = true;
 
         // 1) 인스턴스화
@@ -138,20 +139,23 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         string deadName = PhotonNetwork.CurrentRoom
                                .Players[deadActorNumber]
                                .NickName;
+       
         controller.Init(deadName);
         controller.PlayEnter();
 
         // 4) 대기
         yield return new WaitForSeconds(duration);
-
+      
         // 5) Exit 애니
+      
         controller.PlayExit();
         yield return new WaitForSeconds(0.5f);
 
         // 6) 정리
         Destroy(go);
+        
         popupActive = false;
-        OnReportPopupClosed?.Invoke();
+        OnReportPopupClosed?.Invoke();       
     }
 
     IEnumerator DoEndGamePopup(GameObject prefab, EndGameCategory winner, float duration) 
@@ -177,6 +181,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void ShowVoteResultPopup(int targetActor, Action callback)
     {
+        
         Debug.Log(targetActor);
     }
 }
