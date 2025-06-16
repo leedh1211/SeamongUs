@@ -2,6 +2,7 @@ using System.Collections;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -46,10 +47,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private float ghostAlpha = 0.5f;
     private bool isGhost = false;
 
+    public TMP_Text playerName;
     
-
     
-
     private bool IsUIFocused()
     {
         var sel = EventSystem.current?.currentSelectedGameObject;
@@ -85,6 +85,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
+        SetName();
         if (SceneManager.GetActiveScene().name == "GameScene" && photonView.IsMine)
         {
             StartCoroutine(WaitAndRegister());
@@ -95,6 +96,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         yield return new WaitUntil(() => MissionManager.Instance != null);
         MissionManager.Instance.RegisterLocalPlayer(this);
+    }
+    
+    private void SetName()
+    {
+        Debug.Log("Set name");
+        Photon.Realtime.Player player = photonView.Owner;
+        playerName.text = player.NickName;
     }
 
     private void FixedUpdate()

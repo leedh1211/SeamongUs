@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+using TMPro;
 using UnityEngine.Networking;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -14,6 +15,7 @@ public class PlayerVisual : MonoBehaviourPunCallbacks
 {
     public SpriteRenderer bodyRenderer;
     public Animator animator;
+    public TMP_Text playerName;
     private string setVisualUrl = "http://121.162.172.253:3000/api/users/setVisual";
 
     private void Start()
