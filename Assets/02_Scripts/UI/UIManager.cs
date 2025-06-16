@@ -176,7 +176,6 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Destroy(go);
         popupActive = false;
         OnEndGamePopupClosed?.Invoke();
-      
     }
 
 
