@@ -2,6 +2,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 
 public class ImposterController : MonoBehaviour
 {
@@ -44,19 +45,28 @@ public class ImposterController : MonoBehaviour
         GameObject targetGO = FindKillablePlayer();
         if (targetGO != null)
         {
-            int actorNumber = targetGO.GetComponent<PhotonView>().OwnerActorNr;
-            Player targetPlayer = FindPlayerByActorNumber(actorNumber);
-            if (targetPlayer != null)
-            {
-                Debug.Log($"{localPlayer.NickName}가 {targetPlayer.NickName}를 살해했습니다.");
-                RaiseKillEvent(actorNumber); // 서버 전체에 킬 이벤트 전송
-            }
+            PhotonView targetView = targetGO.GetComponent<PhotonView>();
+            int actorNumber = targetView.OwnerActorNr;
+
+            Debug.Log($"{localPlayer.NickName}가 Actor#{actorNumber}를 공격합니다.");
+
+            object[] eventData = new object[] { targetView.Owner.ActorNumber, 25};
+                PhotonNetwork.RaiseEvent(
+                    EventCodes.PlayerAttacked,
+                    eventData,
+                    new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                    SendOptions.SendReliable
+                );
         }
         else
         {
             Debug.Log("살해 가능한 플레이어가 없습니다.");
         }
     }
+
+
+
+
 
     // void TryReportBody()
     // {
@@ -96,23 +106,6 @@ public class ImposterController : MonoBehaviour
         }
 
         return null;
-    }
-
-    void RaiseKillEvent(int targetActorNumber)
-    {
-        object[] content = new object[] { localPlayer.ActorNumber };
-        PhotonNetwork.RaiseEvent(
-            EventCodes.PlayerKill,
-            content,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            ExitGames.Client.Photon.SendOptions.SendReliable
-        );
-        PhotonNetwork.RaiseEvent(
-            EventCodes.PlayerDied,
-            new object[] { targetActorNumber },
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            ExitGames.Client.Photon.SendOptions.SendReliable
-        );
     }
 
     Player FindPlayerByActorNumber(int actorNumber)
