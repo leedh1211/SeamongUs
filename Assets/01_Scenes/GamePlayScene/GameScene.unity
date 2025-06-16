@@ -1700,6 +1700,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventoryAndItem
       objectReference: {fileID: 0}
+    - target: {fileID: 779608739487023204, guid: babfca9761da06d48ae5b68b69338ddf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2136702470252290219, guid: babfca9761da06d48ae5b68b69338ddf, type: 3}
       propertyPath: sceneViewId
       value: 3
