@@ -163,12 +163,12 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         voteResults.Clear();
     }
 
-    private void RaiseVoteResult(int actorNum)
+    private void RaiseVoteResult(int ejectedActorNum)
     {
         Debug.Log("투표결과 이벤트 발행");
         PhotonNetwork.RaiseEvent(
             EventCodes.VoteResult,
-            new object[] { actorNum },
+            new object[] { ejectedActorNum }, // -1은 스킵
             new RaiseEventOptions { Receivers = ReceiverGroup.All },
             SendOptions.SendReliable
         );
@@ -216,6 +216,17 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     currentVoteTime = newTime;
                     Debug.Log($"남은 투표 시간을 {newTime}초로 줄였습니다.");
                 }
+                break;
+            case EventCodes.VoteResult:
+                var datas = (object[])photonEvent.CustomData;
+                int ejected = (int)datas[0];
+                // 집계된 딕셔너리 복사
+                var finalResults = new Dictionary<int, int>(voteResults);
+                // 투표창 숨기기
+                UIManager.Instance.HideVotingUI();
+                // TODO: 결과 애니메이션 + 추방 UI
+                // 다음 투표 대비 집계 초기화
+                voteResults.Clear();
                 break;
         }
     }
