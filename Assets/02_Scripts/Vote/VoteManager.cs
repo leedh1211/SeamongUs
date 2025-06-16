@@ -4,31 +4,34 @@ using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using Unity.VisualScripting;
 using UnityEngine;
-using Hashtable = System.Collections.Hashtable;
+using System;
 
 public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static VoteManager Instance { get; private set; }
 
     // 투표 시간
-    [Header("투표시간(초)")] [SerializeField] private float voteTime = 30f; // 테스트용 시간 30초
+    [Header("투표시간(초)")][SerializeField] private float voteTime = 30f; // 테스트용 시간 30초
     public float VoteTime => voteTime; // VoteUI에서 접근할 수 있도록 공개
     private Dictionary<int, int> voteResults = new Dictionary<int, int>();
+
     public IReadOnlyDictionary<int, int> VoteResults => voteResults;
-    private System.Action onVoteEndCallback;
+    private Action onVoteEndCallback;
+
     [SerializeField] private VoteUI voteUI;
     private float currentVoteTime;
-    private bool voteTimeShortened = false;
-    private void OnEnable()
+
+    private new void OnEnable()
     {
+        base.OnEnable();
         PhotonNetwork.AddCallbackTarget(this);
     }
 
-    private void OnDisable()
+    private new void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
+        base.OnDisable();
     }
 
 
@@ -45,7 +48,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     /// <summary>
     /// 투표 시작: UI 보여주고 타이머 돌리고 종료 후 콜백
     /// </summary>
-    public void StartVotingPhase(System.Action onVoteEnd)
+    public void StartVotingPhase(Action onVoteEnd)
     {
         // 이전 투표 결과 초기화
         voteResults.Clear();
@@ -61,7 +64,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private IEnumerator VotingRoutine()
     {
         currentVoteTime = voteTime;
-        voteTimeShortened = false;
 
         while (currentVoteTime > 0f)
         {
@@ -77,7 +79,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (PhotonNetwork.IsMasterClient)
         {
-            EndVote();    
+            EndVote();
         }
         UIManager.Instance.HideVotingUI();
         onVoteEndCallback?.Invoke();
@@ -105,11 +107,42 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     /// <summary>
     /// 투표 결과 집계 및 처리 -> 추방(킬) 처리 -> 승리 조건 체크
     /// </summary>
+    private void CheckAllVotesReceived()
+    {
+        // 살아있는 플레이어 수 계산
+        int alivePlayerCount = PhotonNetwork.PlayerList.Count(player =>
+            player.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out var die) && !(bool)die);
+
+        if (voteResults.Count >= alivePlayerCount)
+        {
+            // 전원 투표했으니 타이머 즉시 종료
+            currentVoteTime = 0f;
+            Debug.Log("[Voting] 전원 투표 완료 – 즉시 개표");
+        }
+
+        // 동작 잘 되면, 아래 주석 삭제해도 됨
+        //foreach (var player in PhotonNetwork.PlayerList)
+        //{
+        //    if (player.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object IsDead))
+        //    {
+        //        if (!(bool)IsDead)
+        //        {
+        //            alivePlayerCount += 1;
+        //        }
+        //    }
+        //}
+
+        //if (voteResults.Count >= alivePlayerCount)
+        //{
+        //    Debug.Log("투표시간을 6으로 변경합니다");
+        //    SetVoteTime(6);
+        //}
+    }
+
     public void EndVote()
     {
-        
         Debug.Log("개표 시작");
-        
+
         // 1. 투표 결과 없음
         if (voteResults.Count == 0)
         {
@@ -131,7 +164,10 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             Debug.Log("투표 동점");
             RaiseVoteResult(-1); // 스킵
-            return;
+        }
+        else
+        {
+            RaiseVoteResult(top[0].Actor);
         }
 
         // 5. 단일 최다 득표자 → 추방 처리
@@ -145,7 +181,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void RaiseVoteResult(int actorNum)
     {
-        
         Debug.Log("투표결과 이벤트 발행");
         PhotonNetwork.RaiseEvent(
             EventCodes.VoteResult,
@@ -155,26 +190,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         );
     }
 
-    private void CheckAllVotesReceived()
-    {
-        int alivePlayerCount = 0;
-        foreach (var player in PhotonNetwork.PlayerList)
-        {
-            if (player.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object IsDead))
-            {
-                if (!(bool)IsDead)
-                {
-                    alivePlayerCount += 1;
-                }
-            }
-        }
-
-        if (voteResults.Count >= alivePlayerCount)
-        {
-            Debug.Log("투표시간을 6으로 변경합니다");
-            SetVoteTime(6);
-        }
-    }
 
     private void SetVoteTime(int votetime)
     {
