@@ -92,7 +92,6 @@ public class GameManager : MonoBehaviour
             case GameState.Voting:
                 VoteManager.Instance.StartVotingPhase(() =>
                 {
-                    ChangeState(GameState.Playing);
                 });
                 break;
             case GameState.Result:

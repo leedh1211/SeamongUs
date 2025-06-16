@@ -181,7 +181,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void ShowVoteResultPopup(int targetActor, Action callback)
     {
-        
+        Debug.Log("팝업띄움");
         Debug.Log(targetActor);
     }
 }
