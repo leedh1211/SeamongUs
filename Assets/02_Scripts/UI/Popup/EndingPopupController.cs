@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using _02_Scripts.Ung_Managers;
+using System;
 
 public class EndingPopupController : MonoBehaviour
 {
@@ -25,8 +26,16 @@ public class EndingPopupController : MonoBehaviour
         List<Player> winners = new List<Player>();
         foreach (var p in PhotonNetwork.PlayerList)
         {
-            bool isDead = (bool)(p.CustomProperties[PlayerPropKey.IsDead] ?? false);
-            Role role = (Role)(byte)(p.CustomProperties[PlayerPropKey.Role] ?? 0);
+            // 1) IsDead
+            object deadObj;
+            p.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out deadObj);
+            bool isDead = deadObj is bool db && db;
+
+            // 2) Role
+            object roleObj;
+            p.CustomProperties.TryGetValue(PlayerPropKey.Role, out roleObj);
+            int roleInt = Convert.ToInt32(roleObj);
+            Role role = (Role)roleInt;
 
             if (winnerCategory == EndGameCategory.CitizensWin && role == Role.Crewmate && !isDead)
                 winners.Add(p);
