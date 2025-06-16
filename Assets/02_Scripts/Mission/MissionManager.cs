@@ -19,6 +19,10 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField]
     private PlayerController playerController;
 
+    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
+    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
+    
+
     private void Awake()
     {
         Debug.Log("[MissionManager] Awake() 호출됨");
@@ -122,12 +126,12 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             case EventCodes.MissionsAssigned:
                 var dataA = (object[])photonEvent.CustomData;
-                string pidA = (string)dataA[0];
-                string[] mids = (string[])dataA[1];
-                var clones = mids
+                string playerId = (string)dataA[0];
+                string[] missionList = (string[])dataA[1];
+                var clones = missionList
                     .Select(mid => allMissions.First(m => m.MissionID == mid).Clone())
                     .ToList();
-                playerMissions[pidA] = clones;
+                playerMissions[playerId] = clones;
                 break;
 
             case EventCodes.MissionCompleted:

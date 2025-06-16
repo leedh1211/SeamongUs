@@ -197,7 +197,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
-        if (changedProps.ContainsKey(PlayerPropKey.IsDead))
+        if (changedProps.ContainsKey(PlayerPropKey.IsDead) && SceneManager.GetActiveScene().name == "GameScene")
         {
              CheckEndGame();
         }
