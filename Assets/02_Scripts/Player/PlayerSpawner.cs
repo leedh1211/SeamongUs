@@ -50,7 +50,7 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         
         // 플레이어가 생성된 후 StatManager 가져오기
         StatManager statMgr = player.GetComponent<StatManager>();
-        if (statMgr != null)
+        if (statMgr != null && SceneManager.GetActiveScene().name == "GameScene")
         {
             PlayerUIManager.Instance.Initialize(statMgr);
         }

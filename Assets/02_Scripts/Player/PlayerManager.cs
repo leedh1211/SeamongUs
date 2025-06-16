@@ -170,7 +170,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (changedProps.ContainsKey(PlayerPropKey.IsDead))
         {
-            CheckEndGame();
+            // CheckEndGame();
         }
     }
 

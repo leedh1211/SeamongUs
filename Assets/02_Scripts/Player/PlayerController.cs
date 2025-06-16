@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
 
         rb.velocity = moveInput * currentMoveSpeed;
-        animator.SetFloat(SpeedHash, rb.velocity.magnitude);
+        // animator.SetFloat(SpeedHash, rb.velocity.magnitude);
 
         if (!jumping && moveInput.x != 0 && playerSprite != null)
         {

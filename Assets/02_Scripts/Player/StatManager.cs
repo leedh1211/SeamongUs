@@ -27,8 +27,7 @@ public class StatManager : MonoBehaviour
     {
         stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 100);
         stats[StatType.Stamina] = new ResourceStat(StatType.Stamina, 100);
-        Consume(StatType.CurHp, stats[StatType.CurHp].MaxValue);
-        
+        Consume(StatType.CurHp, 20f);
     }
 
     private void Start()
