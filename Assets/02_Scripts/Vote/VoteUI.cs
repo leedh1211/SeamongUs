@@ -85,33 +85,51 @@ public class VoteUI : MonoBehaviour
     private IEnumerator Ballot(Dictionary<int, int> finalCounts, Action onComplete)
     {
         Debug.Log("Ballot 실행");
-        // 모든 슬롯 초기화
+
+        if (finalCounts == null || finalCounts.Count == 0)
+        {
+            Debug.LogWarning("[Ballot] finalCounts가 비어 있습니다.");
+            UIManager.Instance.HideVotingUI();
+            onComplete?.Invoke();
+            yield break;
+        }
+
         foreach (var slot in slots)
             if (slot.gameObject.activeSelf)
                 slot.PrepareForBallot();
 
-        // 최대 득표수만큼 애니메이션 진행
-        int max = finalCounts.Values
-            .GroupBy(v => v)
-            .Max(g => g.Count());
+        // 각 투표 대상자에게 받은 표 수만큼 AddMark를 한 번씩 실행
+        // 이를 라운드별로 나눠서 순차적으로 실행
         
-        Debug.Log("Ballot Max : " + max);
-
-        for (int round = 1; round <= max; round++)
+        //{누가, 누구를 뽑았다}
+        //{누가, 몇표씩 받았는가}
+        Dictionary<int, int> voteResults = new Dictionary<int, int>();
+        foreach (var vote in finalCounts)
         {
-            foreach (var keyV in finalCounts)
+            if (voteResults.ContainsKey(vote.Value))
             {
-                if (keyV.Value >= round)
-                {
-                    // 해당 actor의 슬롯 찾아서
-                    var slot = slots.Find(s => s.TargetPlayerId == keyV.Key);
-                    slot?.AddMark();
-                }
+                voteResults[vote.Value]++;   
             }
-            yield return new WaitForSeconds(0.5f);
+            else
+            {
+                voteResults[vote.Value] = 1;
+            }
         }
 
-        // 애니 끝나면 VoteCanvas 닫고 콜백까지 구현함. => 이후 추방 UI (양복님께서 구현 진행)
+        int maxVote = finalCounts.Values.Max();
+        for (int i = 0; i < maxVote; i++)
+        {
+            foreach (var pair in voteResults)
+            {
+                if (pair.Value > i)
+                {
+                    var slot = slots.Find(s => s.TargetPlayerId == pair.Key);
+                    slot?.AddMark(); // 한 번에 하나씩 추가
+                }
+            }
+            yield return new WaitForSeconds(1f);
+        }
+
         UIManager.Instance.HideVotingUI();
         onComplete?.Invoke();
     }
