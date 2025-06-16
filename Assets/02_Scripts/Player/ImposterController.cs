@@ -2,6 +2,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 
 public class ImposterController : MonoBehaviour
 {
@@ -49,41 +50,13 @@ public class ImposterController : MonoBehaviour
 
             Debug.Log($"{localPlayer.NickName}가 Actor#{actorNumber}를 공격합니다.");
 
-            if (!targetView.IsMine)
-            {
-                Debug.Log("[TryKill] 대상은 타인입니다. RPC 전송 중...");
-                // 타인 소유의 뷰에 RPC 호출
-                if (targetView.Owner != null)
-                {
-                    if (!targetView.IsMine)
-                    {
-                        Debug.Log($"[TryKill] 대상은 타인입니다. {targetView.Owner.NickName}에게 RPC 전송 시도");
-                        targetView.RPC("RPC_ReceiveDamage", targetView.Owner, 50f, localPlayer.ActorNumber);
-                    }
-                    else
-                    {
-                        Debug.Log("[TryKill] 자기 자신을 공격합니다.");
-                        PlayerDamageReceiver damageReceiver = targetGO.GetComponent<PlayerDamageReceiver>();
-                        if (damageReceiver != null)
-                        {
-                            damageReceiver.RPC_ReceiveDamage(50f, localPlayer.ActorNumber);
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("[TryKill] targetView.Owner가 null입니다. ViewID: " + targetView.ViewID);
-                }
-            }
-            else
-            {
-                // 본인 테스트용: 자기 자신에게 데미지 처리
-                PlayerDamageReceiver damageReceiver = targetGO.GetComponent<PlayerDamageReceiver>();
-                if (damageReceiver != null)
-                {
-                    damageReceiver.RPC_ReceiveDamage(50f, localPlayer.ActorNumber);
-                }
-            }
+            object[] eventData = new object[] { targetView.Owner.ActorNumber, 25};
+                PhotonNetwork.RaiseEvent(
+                    EventCodes.PlayerAttacked,
+                    eventData,
+                    new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                    SendOptions.SendReliable
+                );
         }
         else
         {

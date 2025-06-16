@@ -124,6 +124,14 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 controller = FindPlayerController(actorNumber);
                 controller.StartCoroutine(controller.JumpCoroutine());
                 break;
+            case EventCodes.PlayerAttacked:
+            {
+                int receiverActnum = (int)data[0];
+                int attackerActorNumber = photonEvent.Sender;
+                int receiveDamage = (int)data[1];
+                GetPlayersGO(receiverActnum).GetComponent<PlayerDamageReceiver>().ReceiveDamage(receiveDamage, attackerActorNumber, receiverActnum);
+            }
+                break;
             case EventCodes.PlayerKill: //임포스터 actorNum = data[0]
                 
                 break;

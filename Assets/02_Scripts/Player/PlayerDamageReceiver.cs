@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ExitGames.Client.Photon;
+using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -7,19 +8,21 @@ public class PlayerDamageReceiver : MonoBehaviourPunCallbacks
     private StatManager stat;
     private Player localPlayer;
 
+    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
+    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
+
     void Awake()
     {
         stat = GetComponent<StatManager>();
         localPlayer = PhotonNetwork.LocalPlayer;
         Debug.Log($"[PlayerDamageReceiver] ViewID: {GetComponent<PhotonView>().ViewID}, IsMine: {photonView.IsMine}");
     }
-
-    [PunRPC]
-    public void RPC_ReceiveDamage(float damage, int attackerActorNumber)
+    
+    public void ReceiveDamage(float damage, int attackerActorNumber, int receiverActorNumber)
     {
         if (stat == null) return;
 
-        Debug.Log($"[RPC] 피해 {damage} 받음, 공격자 Actor#{attackerActorNumber}");
+        Debug.Log($"피해 {damage} 받음, 공격자 Actor#{attackerActorNumber}");
 
         stat.Consume(StatType.CurHp, damage);
 
@@ -28,7 +31,7 @@ public class PlayerDamageReceiver : MonoBehaviourPunCallbacks
             stat.Die();
 
             // 공격자와 피해자 정보를 모두 RaiseKillEvent에 전달
-            RaiseKillEvent(attackerActorNumber, photonView.OwnerActorNr);
+            RaiseKillEvent(attackerActorNumber, photonView.Owner.ActorNumber);
         }
     }
 
