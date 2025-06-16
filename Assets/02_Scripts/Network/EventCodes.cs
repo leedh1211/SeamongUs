@@ -13,8 +13,14 @@ public static class EventCodes
     public const byte PlayerKill = 102;
     public const byte PlayerDied = 103;
     public const byte PlayerAttacked = 104;
+    public const byte PlayerReport = 105;
+    public const byte PlayerVote = 106;
+    
     
     //----------------------GameManageCode----------------------//
+    
+    public const byte SetVoteTime = 197;
+    public const byte VoteResult = 198;
     public const byte ChangeState = 199;
 
     //----------------------PopupUICode----------------------//

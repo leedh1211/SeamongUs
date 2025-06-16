@@ -1,4 +1,5 @@
-﻿using ExitGames.Client.Photon;
+﻿using System;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -130,4 +131,9 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         //GameManager.Instance.ChangeState(GameState.Result);
     }
 
+
+    public void ShowVoteResultPopup(int targetActor, Action callback)
+    {
+        Debug.Log(targetActor);
+    }
 }

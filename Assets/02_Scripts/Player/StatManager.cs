@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Resources;
@@ -17,7 +17,7 @@ public class StatManager : MonoBehaviour
     [SerializeField] private Animator animator;
     private void Awake()
     {
-        stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 0);
+        stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 20);
         stats[StatType.Stamina] = new ResourceStat(StatType.Stamina, 100);
         animator = GetComponent<Animator>();
     }
@@ -41,7 +41,7 @@ public class StatManager : MonoBehaviour
         if (stats.TryGetValue(type, out var stat))
         {
             stat.Recover(amount);
-            Debug.Log($"[StatManager] {type} È¸º¹: +{amount} ¡æ {stat.CurrentValue}/{stat.MaxValue}");
+            Debug.Log($"[StatManager] {type} íšŒë³µ: +{amount} â†’ {stat.CurrentValue}/{stat.MaxValue}");
         }
     }
 
@@ -50,7 +50,7 @@ public class StatManager : MonoBehaviour
         if (stats.TryGetValue(type, out var stat))
         {
             stat.Consume(amount);
-            Debug.Log($"[StatManager] {type} ¼Ò¸ð: -{amount} ¡æ {stat.CurrentValue}/{stat.MaxValue}");
+            Debug.Log($"[StatManager] {type} ì†Œëª¨: -{amount} â†’ {stat.CurrentValue}/{stat.MaxValue}");
 
             if (type == StatType.CurHp && stat.CurrentValue <= 0)
             {
@@ -76,7 +76,7 @@ public class StatManager : MonoBehaviour
     }
     private void Die()
     {
-        Debug.Log("[StatManager] ÇÃ·¹ÀÌ¾î »ç¸Á Ã³¸® È£Ãâ");
+        Debug.Log("[StatManager] í”Œë ˆì´ì–´ ì‚¬ë§ ì²˜ë¦¬ í˜¸ì¶œ");
 
         if (animator != null)
         {
