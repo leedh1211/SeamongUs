@@ -906,7 +906,16 @@ MonoBehaviour:
   - {fileID: -296308826, guid: 5fb107b0f36d72b4ea7d46b5f4af68c2, type: 3}
   - {fileID: 2061335734, guid: bc69245c2646c9643b05d05b892181cc, type: 3}
   - {fileID: 676251130, guid: ac7b2387a813d8042a02c5c28a39b677, type: 3}
-  overrideList: []
+  overrideList:
+  - {fileID: 22100000, guid: 33f817e3c5f89df42a821252f63b49bd, type: 2}
+  - {fileID: 22100000, guid: ec308d0a3dbb9344c8b6ef19e62ffdbf, type: 2}
+  - {fileID: 22100000, guid: 303cfe4e53cce774588c282994aae971, type: 2}
+  - {fileID: 22100000, guid: 6a1445e62b361d34c9565dd83c4b52a2, type: 2}
+  - {fileID: 22100000, guid: eb350ae834f30a5498d94fc842fb40ef, type: 2}
+  - {fileID: 22100000, guid: e1d5c5344a4531240bc2ff5221c7f2b0, type: 2}
+  - {fileID: 22100000, guid: d2d46d0df2c7b5642855aa7ddbed2570, type: 2}
+  - {fileID: 22100000, guid: f39667086b6873e4dadd9f032b057464, type: 2}
+  - {fileID: 22100000, guid: 6a4ea1fe2879b554da01dbc0e6468eaa, type: 2}
 --- !u!4 &359391131
 Transform:
   m_ObjectHideFlags: 0
