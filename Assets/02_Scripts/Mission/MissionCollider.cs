@@ -5,24 +5,25 @@ using UnityEngine;
 
 public class MissionCollider : MonoBehaviour
 {
-    [Tooltip("Inspector¿¡ ÀÌ ¹Ì¼Ç¿¡ ´ëÀÀÇÏ´Â UI ÆÐ³Î GameObject¸¦ µå·¡±×ÇÏ¼¼¿ä")]
+    [Tooltip("Inspectorï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¼Ç¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ UI ï¿½Ð³ï¿½ GameObjectï¿½ï¿½ ï¿½å·¡ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½")]
     [SerializeField] private GameObject missionUIPanel;
 
     private IMissionUI missionUI;
     public MissionType missionType;
+    public PlayerController playerController;
 
     private void Awake()
     {
         if (missionUIPanel == null)
         {
-            Debug.LogError($"{name}: missionUIPanel¿¡ UI ÆÐ³Î GameObject¸¦ ÇÒ´çÇØ¾ß ÇÕ´Ï´Ù.");
+            Debug.LogError($"{name}: missionUIPanelï¿½ï¿½ UI ï¿½Ð³ï¿½ GameObjectï¿½ï¿½ ï¿½Ò´ï¿½ï¿½Ø¾ï¿½ ï¿½Õ´Ï´ï¿½.");
             return;
         }
 
-        // GameObject¿¡¼­ IMissionUI ±¸ÇöÃ¼¸¦ Ã£¾Æ¼­ ÇÒ´ç
+        // GameObjectï¿½ï¿½ï¿½ï¿½ IMissionUI ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½Ò´ï¿½
         missionUI = missionUIPanel.GetComponent<IMissionUI>();
         if (missionUI == null)
-            Debug.LogError($"{name}: missionUIPanel¿¡ IMissionUI¸¦ ±¸ÇöÇÑ ÄÄÆ÷³ÍÆ®(LaundryUI µî)¸¦ ºÙ¿©¾ß ÇÕ´Ï´Ù.");
+            Debug.LogError($"{name}: missionUIPanelï¿½ï¿½ IMissionUIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®(LaundryUI ï¿½ï¿½)ï¿½ï¿½ ï¿½Ù¿ï¿½ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.");
     }
 
     public void HandleInteract(string playerId)
@@ -33,7 +34,7 @@ public class MissionCollider : MonoBehaviour
             Role myRole = (Role)Convert.ToInt32(roleObj);
             if (myRole == Role.Impostor)
             {
-                Debug.Log("[MissionCollider] ÀÓÆ÷½ºÅÍ´Â ¹Ì¼ÇÀ» ¼öÇàÇÒ ¼ö ¾ø½À´Ï´Ù.");
+                Debug.Log("[MissionCollider] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í´ï¿½ ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
                 return;
             }
         }
@@ -45,5 +46,6 @@ public class MissionCollider : MonoBehaviour
         if (mission == null || mission.IsCompleted) return;
 
         missionUI.Show(mission, playerId);
+        playerController.SetInteraction(true);
     }
 }

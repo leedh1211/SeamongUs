@@ -41,9 +41,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private Transform visual;
     [SerializeField] private Transform shadow;
     [SerializeField] private float lerpSpeed = 10f;
-
+    
+    [Header("State")]
+    public bool IsInteraction = false;
+    
     [Header("Ghost Settings")]
-    [SerializeField] private float ghostMoveSpeed = 3f;
+    [SerializeField] private float ghostMoveSpeed = 6f;
     [SerializeField] private float ghostAlpha = 0.5f;
     private bool isGhost = false;
 
@@ -56,6 +59,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (sel == null) return false;
         return sel.GetComponent<TMPro.TMP_InputField>() != null;
 
+    }
+    
+    public void SetInteraction(bool on)
+    {
+        IsInteraction = on;                        // on == true → 잠금
+        PlayerUIManager.Instance?.
+            SetUseButtonInteractable(!on);         // 버튼은 잠금 시 비활성
+
+        if (on && rb != null)                      // 잠금이면 즉시 정지
+            rb.velocity = Vector2.zero;
     }
 
     
@@ -107,6 +120,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void FixedUpdate()
     {
+        if (IsInteraction)        // 잠금 상태면 아무것도 못 함
+        {
+            rb.velocity = Vector2.zero;
+            return;
+        }
+        
         if (killCooldown > 0)
         {
             killCooldown -= Time.fixedDeltaTime;
@@ -153,31 +172,32 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (IsUIFocused())
+        if (IsInteraction || IsUIFocused()) 
             return;
         moveInput = context.ReadValue<Vector2>();
     }
 
     public void OnInteractInput(InputAction.CallbackContext context)
     {
-        if (context.performed && photonView.IsMine)
-        {
-            OnInteractAction();
-        }
+        if (IsInteraction || !photonView.IsMine || !context.performed)
+            return;
+        OnInteractAction();
+        
     }
 
     public void OnInteractAction()
     {
+        
         Collider2D target = Physics2D.OverlapCircle(transform.position, interactRange, interactLayer);
         if (target != null) OnInteract?.Invoke();
     }
 
     public void OnKillInput(InputAction.CallbackContext context)
     {
-        if (photonView.IsMine && context.performed)
-        {
-            TryKill();
-        }
+        if (isGhost || IsInteraction || !photonView.IsMine || !context.performed)
+            return;
+        TryKill();
+        
     }
 
     public void TryKill()
@@ -202,15 +222,14 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
     {
-        if (IsUIFocused()) return;
-        if (photonView.IsMine && ctx.performed)
-        {
-            PhotonNetwork.RaiseEvent(
-                EventCodes.PlayerJump,
-                new object[] { PhotonNetwork.LocalPlayer.ActorNumber },
-                new RaiseEventOptions { Receivers = ReceiverGroup.All },
-                SendOptions.SendReliable);
-        }
+        if (IsInteraction || IsUIFocused() || !photonView.IsMine || !ctx.performed) 
+            return;
+
+        PhotonNetwork.RaiseEvent(
+            EventCodes.PlayerJump,
+            new object[] { PhotonNetwork.LocalPlayer.ActorNumber },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            SendOptions.SendReliable);
     }
 
     private bool IsJumpableAhead()
@@ -257,10 +276,10 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnInventoryInput(InputAction.CallbackContext context)
     {
-        if (context.performed && photonView.IsMine)
-        {
-            OnOpenInventory?.Invoke();
-        }
+        if (IsInteraction || !photonView.IsMine || !context.performed) 
+            return;
+
+        OnOpenInventory?.Invoke();
     }
 
     public void ModifySpeed(float amount)
@@ -293,12 +312,10 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnReportInput(InputAction.CallbackContext context)
     {
-        if (IsUIFocused())
+        if (IsInteraction || IsUIFocused() || !photonView.IsMine || !context.performed) 
             return;
-        if (context.performed && photonView.IsMine)
-        {
-            OnReportAction();
-        }
+
+        OnReportAction();
     }
 
     public void OnReportAction()
@@ -367,14 +384,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnDanceInput(InputAction.CallbackContext ctx)   // Input System에서 G 키와 매핑
     {
-        if (photonView.IsMine && ctx.performed)
-        {
-            playDance = true;                     // 내 화면 즉시 트리거
-            animator.SetTrigger("Dance");         // Animator에 Dance 트리거
+        if (IsInteraction || !photonView.IsMine || !ctx.performed) 
+            return;
 
-            // 다른 클라이언트에도 알려주기 (간단 RPC)
-            photonView.RPC(nameof(DoDanceRPC), RpcTarget.Others);
-        }
+        playDance = true;
+        animator.SetTrigger("Dance");
+        photonView.RPC(nameof(DoDanceRPC), RpcTarget.Others);
     }
 
     [PunRPC] void DoDanceRPC()
