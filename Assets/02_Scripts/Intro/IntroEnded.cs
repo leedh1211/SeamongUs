@@ -13,6 +13,7 @@ public class IntroEnded : MonoBehaviour
     
     public void OnstartGame()
     {
+        SoundManager.Instance.PlaySFX(SFXType.Click);
         Time.timeScale = 1f;
         SceneManager.LoadScene("Loginscene");
     }
