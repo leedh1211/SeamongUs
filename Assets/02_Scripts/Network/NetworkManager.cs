@@ -87,7 +87,7 @@ namespace _02_Scripts.Lobby
                 { PlayerPropKey.Nick , LoginSession.loginPlayerInfo.name  }, // string
                 { PlayerPropKey.Level, LoginSession.loginPlayerInfo.level }, // int
                 { PlayerPropKey.Gold , LoginSession.loginPlayerInfo.gold  }, // int
-                { PlayerPropKey.Spr  , 0               }, // int (스프라이트 인덱스만)
+                { PlayerPropKey.Spr  , LoginSession.loginPlayerInfo.current_character  }, // int (스프라이트 인덱스만)
                 { PlayerPropKey.IsDead , false           }, // bool
                 { PlayerPropKey.Role , (byte)0         },  // byte
                 { PlayerPropKey.IsReady , false         },  // bool

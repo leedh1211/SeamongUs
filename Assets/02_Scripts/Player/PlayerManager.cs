@@ -126,6 +126,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 break;
             case EventCodes.PlayerAttacked:
             {
+                controller = FindPlayerController(photonEvent.Sender);
+                controller.SetKillCooldown(3f);
                 int receiverActnum = (int)data[0];
                 int attackerActorNumber = photonEvent.Sender;
                 int receiveDamage = (int)data[1];
