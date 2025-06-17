@@ -53,7 +53,7 @@ public class HerdUI : MonoBehaviour, IMissionUI
         float halfW = spawnArea.rect.width * 0.5f;
         float halfH = spawnArea.rect.height * 0.5f;
 
-        // 1) 골 위치는 그대로 우하단에
+        // 1) 골 위치는 그대로 우하단에.
         {
             var rt = goalArea;
             float gx = center.x + halfW - rt.sizeDelta.x * rt.pivot.x;
@@ -61,7 +61,7 @@ public class HerdUI : MonoBehaviour, IMissionUI
             rt.anchoredPosition = new Vector2(gx, gy);
         }
 
-        // 2) 장애물 뿌리기: 중앙 80% 구역, spacing 넓게
+        // 2) 장애물 뿌리기: 중앙 80% 구역, spacing 넓게.
         obstaclePositions.Clear();
         float obsZoneW = halfW * 0.8f;  // 80%
         float obsZoneH = halfH * 0.8f;
@@ -85,10 +85,10 @@ public class HerdUI : MonoBehaviour, IMissionUI
             obstaclePositions.Add(pos);
         }
 
-        // 3) 양 수 설정
+        // 3) 양 수 설정.
         mission.SetTotalSheep(sheepCount);
 
-        // 4) 양 뿌리기: 왼쪽 상단
+        // 4) 양 뿌리기: 왼쪽 상단.
         float sheepW = sheepPrefab.GetComponent<RectTransform>().sizeDelta.x;
         float separation = sheepW * 0.5f;
 
@@ -116,7 +116,7 @@ public class HerdUI : MonoBehaviour, IMissionUI
                 mission: mission,
                 playerId: playerId,
                 ui: this,
-                speed: herdSpeed,  // 느린 속도로 전달
+                speed: herdSpeed,  // 느린 속도로 전달.
                 followOffset: offset
             );
             spawnedSheep.Add(go);
