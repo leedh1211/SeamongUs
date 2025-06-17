@@ -20,6 +20,7 @@ public enum BGMType
 {
     Intro,
     Start,
+    Room,
     Play,
     Voting,
 }
