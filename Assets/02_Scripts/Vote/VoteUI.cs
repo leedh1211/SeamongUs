@@ -36,6 +36,20 @@ public class VoteUI : MonoBehaviour
         timeText.text = $"투표 시간이 {seconds}초 남았습니다...";
     }
 
+    public void ResetVoteUI()
+    {
+        PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object isDead);
+        
+        foreach (VoteUISlot slot in slots)
+        {
+            slot.PrepareForVote();
+            if ((bool)isDead)
+            {
+                slot.IsDeadPeopleUI();
+            }
+        }
+    }
+
     public void PopulateSlots()
     {
         var players = PhotonNetwork.PlayerList;

@@ -63,6 +63,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private IEnumerator VotingRoutine()
     {
+        VoteUI.Instance.ResetVoteUI();
         float currentTime = voteTime;
 
         while (currentTime > 0f)
@@ -164,17 +165,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
             SendOptions.SendReliable
         );
     }
-
-    //private void SetVoteTime(int votetime)
-    //{
-    //    object[] eventData = new object[] { votetime }; // 투표 다했을 경우, 시간 줄어들게 세팅
-    //    PhotonNetwork.RaiseEvent(
-    //        EventCodes.SetVoteTime,
-    //        eventData,
-    //        new RaiseEventOptions { Receivers = ReceiverGroup.All },
-    //        SendOptions.SendReliable
-    //    );
-    //}
 
     public void OnEvent(EventData photonEvent)
     {

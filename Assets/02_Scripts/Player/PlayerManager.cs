@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
+    [SerializeField] private float AttackedCoolDown;
+    [SerializeField] private float KillCoolDown;
     private Dictionary<int, GameObject> playerGODict = new Dictionary<int, GameObject>();
     private HashSet<int> spawnedActorNumbers = new HashSet<int>();
 
@@ -126,8 +128,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 break;
             case EventCodes.PlayerAttacked:
             {
-                controller = FindPlayerController(photonEvent.Sender);
-                controller.SetKillCooldown(3f);
+                if (photonEvent.Sender == PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    controller = FindPlayerController(actorNumber);
+                    controller.SetKillCooldown(AttackedCoolDown);    
+                }
                 int receiverActnum = (int)data[0];
                 int attackerActorNumber = photonEvent.Sender;
                 int receiveDamage = (int)data[1];
@@ -135,8 +140,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
                 break;
             case EventCodes.PlayerKill: //임포스터 actorNum = data[0]
-                controller = FindPlayerController(actorNumber);
-                controller.SetKillCooldown(30f);
+                if (photonEvent.Sender == PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    controller = FindPlayerController(actorNumber);
+                    controller.SetKillCooldown(KillCoolDown);    
+                }
                 break;
             case EventCodes.PlayerDied:
                 if (PhotonNetwork.IsMasterClient)

@@ -40,9 +40,17 @@ namespace _02_Scripts.Lobby
             DontDestroyOnLoad(gameObject); // 씬 전환 유지 원할 경우
         }
 
-        void Start() // 포톤네트워크에 연결
+        private void Start()
         {
-            Init();
+            if (SceneManager.GetActiveScene().name == "LoginScene")
+            {
+                Destroy(gameObject);
+                return;
+            }
+            else
+            {
+                Init(); // 기존 Init() 호출    
+            }
         }
 
         public override void OnConnectedToMaster() //마스터에 연결 -> 로비로 진입
@@ -120,6 +128,26 @@ namespace _02_Scripts.Lobby
         public override void OnLeftRoom() // 방 나간 후 콜백
         {
             PhotonNetwork.JoinLobby();
+            SceneManager.LoadScene("LobbyScene");
+        }
+        
+        public void GoToLoginScene()
+        {
+            LoginSession.loginPlayerInfo = null;
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.Disconnect(); // 연결 종료 → OnDisconnected 호출됨
+            }
+            else
+            {
+                SceneManager.LoadScene("LoginScene"); // 비상 처리
+            }
+        }
+        
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            Debug.Log($"포톤 연결 종료: {cause}");
+            SceneManager.LoadScene("LoginScene");
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList) // 방 리스트 업데이트 함수

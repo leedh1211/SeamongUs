@@ -70,8 +70,27 @@ public class VoteUISlot : MonoBehaviour
         // 기존 마크 제거
         foreach (Transform transform in markParent) Destroy(transform.gameObject);
     }
+    
+    // 투표 시작 전 UI 초기화
 
     // 한표당 마크 하나 추가
+    public void PrepareForVote()
+    {
+        // 활성화 시킬 UI 요소들
+        voteButton.gameObject.SetActive(true);
+        isDeadText.gameObject.SetActive(true);
+        reporterMark.SetActive(true);
+        votedMark.SetActive(true);
+
+        // 기존 마크 제거
+        foreach (Transform transform in markParent) Destroy(transform.gameObject);
+    }
+
+    public void IsDeadPeopleUI()
+    {
+        voteButton.gameObject.SetActive(false);
+    }
+
     public void AddMark()
     {
         Instantiate(markPrefab, markParent);
@@ -83,7 +102,7 @@ public class VoteUISlot : MonoBehaviour
         SoundManager.Instance.PlaySFX(SFXType.Click);
 
         VoteManager.Instance.OnVoteButtonClicked(TargetPlayerId);
-        voteButton.interactable = false; // 투표 후 버튼 비활성화
+        // voteButton.interactable = false; // 투표 후 버튼 비활성화
         votedMark.SetActive(true); // 투표 완료 표시
     }
 }
