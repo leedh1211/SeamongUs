@@ -25,11 +25,6 @@ public class VoteUI : MonoBehaviour
             .ToList();
     }
 
-    private void OnEnable()
-    {
-        PopulateSlots(); // 신고자 표시 포함해서 한 번에 초기화
-    }
-
     // 투표 시간 업데이트
     public void UpdateTimerUI(int seconds)
     {
@@ -64,11 +59,12 @@ public class VoteUI : MonoBehaviour
                 var p = players[i];
 
                 // 슬롯 데이터 채우기
+                
                 bool isDead = (bool)(p.CustomProperties[PlayerPropKey.IsDead] ?? false);
                 bool isReporter = p.ActorNumber == ReportManager.Instance.LastReporter;
                 bool hasVoted = VoteManager.Instance.VoteResults.ContainsKey(p.ActorNumber);
                 Sprite avatar = AvatarManager.Instance.GetSprite(p.ActorNumber);
-
+                
                 slot.Init(
                   p.ActorNumber,
                   p.NickName,
