@@ -43,7 +43,8 @@ public class HerdUI : MonoBehaviour, IMissionUI
         foreach (var go in spawnedSheep) Destroy(go);
         spawnedSheep.Clear();
         foreach (Transform t in obstacleContainer) Destroy(t.gameObject);
-        obstacles.Clear(); obstaclePositions.Clear();
+        obstacles.Clear(); 
+        obstaclePositions.Clear();
         gameObject.SetActive(false);
     }
 
@@ -89,13 +90,24 @@ public class HerdUI : MonoBehaviour, IMissionUI
         mission.SetTotalSheep(sheepCount);
 
         // 4) 양 뿌리기: 왼쪽 상단
-        float sheepX = center.x - halfW + (sheepPrefab.GetComponent<RectTransform>().sizeDelta.x * 0.5f);
+        float sheepW = sheepPrefab.GetComponent<RectTransform>().sizeDelta.x;
+        float separation = sheepW * 0.5f;
+
+        float sheepBaseX = center.x - halfW + (sheepW * 0.5f);
         float sheepY = center.y + halfH - (sheepPrefab.GetComponent<RectTransform>().sizeDelta.y * 0.5f);
+
+        var panelRt = GetComponent<RectTransform>();
+        Vector2 panelCenter = panelRt.rect.center;
+
         for (int i = 0; i < sheepCount; i++)
         {
+            float spawnX = sheepBaseX + separation * i;
+
             var go = Instantiate(sheepPrefab, transform, false);
             var rt = go.GetComponent<RectTransform>();
-            rt.anchoredPosition = new Vector2(sheepX, sheepY);
+            rt.anchoredPosition = new Vector2(spawnX, sheepY);
+
+            Vector2 offset = rt.anchoredPosition - panelCenter;
 
             var sc = go.AddComponent<SheepController>();
             sc.Initialize(
@@ -105,7 +117,8 @@ public class HerdUI : MonoBehaviour, IMissionUI
                 mission: mission,
                 playerId: playerId,
                 ui: this,
-                speed: herdSpeed  // 느린 속도로 전달
+                speed: herdSpeed,  // 느린 속도로 전달
+                followOffset: offset
             );
             spawnedSheep.Add(go);
         }

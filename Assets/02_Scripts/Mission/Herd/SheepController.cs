@@ -13,12 +13,8 @@ public class SheepController : MonoBehaviour
     private Vector2 initialPos;
     private bool inGoal;
     private float speed;
+    private Vector2 followOffset;
 
-    /// <summary>
-    /// panelRect: HerdUI �г��� RectTransform
-    /// goalArea:  �г� ���� ��ǥ���� ��ǥ ����
-    /// obstacles: �г� ���� ��ǥ�� ��ֹ� ���
-    /// </summary>
     public void Initialize(
         RectTransform panelRect,
         RectTransform goalArea,
@@ -26,7 +22,8 @@ public class SheepController : MonoBehaviour
         HerdMission mission,
         string playerId,
         HerdUI ui,
-        float speed
+        float speed,
+        Vector2 followOffset
     )
     {
         this.panelRect = panelRect;
@@ -36,6 +33,7 @@ public class SheepController : MonoBehaviour
         this.playerId = playerId;
         this.ui = ui;
         this.speed = speed;
+        this.followOffset = followOffset;
 
         var rt = GetComponent<RectTransform>();
         initialPos = rt.anchoredPosition;
@@ -54,6 +52,9 @@ public class SheepController : MonoBehaviour
             ui.GetComponentInParent<Canvas>().worldCamera,
             out mouseLocal
         );
+        var r = panelRect.rect;
+        mouseLocal.x = Mathf.Clamp(mouseLocal.x, r.xMin, r.xMax);
+        mouseLocal.y = Mathf.Clamp(mouseLocal.y, r.yMin, r.yMax);
 
         // (2) �ε巴�� ���󰡱�
         rt.anchoredPosition = Vector2.Lerp(
@@ -65,6 +66,7 @@ public class SheepController : MonoBehaviour
         // (3) �� ���� ���� üũ
         if (!inGoal && RectIntersects(rt, goalArea))
         {
+            inGoal = true;
             MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
             ui.Hide();
         }

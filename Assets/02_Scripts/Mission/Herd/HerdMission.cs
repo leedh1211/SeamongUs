@@ -24,13 +24,13 @@ public class HerdMission : Mission
     }
 
     // �� �ϳ��� ��ǥ ������ �������� �� ȣ��
-    public bool CollectOne()
-    {
-        if (IsCompleted) return false;
+    //public bool CollectOne()
+    //{
+    //    if (IsCompleted) return false;
 
-        collected++;
-        if (collected < totalSheep) return false;
+    //    collected++;
+    //    if (collected < totalSheep) return false;
         
-        return true; 
-    }
+    //    return true; 
+    //}
 }
