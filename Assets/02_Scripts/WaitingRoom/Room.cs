@@ -5,6 +5,7 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
+using _02_Scripts.Alert;
 using _02_Scripts.Lobby;
 using ExitGames.Client.Photon;
 
@@ -102,7 +103,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 
             if (!p.CustomProperties.TryGetValue(PlayerPropKey.IsReady, out object isReady) || !(bool)isReady)
             {
-                Debug.Log(p.ActorNumber+" is ready : "+isReady.ToString());
+                AlertUIManager.Instance.OnAlert(p.NickName+"님이 준비완료하지 않으셨습니다.");
                 return false;
             }
         }

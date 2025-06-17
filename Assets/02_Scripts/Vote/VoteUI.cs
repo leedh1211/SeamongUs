@@ -96,7 +96,6 @@ public class VoteUI : MonoBehaviour
 
     private IEnumerator Ballot(Dictionary<int, int> finalCounts, Action onComplete)
     {
-        Debug.Log("Ballot 실행");
 
         if (finalCounts == null || finalCounts.Count == 0)
         {

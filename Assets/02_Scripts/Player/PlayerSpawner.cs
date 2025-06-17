@@ -43,10 +43,12 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
 
     private void SpawnPlayer()
     {
-        Vector2 spawnPos = GetValidGroundPosition();
+        Vector2 spawnPos = fallbackSpawnPoint.position;
 
         GameObject player = PhotonNetwork.Instantiate(playerPrefabName, spawnPos, Quaternion.identity);
-
+        
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        playerController.SetStartArea();
         
         // 플레이어가 생성된 후 StatManager 가져오기
         StatManager statMgr = player.GetComponent<StatManager>();
@@ -93,46 +95,6 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
         );
 
         Debug.Log($"[PlayerSpawner] RaiseEvent로 PlayerSpawn 전송됨: Actor={actorNumber}, ViewID={viewID}");
-    }
-
-    private Vector2 GetValidGroundPosition()
-    {
-        const float searchRadius = 5f;
-        const float playerCheckRadius = 0.5f;
-        const int maxAttempts = 20;
-        
-        if (groundObject == null)
-        {
-            Debug.LogWarning("GroundLevel 오브젝트를 찾을 수 없습니다.");
-            return Vector2.zero;
-        }
-
-        Tilemap tilemap = groundObject.GetComponent<Tilemap>();
-        if (tilemap == null)
-        {
-            Debug.LogWarning("GroundLevel 오브젝트에 Tilemap 컴포넌트가 없습니다.");
-            return Vector2.zero;
-        }
-
-        for (int i = 0; i < maxAttempts; i++)
-        {
-            // 1. 0,0 기준으로 반경 5 이내 랜덤 위치
-            Vector2 randomPos = (Vector2)Vector2.zero + Random.insideUnitCircle * searchRadius;
-
-            // 2. 해당 위치에 타일이 있는지 확인
-            Vector3Int cellPos = tilemap.WorldToCell(randomPos);
-            if (!tilemap.HasTile(cellPos)) continue;
-
-            // 3. 해당 위치에 다른 플레이어가 겹치는지 확인
-            Collider2D hit = Physics2D.OverlapCircle(randomPos, playerCheckRadius, LayerMask.GetMask("Player"));
-            if (hit == null)
-            {
-                return randomPos;
-            }
-        }
-
-        Debug.LogWarning("유효한 위치를 찾지 못했습니다. (기본값 반환)");
-        return Vector2.zero; // fallback 위치
     }
 
 }
