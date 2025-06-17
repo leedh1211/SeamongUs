@@ -345,7 +345,7 @@ MonoBehaviour:
   shadow: {fileID: 5347211133527075390}
   lerpSpeed: 5
   IsInteraction: 0
-  ghostMoveSpeed: 3
+  ghostMoveSpeed: 6
   ghostAlpha: 0.5
   playerName: {fileID: 4926196008496499306}
   playerSprite: {fileID: 6850340908535943482}
@@ -726,7 +726,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 100
+  m_SortingOrder: 90
   m_Sprite: {fileID: -1395291393, guid: 1ae13a0f0874f684b9fd3dcd8b7a882f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -933,7 +933,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 101
+  m_SortingOrder: 120
   m_TargetDisplay: 0
 --- !u!114 &8102978424044514272
 MonoBehaviour:
