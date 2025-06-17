@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _02_Scripts.Alert;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
@@ -34,6 +35,15 @@ public class RoleManager : MonoBehaviourPunCallbacks
     {
         Role role = (Role)roleInt;
         Debug.Log($"[RoleManager] My Role: {role}");
+        if (role == Role.Impostor)
+        {
+            AlertUIManager.Instance.OnAlert("당신의 역할은 살인마입니다. 모든 시민을 죽이고 탈출하세요 ");    
+        }
+        else
+        {
+            AlertUIManager.Instance.OnAlert("당신의 역할은 시민입니다. 모든 살인마를 찾고 평화를 찾으세요. ");
+        }
+        
 
         if (role == Role.Impostor)
         {

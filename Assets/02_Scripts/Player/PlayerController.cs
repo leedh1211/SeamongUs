@@ -197,6 +197,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public void SetKillCooldown(float cooldown)
     {
         this.killCooldown = cooldown;
+        StartCoroutine(PlayerUIManager.Instance.SetKillButtonCooldown(cooldown));
     }
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
