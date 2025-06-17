@@ -33,15 +33,11 @@ public class EndingPopupController : MonoBehaviour
                 p.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj);
                 Role role = (Role)Convert.ToInt32(roleObj);
                 if (role != Role.Crewmate)
-                    continue;   // 임포스터는 건너뛴다
-
-                // PlayerMissions 에서 이 플레이어 키(ActorNumber.ToString())로 할당된 미션 가져오기
-                string key = p.ActorNumber.ToString();
-                if (MissionManager.Instance.PlayerMissions.TryGetValue(key, out var missions)
-                    && missions.All(m => m.IsCompleted))
                 {
-                    winners.Add(p);
+                    continue;   // 임포스터는 건너뛴다
                 }
+                // PlayerMissions 에서 이 플레이어 키(ActorNumber.ToString())로 할당된 미션 가져오기
+                winners.Add(p);
             }
         }
         else

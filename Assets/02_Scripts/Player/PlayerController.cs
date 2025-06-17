@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq.Expressions;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -69,6 +70,15 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         if (on && rb != null)                      // 잠금이면 즉시 정지
             rb.velocity = Vector2.zero;
+    }
+    
+    public void SetStartArea()
+    {
+        float angle = UnityEngine.Random.Range(-4, 4f); // 자연스러운 랜덤 회전
+
+        float rad = angle * Mathf.Deg2Rad;
+        Vector3 offset = new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0) * 4f;
+        gameObject.transform.position = offset;
     }
 
     

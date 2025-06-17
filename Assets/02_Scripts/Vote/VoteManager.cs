@@ -21,6 +21,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     [SerializeField] private VoteUI voteUI;
     private float currentVoteTime;
+    [SerializeField] private PlayerManager playerManager; 
 
     public override void OnEnable()
     {
@@ -62,7 +63,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private IEnumerator VotingRoutine()
     {
         VoteUI.Instance.PopulateSlots();
-        VoteUI.Instance.ResetVoteUI();
+        
         float currentTime = voteTime;
 
         while (currentTime > 0f)
@@ -175,6 +176,8 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 int findPeopleActorNum = (int)data[0];
                 DeadBodyManager.Instance.RemoveAllDeadBody();
                 SetReportData(photonEvent.Sender, findPeopleActorNum);
+                PlayerController pc = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);
+                pc.SetInteraction(true);
                 break;
             case EventCodes.PlayerVote:
                 Debug.Log("투표이벤트 수신");
@@ -206,13 +209,15 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     // 2. 팝업 띄우고 → 끝나면 상태 전환
                     UIManager.Instance.ShowVoteResultPopup(ejected, () =>
                     {   
-                        Debug.Log("콜백 5");
                         PhotonNetwork.RaiseEvent(
                             EventCodes.VoteResultKill,
                             new object[] { ejected },
                             new RaiseEventOptions { Receivers = ReceiverGroup.All },
                             ExitGames.Client.Photon.SendOptions.SendReliable
                         );
+                        PlayerController pc = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);
+                        pc.SetStartArea();
+                        pc.SetInteraction(false);
                         VoteUI.Instance.ResetVoteUI();
                     });
                 });

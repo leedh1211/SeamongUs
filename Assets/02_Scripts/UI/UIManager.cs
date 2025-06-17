@@ -69,22 +69,6 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         votingUI.SetActive(false);
     }
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //ShowVoteResultPopup(0, () =>
-        //{
-        //    GameManager.Instance.ChangeState(GameState.Playing);
-        //});
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void ShowInGameUI()
     {
 
@@ -194,8 +178,6 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void ShowVoteResultPopup(int targetActor, Action callback)
     {
         voteResultCallback = callback; // 저장
-        Debug.Log("팝업띄움");
-        Debug.Log(targetActor);
         //팝업을 킴
         votingUI.SetActive(false);
         voteResult.SetActive(true);
@@ -224,10 +206,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             roletext = ($"누군가의 죽음이 쓸모없어졌습니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
         }
-        
-        Debug.Log("콜백 0");
         StartCoroutine(TextEffect(roletext, 0.1f));
-        Debug.Log("콜백 4");
     }
     IEnumerator StartRotateImage(RectTransform target, float speed)
     {
@@ -281,9 +260,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
             yield return new WaitForSeconds(currentDelay);
         }
         yield return new WaitForSeconds(2f);
-        Debug.Log("콜백 1");
         voteResult.SetActive(false);
-        Debug.Log("콜백 2");
         voteResultCallback?.Invoke();
     }
 }

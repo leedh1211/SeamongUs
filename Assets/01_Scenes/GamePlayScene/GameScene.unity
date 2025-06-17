@@ -32212,6 +32212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   voteTime: 30
   voteUI: {fileID: 7777552860583331028}
+  playerManager: {fileID: 6444560719775073502}
 --- !u!222 &3764158731876477750
 CanvasRenderer:
   m_ObjectHideFlags: 0

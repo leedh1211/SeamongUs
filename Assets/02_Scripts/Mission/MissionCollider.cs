@@ -11,7 +11,7 @@ public class MissionCollider : MonoBehaviour
     private IMissionUI missionUI;
     public MissionType missionType;
     public PlayerManager playerManager;
-    public PlayerController playerController;
+    public PlayerController playerController = null;
 
     private bool isOpen = false;
 
@@ -28,11 +28,7 @@ public class MissionCollider : MonoBehaviour
         if (missionUI == null)
             Debug.LogError($"{name}: missionUIPanel에 IMissionUI를 구현한 컴포넌트(LaundryUI 등)가 필요합니다.");
     }
-
-    private void Start()
-    {
-        playerController = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);
-    }
+    
 
     public void HandleInteract(string playerId)
     {
@@ -49,13 +45,11 @@ public class MissionCollider : MonoBehaviour
         }
         if (missionUI == null) return;
 
-        var mission = MissionManager.Instance
-            .PlayerMissions[playerId]
-            .FirstOrDefault(m => m.MissionID == missionType.ToString());
+        var mission = MissionManager.Instance.PlayerMissions[playerId].FirstOrDefault(m => m.MissionID == missionType.ToString());
         if (mission == null || mission.IsCompleted) return;
         isOpen = true;
         missionUI.Show(mission, playerId);
-        playerController.SetInteraction(true);
+        MissionManager.Instance.playerController.SetInteraction(true);
     }
 
     public void CloseUI()
@@ -66,6 +60,6 @@ public class MissionCollider : MonoBehaviour
         missionUIPanel.SetActive(false);
 
         // 상호작용 상태 해제
-        playerController.SetInteraction(false);
+        MissionManager.Instance.playerController.SetInteraction(false);
     }
 }

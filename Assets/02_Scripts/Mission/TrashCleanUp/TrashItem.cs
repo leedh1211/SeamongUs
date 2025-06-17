@@ -27,7 +27,6 @@ public class TrashItem : MonoBehaviour, IPointerClickHandler
 
         if (mission.IsCompleted)
             ui.Hide();
-        playercontroller.SetInteraction(false);
     }
 
 

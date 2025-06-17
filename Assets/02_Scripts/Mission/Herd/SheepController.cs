@@ -74,7 +74,6 @@ public class SheepController : MonoBehaviour
             inGoal = true;
             MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
             ui.Hide();
-            playerController.SetInteraction(false);
         }
 
         // 겹칠시 초기위치로

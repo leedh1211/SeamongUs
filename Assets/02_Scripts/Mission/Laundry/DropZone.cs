@@ -42,7 +42,6 @@ public class DropZone : MonoBehaviour, IDropHandler
             {
                 MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
                 laundryUI.gameObject.SetActive(false);
-                playerController.SetInteraction(false);
             }
         }
         else

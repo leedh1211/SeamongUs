@@ -17,7 +17,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public IReadOnlyDictionary<string, List<Mission>> PlayerMissions => playerMissions;
 
     [SerializeField]
-    private PlayerController playerController;
+    public PlayerController playerController;
 
     new void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
     new void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
@@ -82,6 +82,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void CompleteMission(string playerKey, string missionID)
     {
         Debug.Log("Mission Completed");
+        playerController.SetInteraction(false);
         if (!playerMissions.TryGetValue(playerKey, out var list))
             return;
 

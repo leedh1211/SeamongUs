@@ -24,7 +24,6 @@ public class SignpostUI : MonoBehaviour, IMissionUI
                 OnPieceClicked(button);
             });
         }
-        gameObject.SetActive(false);
     }
 
     // IMissionUI 구현
@@ -78,6 +77,5 @@ public class SignpostUI : MonoBehaviour, IMissionUI
 
         // 창닫기
         gameObject.SetActive(false);
-        playerController.SetInteraction(false);
     }
 }
