@@ -178,7 +178,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 }
 
                 break;
-            case EventCodes.VoteResult:
+            case EventCodes.VoteResultKill:
             {
                 Debug.Log("투표 결과 들어옴");
                 // 1. 죽이기 (죽지 않는 값: -1)
@@ -187,16 +187,13 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     var player = FindPlayerController(actorNumber);
                     if (player != null)
                     {
+                        Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
+                        targetPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.IsDead, true } });
                         player.Die("vote");
                     }
                 }
             }
                 break;
-            case EventCodes.PlayerReport:
-            {
-
-                break;
-            }
         }
     }
     
@@ -252,7 +249,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             GameManager.Instance.EndGame(EndGameCategory.ImpostorsWin);
         }
-
+        
         if (AliveImposter == 0) // 생존자 승리
         {
             GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
