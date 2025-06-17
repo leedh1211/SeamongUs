@@ -2357,6 +2357,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1373956153}
     m_Modifications:
     - target: {fileID: 69209417828254125, guid: a6604c51c46ce2044b3304eda07f1aaa, type: 3}
+      propertyPath: playerManager
+      value: 
+      objectReference: {fileID: 6444560719775073502}
+    - target: {fileID: 69209417828254125, guid: a6604c51c46ce2044b3304eda07f1aaa, type: 3}
       propertyPath: missionUIPanel
       value: 
       objectReference: {fileID: 903992177}
@@ -3068,6 +3072,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 945974181}
     m_Modifications:
+    - target: {fileID: 4095904174146169431, guid: 15803f4822203b94a913be8b2dfda8eb, type: 3}
+      propertyPath: playerManager
+      value: 
+      objectReference: {fileID: 6444560719775073502}
     - target: {fileID: 4095904174146169431, guid: 15803f4822203b94a913be8b2dfda8eb, type: 3}
       propertyPath: missionUIPanel
       value: 
@@ -13855,6 +13863,7 @@ MonoBehaviour:
   hpSlider: {fileID: 1137224935}
   staminaSlider: {fileID: 1068664039}
   statManager: {fileID: 0}
+  useButton: {fileID: 0}
 --- !u!1 &1533223227
 GameObject:
   m_ObjectHideFlags: 0
@@ -15168,6 +15177,10 @@ PrefabInstance:
       value: TrashCleanArea
       objectReference: {fileID: 0}
     - target: {fileID: 1467880484329432460, guid: c0c2d4309831d41428feac0a51b55384, type: 3}
+      propertyPath: playerManager
+      value: 
+      objectReference: {fileID: 6444560719775073502}
+    - target: {fileID: 1467880484329432460, guid: c0c2d4309831d41428feac0a51b55384, type: 3}
       propertyPath: missionUIPanel
       value: 
       objectReference: {fileID: 1590547096}
@@ -15520,6 +15533,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1268223851}
     m_Modifications:
+    - target: {fileID: 537969289974936974, guid: e0a213b5196d6254d845338b8f3d7aed, type: 3}
+      propertyPath: playerManager
+      value: 
+      objectReference: {fileID: 6444560719775073502}
     - target: {fileID: 537969289974936974, guid: e0a213b5196d6254d845338b8f3d7aed, type: 3}
       propertyPath: missionUIPanel
       value: 
@@ -15944,10 +15961,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 191650635517441656, guid: f7875a7d2d41c3549958ad166fdfb62f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1172148617817022276, guid: f7875a7d2d41c3549958ad166fdfb62f, type: 3}
       propertyPath: m_Name
       value: UIPopupCanvas

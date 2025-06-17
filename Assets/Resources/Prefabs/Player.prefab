@@ -344,6 +344,7 @@ MonoBehaviour:
   visual: {fileID: 6850340908535943482}
   shadow: {fileID: 5347211133527075390}
   lerpSpeed: 5
+  IsInteraction: 0
   ghostMoveSpeed: 3
   ghostAlpha: 0.5
   playerName: {fileID: 4926196008496499306}

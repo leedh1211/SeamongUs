@@ -8,6 +8,7 @@ public class DropZone : MonoBehaviour, IDropHandler
     private string playerId;
     private RectTransform dragArea;
     private LaundryUI laundryUI;  // UI도 바로 닫을 수 있도록 참조
+    private PlayerController playerController;
 
     public void Initialize(Laundry mission, string playerId, RectTransform dragArea, LaundryUI ui)
     {
@@ -41,6 +42,7 @@ public class DropZone : MonoBehaviour, IDropHandler
             {
                 MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
                 laundryUI.gameObject.SetActive(false);
+                playerController.SetInteraction(false);
             }
         }
         else

@@ -5,35 +5,45 @@ using UnityEngine;
 
 public class MissionCollider : MonoBehaviour
 {
-    [Tooltip("Inspector¿¡ ÀÌ ¹Ì¼Ç¿¡ ´ëÀÀÇÏ´Â UI ÆĞ³Î GameObject¸¦ µå·¡±×ÇÏ¼¼¿ä")]
+    [Tooltip("Inspectorì—ì„œ ì§ì ‘ ì—°ê²°í•˜ëŠ” UI íŒ¨ë„ GameObjectë¥¼ ì°¸ì¡°í•˜ì„¸ìš”")]
     [SerializeField] private GameObject missionUIPanel;
 
     private IMissionUI missionUI;
     public MissionType missionType;
+    public PlayerManager playerManager;
+    public PlayerController playerController;
+
+    private bool isOpen = false;
 
     private void Awake()
     {
         if (missionUIPanel == null)
         {
-            Debug.LogError($"{name}: missionUIPanel¿¡ UI ÆĞ³Î GameObject¸¦ ÇÒ´çÇØ¾ß ÇÕ´Ï´Ù.");
+            Debug.LogError($"{name}: missionUIPanelì— UI íŒ¨ë„ GameObjectê°€ í• ë‹¹ë˜ì–´ì•¼ í•©ë‹ˆë‹¤.");
             return;
         }
 
-        // GameObject¿¡¼­ IMissionUI ±¸ÇöÃ¼¸¦ Ã£¾Æ¼­ ÇÒ´ç
+        // GameObjectì—ì„œ IMissionUI ì¸í„°í˜ì´ìŠ¤ë¥¼ êµ¬í˜„í•œ ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ìŒ
         missionUI = missionUIPanel.GetComponent<IMissionUI>();
         if (missionUI == null)
-            Debug.LogError($"{name}: missionUIPanel¿¡ IMissionUI¸¦ ±¸ÇöÇÑ ÄÄÆ÷³ÍÆ®(LaundryUI µî)¸¦ ºÙ¿©¾ß ÇÕ´Ï´Ù.");
+            Debug.LogError($"{name}: missionUIPanelì— IMissionUIë¥¼ êµ¬í˜„í•œ ì»´í¬ë„ŒíŠ¸(LaundryUI ë“±)ê°€ í•„ìš”í•©ë‹ˆë‹¤.");
+    }
+
+    private void Start()
+    {
+        playerController = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     public void HandleInteract(string playerId)
     {
-
+        if (isOpen) return;
+        
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
         {
             Role myRole = (Role)Convert.ToInt32(roleObj);
             if (myRole == Role.Impostor)
             {
-                Debug.Log("[MissionCollider] ÀÓÆ÷½ºÅÍ´Â ¹Ì¼ÇÀ» ¼öÇàÇÒ ¼ö ¾ø½À´Ï´Ù.");
+                Debug.Log("[MissionCollider] ì„í¬ìŠ¤í„°ëŠ” ë¯¸ì…˜ì„ ì‹¤í–‰í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 return;
             }
         }
@@ -43,7 +53,19 @@ public class MissionCollider : MonoBehaviour
             .PlayerMissions[playerId]
             .FirstOrDefault(m => m.MissionID == missionType.ToString());
         if (mission == null || mission.IsCompleted) return;
-
+        isOpen = true;
         missionUI.Show(mission, playerId);
+        playerController.SetInteraction(true);
+    }
+
+    public void CloseUI()
+    {
+        if (!isOpen) return;
+
+        isOpen = false;
+        missionUIPanel.SetActive(false);
+
+        // ìƒí˜¸ì‘ìš© ìƒíƒœ í•´ì œ
+        playerController.SetInteraction(false);
     }
 }

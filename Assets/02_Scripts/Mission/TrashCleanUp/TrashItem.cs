@@ -6,6 +6,7 @@ public class TrashItem : MonoBehaviour, IPointerClickHandler
     private TrashCleanup mission;
     private string playerId;
     private TrashUI ui;
+    public PlayerController playercontroller;
 
 
     public void Initialize(TrashCleanup mission, string playerId, TrashUI ui)
@@ -26,6 +27,7 @@ public class TrashItem : MonoBehaviour, IPointerClickHandler
 
         if (mission.IsCompleted)
             ui.Hide();
+        playercontroller.SetInteraction(false);
     }
 
 

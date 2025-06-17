@@ -20,6 +20,7 @@ public enum BGMType
 {
     Intro,
     Start,
+    Room,
     Play,
     Voting,
 }
@@ -73,9 +74,6 @@ public class SoundManager : MonoBehaviour
 
         // 매핑
         InitializeMappings();
-
-        // 초기 BGM 재생 (로그인 화면 BGM)
-        PlayBGM(BGMType.Start);
     }
 
     // 배경음악

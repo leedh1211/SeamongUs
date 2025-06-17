@@ -13,6 +13,11 @@ public class SheepController : MonoBehaviour
     private bool inGoal;
     private float speed;
     private Vector2 followOffset;
+    public PlayerController playerController;
+
+    [Header("Collision Padding")]
+    [Tooltip("충돌 판정을 완화할 픽셀 단위 패딩. 클수록 더 후한판정")]
+    [SerializeField] private float overlapPadding = 20f;
 
     public void Initialize(
         RectTransform panelRect,
@@ -69,12 +74,13 @@ public class SheepController : MonoBehaviour
             inGoal = true;
             MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
             ui.Hide();
+            playerController.SetInteraction(false);
         }
 
         // 겹칠시 초기위치로
         foreach (var obs in obstacles)
         {
-            if (RectIntersects(rt, obs))
+            if (RectIntersectsWithPadding(rt, obs, overlapPadding))
             {
                 // �浹 ��� ����
                 rt.anchoredPosition = initialPos;
@@ -91,6 +97,19 @@ public class SheepController : MonoBehaviour
         var bp = b.anchoredPosition;
         var asz = a.sizeDelta * 0.5f;
         var bsz = b.sizeDelta * 0.5f;
+        return Mathf.Abs(ap.x - bp.x) < (asz.x + bsz.x)
+            && Mathf.Abs(ap.y - bp.y) < (asz.y + bsz.y);
+    }
+    //장애물 겹침 방지 bool 메서드
+    private bool RectIntersectsWithPadding(RectTransform a, RectTransform b, float padding)
+    {
+        Vector2 ap = a.anchoredPosition;
+        Vector2 bp = b.anchoredPosition;
+        Vector2 asz = a.sizeDelta * 0.5f - new Vector2(padding, padding);
+        Vector2 bsz = b.sizeDelta * 0.5f - new Vector2(padding, padding);
+        // 절반 크기가 음수가 되지 않도록 최소 0으로 클램프
+        asz = Vector2.Max(asz, Vector2.zero);
+        bsz = Vector2.Max(bsz, Vector2.zero);
         return Mathf.Abs(ap.x - bp.x) < (asz.x + bsz.x)
             && Mathf.Abs(ap.y - bp.y) < (asz.y + bsz.y);
     }

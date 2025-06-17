@@ -184,14 +184,16 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 // 1. 죽이기 (죽지 않는 값: -1)
                 if (actorNumber != -1)
                 {
-                    var player = FindPlayerController(actorNumber);
+                    PlayerController player = FindPlayerController(actorNumber);
                     if (player != null)
                     {
+                        Debug.Log($"투표로 {actorNumber} 죽임");
                         Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
                         targetPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.IsDead, true } });
                         player.Die("vote");
                     }
                 }
+                GameManager.Instance.ChangeState(GameState.Playing);
             }
                 break;
         }
@@ -213,7 +215,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                photonEvent.Code == EventCodes.PlayerAttacked ||
                photonEvent.Code == EventCodes.PlayerDied ||
                photonEvent.Code == EventCodes.VoteResult ||
-               photonEvent.Code == EventCodes.PlayerReport
+               photonEvent.Code == EventCodes.PlayerReport ||
+               photonEvent.Code == EventCodes.VoteResultKill
                ;
         
     }

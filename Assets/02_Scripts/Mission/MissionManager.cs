@@ -216,4 +216,12 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
         this.playerController = controller;
         controller.OnInteract += HandlePlayerInteract;
     }
+
+    public void CloseAllMissionUIs()
+    {
+        foreach (var mc in FindObjectsOfType<MissionCollider>())
+        {
+            mc.CloseUI();
+        }
+    }
 }

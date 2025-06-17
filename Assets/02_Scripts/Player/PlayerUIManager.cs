@@ -22,6 +22,7 @@ public class PlayerUIManager : MonoBehaviour
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Slider staminaSlider;
     [SerializeField] private StatManager statManager;
+    [SerializeField] private Button useButton;
     public static PlayerUIManager Instance { get; private set; }
 
     private Dictionary<int, UIInventory> playerInventories = new();
@@ -109,5 +110,10 @@ public class PlayerUIManager : MonoBehaviour
             hpSlider.value = val;
             Debug.Log($"[UIStatDisplay] 체력 UI 갱신: {val}");
         });
+    }
+    public void SetUseButtonInteractable(bool interactable)
+    {
+        if (useButton != null)
+            useButton.interactable = interactable;
     }
 }
