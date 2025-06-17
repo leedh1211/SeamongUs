@@ -1,4 +1,3 @@
-using _02_Scripts.Ung_Managers;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
