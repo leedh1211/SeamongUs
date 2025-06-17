@@ -94,7 +94,7 @@ public class SoundManager : MonoBehaviour
         bgmSource.Play();
     }
 
-    public void stopBGM()
+    public void StopBGM()
     {
         bgmSource.Stop();
     }

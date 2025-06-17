@@ -8110,7 +8110,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerManager: {fileID: 1645233785}
   playerPrefabName: Prefabs/Player
-  groundObject: {fileID: 0}
   fallbackSpawnPoint: {fileID: 1170603740}
   groundLayer:
     serializedVersion: 2
@@ -9535,7 +9534,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Wait!
+  m_text: Ready
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0cfe88ca5ca8bac43bb98a61c158b742, type: 2}
   m_sharedMaterial: {fileID: 3383958189458217215, guid: 0cfe88ca5ca8bac43bb98a61c158b742, type: 2}
@@ -10561,6 +10560,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackedCoolDown: 0
   KillCoolDown: 0
+  groundTilemap: {fileID: 779799350}
+  spawnRange: 3
 --- !u!4 &1645233786
 Transform:
   m_ObjectHideFlags: 0

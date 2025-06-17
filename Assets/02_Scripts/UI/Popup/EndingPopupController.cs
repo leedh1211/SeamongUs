@@ -29,6 +29,7 @@ public class EndingPopupController : MonoBehaviour
         {
             foreach (var p in PhotonNetwork.PlayerList)
             {
+                SoundManager.Instance.PlaySFX(SFXType.CrewWin);
                 // Role 뽑아오기
                 p.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj);
                 Role role = (Role)Convert.ToInt32(roleObj);
@@ -42,6 +43,7 @@ public class EndingPopupController : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.PlaySFX(SFXType.ImposterWin);
             // “임포스터 승리” → 살아 있는 임포스터 전원
             foreach (var p in PhotonNetwork.PlayerList)
             {

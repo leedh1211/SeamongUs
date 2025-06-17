@@ -43,6 +43,8 @@ public class InventoryManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_UpdateInventory(int itemId)
     {
+        SoundManager.Instance.PlaySFX(SFXType.Item);
+
         var item = ItemDatabase.Instance.GetItemById(itemId);
         if (item == null)
         {

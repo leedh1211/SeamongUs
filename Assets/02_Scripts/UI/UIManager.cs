@@ -177,6 +177,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void ShowVoteResultPopup(int targetActor, Action callback)
     {
+        SoundManager.Instance.PlaySFX(SFXType.Eject);
         voteResultCallback = callback; // 저장
         //팝업을 킴
         votingUI.SetActive(false);

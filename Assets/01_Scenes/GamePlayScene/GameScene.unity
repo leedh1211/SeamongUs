@@ -7364,7 +7364,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerManager: {fileID: 6444560719775073502}
   playerPrefabName: Prefabs/Player
-  groundObject: {fileID: 0}
   fallbackSpawnPoint: {fileID: 866007888}
   groundLayer:
     serializedVersion: 2
@@ -52389,6 +52388,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackedCoolDown: 2
   KillCoolDown: 20
+  groundTilemap: {fileID: 4105752657068717653}
+  spawnRange: 3
 --- !u!1 &6462302134807880708
 GameObject:
   m_ObjectHideFlags: 0

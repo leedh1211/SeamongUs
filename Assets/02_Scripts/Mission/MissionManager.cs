@@ -81,6 +81,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void CompleteMission(string playerKey, string missionID)
     {
+        SoundManager.Instance.PlaySFX(SFXType.MissionComplete);
         Debug.Log("Mission Completed");
         playerController.SetInteraction(false);
         if (!playerMissions.TryGetValue(playerKey, out var list))

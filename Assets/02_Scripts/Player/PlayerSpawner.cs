@@ -10,7 +10,6 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
 {
     [SerializeField] private PlayerManager playerManager;
     public string playerPrefabName = "Prefabs/Player"; // Resources/Prefabs/Player.prefab
-    [SerializeField] private GameObject groundObject;
 
     public Transform fallbackSpawnPoint;
     public LayerMask groundLayer;
@@ -43,12 +42,7 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
 
     private void SpawnPlayer()
     {
-        Vector2 spawnPos = fallbackSpawnPoint.position;
-
-        GameObject player = PhotonNetwork.Instantiate(playerPrefabName, spawnPos, Quaternion.identity);
-        
-        PlayerController playerController = player.GetComponent<PlayerController>();
-        playerController.SetStartArea();
+        GameObject player = PhotonNetwork.Instantiate(playerPrefabName, playerManager.GetValidSpawnPosition(), Quaternion.identity);
         
         // 플레이어가 생성된 후 StatManager 가져오기
         StatManager statMgr = player.GetComponent<StatManager>();

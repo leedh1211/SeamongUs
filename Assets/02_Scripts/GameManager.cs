@@ -83,6 +83,8 @@ public class GameManager : MonoBehaviour
                 MissionManager.Instance.Init();
                 break;
             case GameState.Playing:
+                SoundManager.Instance.StopBGM();
+                SoundManager.Instance.PlayBGM(BGMType.Play);
                 UIManager.Instance.HideVotingUI();
                 
                 break;
@@ -92,6 +94,8 @@ public class GameManager : MonoBehaviour
                 UIManager.Instance.RaiseLocalReportPopup(lastDeadActorNumber);
                 break;
             case GameState.Voting:
+                SoundManager.Instance.StopBGM();
+                SoundManager.Instance.PlayBGM(BGMType.Voting);
                 VoteManager.Instance.StartVotingPhase(() =>
                 {
                 });

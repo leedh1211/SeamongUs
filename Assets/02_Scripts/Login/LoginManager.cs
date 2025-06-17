@@ -58,6 +58,8 @@ public class LoginManager : MonoBehaviour
 
     private void login(PlayerResponseData loginData)
     {
+        SoundManager.Instance.StopBGM();
+        SoundManager.Instance.PlayBGM(BGMType.Start);
         Debug.Log(loginData.seq);
         LoginSession.loginPlayerInfo = loginData;
         // 씬 이동

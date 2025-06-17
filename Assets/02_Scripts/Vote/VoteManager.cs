@@ -172,6 +172,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             case EventCodes.PlayerReport:
                 Debug.Log("신고이벤트 수신");
+                SoundManager.Instance.PlaySFX(SFXType.Report);
                 var data = (object[])photonEvent.CustomData;
                 int findPeopleActorNum = (int)data[0];
                 DeadBodyManager.Instance.RemoveAllDeadBody();
@@ -216,7 +217,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                             ExitGames.Client.Photon.SendOptions.SendReliable
                         );
                         PlayerController pc = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);
-                        pc.SetStartArea();
+                        pc.gameObject.transform.position = playerManager.GetValidSpawnPosition();
                         pc.SetInteraction(false);
                         VoteUI.Instance.ResetVoteUI();
                     });

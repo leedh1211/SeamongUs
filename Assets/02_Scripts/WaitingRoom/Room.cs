@@ -35,6 +35,9 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void Start()
     {
+        SoundManager.Instance.StopBGM();
+        SoundManager.Instance.PlayBGM(BGMType.Room);
+        
         SetupUIByHost();
         RefreshPlayerSlots();
 

@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -12,6 +13,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private float KillCoolDown;
     private Dictionary<int, GameObject> playerGODict = new Dictionary<int, GameObject>();
     private HashSet<int> spawnedActorNumbers = new HashSet<int>();
+    [SerializeField] private Tilemap groundTilemap; // GroundLevel 타일맵
+    [SerializeField] private int spawnRange = 4;
 
     private void OnEnable()
     {
@@ -130,6 +133,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
             {
                 if (photonEvent.Sender == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
+                    SoundManager.Instance.PlaySFX(SFXType.Kill);
                     controller = FindPlayerController(actorNumber);
                     controller.SetKillCooldown(AttackedCoolDown);    
                 }
@@ -257,5 +261,24 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
         }
+    }
+    
+        
+    public Vector3 GetValidSpawnPosition()
+    {
+        int x = Random.Range(-spawnRange, spawnRange + 1);
+        int y = Random.Range(-spawnRange, spawnRange + 1);
+        Vector3Int cellPos = new Vector3Int(x, y, 0);
+
+        // 해당 셀에 타일이 존재하는지 확인
+        if (groundTilemap.HasTile(cellPos))
+        {
+            // 타일 중앙의 월드 좌표 반환
+            Vector3 worldPos = groundTilemap.GetCellCenterWorld(cellPos);
+
+            // 추가적으로 겹침 검사 필요하면 여기에 Overlap 검사 가능
+            return worldPos;
+        }
+        return Vector3.zero; // 실패 시
     }
 }
