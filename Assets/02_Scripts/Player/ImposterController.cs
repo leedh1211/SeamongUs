@@ -10,7 +10,8 @@ public class ImposterController : MonoBehaviour
     private PhotonView view;
 
     [SerializeField] private float killRange = 2.0f;
-
+    [SerializeField] private int AttackDamage = 50;
+    
     void Start()
     {
         view = GetComponent<PhotonView>();
@@ -34,7 +35,7 @@ public class ImposterController : MonoBehaviour
 
             Debug.Log($"{localPlayer.NickName}가 Actor#{actorNumber}를 공격합니다.");
 
-            object[] eventData = new object[] { targetView.Owner.ActorNumber, 25};
+            object[] eventData = new object[] { targetView.Owner.ActorNumber, AttackDamage};
                 PhotonNetwork.RaiseEvent(
                     EventCodes.PlayerAttacked,
                     eventData,
@@ -47,11 +48,7 @@ public class ImposterController : MonoBehaviour
             Debug.Log("살해 가능한 플레이어가 없습니다.");
         }
     }
-
-
-
-
-
+    
     // void TryReportBody()
     // {
     //     string deadID = DeadBodyManager.Instance.GetClosestDeadBodyID(transform.position);

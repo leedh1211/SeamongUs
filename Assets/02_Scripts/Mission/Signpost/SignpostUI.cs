@@ -18,7 +18,11 @@ public class SignpostUI : MonoBehaviour, IMissionUI
         // 각 버튼 클릭 시 회전 이벤트 연결
         foreach (var button in pieceButtons)
         {
-            button.onClick.AddListener(() => OnPieceClicked(button));
+            button.onClick.AddListener(() =>
+            {
+                SoundManager.Instance.PlaySFX(SFXType.Click);
+                OnPieceClicked(button);
+            });
         }
         gameObject.SetActive(false);
     }

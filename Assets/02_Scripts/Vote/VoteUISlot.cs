@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using _02_Scripts.Ung_Managers;
 
 public class VoteUISlot : MonoBehaviour
 {
@@ -46,7 +45,8 @@ public class VoteUISlot : MonoBehaviour
 
         // 사망자 처리
         isDeadText.gameObject.SetActive(isDead);
-        voteButton.interactable = !isDead && !hasVoted; // 사망자와 투표 완료자는 버튼 비활성화
+        voteButton.gameObject.SetActive(!isDead);
+        // voteButton.interactable = !isDead;
 
         // 신고자 표시
         reporterMark.SetActive(playerId == ReportManager.Instance.LastReporter);
@@ -71,8 +71,24 @@ public class VoteUISlot : MonoBehaviour
         // 기존 마크 제거
         foreach (Transform transform in markParent) Destroy(transform.gameObject);
     }
+    
+    // 투표 시작 전 UI 초기화
 
     // 한표당 마크 하나 추가
+    public void PrepareForVote()
+    {
+        // 활성화 시킬 UI 요소들
+        voteButton.gameObject.SetActive(true);
+
+        // 기존 마크 제거
+        foreach (Transform transform in markParent) Destroy(transform.gameObject);
+    }
+
+    public void IsDeadPeopleUI()
+    {
+        voteButton.gameObject.SetActive(false);
+    }
+
     public void AddMark()
     {
         Instantiate(markPrefab, markParent);
@@ -81,8 +97,10 @@ public class VoteUISlot : MonoBehaviour
     // 투표 버튼 클릭 시 호출되는 메서드
     private void OnVoteClicked()
     {
+        SoundManager.Instance.PlaySFX(SFXType.Click);
+
         VoteManager.Instance.OnVoteButtonClicked(TargetPlayerId);
-        voteButton.interactable = false; // 투표 후 버튼 비활성화
+        // voteButton.interactable = false; // 투표 후 버튼 비활성화
         votedMark.SetActive(true); // 투표 완료 표시
     }
 }

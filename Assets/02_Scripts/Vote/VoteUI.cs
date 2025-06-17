@@ -1,5 +1,4 @@
-﻿using _02_Scripts.Ung_Managers;
-using Photon.Pun;
+﻿using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,6 +34,20 @@ public class VoteUI : MonoBehaviour
     public void UpdateTimerUI(int seconds)
     {
         timeText.text = $"투표 시간이 {seconds}초 남았습니다...";
+    }
+
+    public void ResetVoteUI()
+    {
+        PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object isDead);
+        
+        foreach (VoteUISlot slot in slots)
+        {
+            slot.PrepareForVote();
+            if ((bool)isDead)
+            {
+                slot.IsDeadPeopleUI();
+            }
+        }
     }
 
     public void PopulateSlots()

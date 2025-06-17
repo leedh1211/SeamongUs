@@ -1,4 +1,3 @@
-using _02_Scripts.Ung_Managers;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -16,8 +15,11 @@ public class VotingChatUI : MonoBehaviour
     private void Start()
     {
         sendButton.onClick.AddListener(OnSendClicked);
-        closeButton.onClick.AddListener(() => chatPanel.SetActive(false));
-        chatPanel.SetActive(false);
+        closeButton.onClick.AddListener(() =>
+        {
+            SoundManager.Instance.PlaySFX(SFXType.Click);
+            chatPanel.SetActive(false);
+        });
     }
 
     public void Open()
@@ -30,7 +32,11 @@ public class VotingChatUI : MonoBehaviour
 
     void OnSendClicked()
     {
+        PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object isDead);
+        if ((bool)isDead) return;
         if (string.IsNullOrWhiteSpace(inputField.text)) return;
+
+        SoundManager.Instance.PlaySFX(SFXType.Click);
 
         string msg = inputField.text;
         inputField.text = "";

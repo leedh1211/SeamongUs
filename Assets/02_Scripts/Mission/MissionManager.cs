@@ -19,8 +19,8 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField]
     private PlayerController playerController;
 
-    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
-    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
+    new void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
+    new void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
     
 
     private void Awake()

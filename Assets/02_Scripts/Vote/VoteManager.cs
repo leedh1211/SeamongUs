@@ -63,6 +63,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private IEnumerator VotingRoutine()
     {
+        VoteUI.Instance.ResetVoteUI();
         float currentTime = voteTime;
 
         while (currentTime > 0f)
@@ -122,7 +123,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void EndVote()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        
+
         Debug.Log("개표 시작");
 
         // 1. 투표 결과 없음
@@ -165,19 +166,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         );
     }
 
-
-    private void SetVoteTime(int votetime)
-    {
-        object[] eventData = new object[] { votetime }; // 투표 다했을 경우, 시간 줄어들게 세팅
-        PhotonNetwork.RaiseEvent(
-            EventCodes.SetVoteTime,
-            eventData,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            SendOptions.SendReliable
-        );
-    }
-
-
     public void OnEvent(EventData photonEvent)
     {
         switch (photonEvent.Code)
@@ -213,13 +201,19 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 var customData = (object[])photonEvent.CustomData;
                 int ejected = (int)customData[0];
                 var finalCounts = new Dictionary<int, int>(voteResults);
-                PrintDictionary(voteResults);
                 // 투표 결과 -> 추방
                 voteUI.ShowBallotAnimation(finalCounts, () =>
-                {
+                {      
                     // 2. 팝업 띄우고 → 끝나면 상태 전환
                     UIManager.Instance.ShowVoteResultPopup(ejected, () =>
-                    {
+                    {   
+                        PhotonNetwork.RaiseEvent(
+                            EventCodes.VoteResultKill,
+                            new object[] { ejected },
+                            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                            ExitGames.Client.Photon.SendOptions.SendReliable
+                        );
+                        VoteUI.Instance.ResetVoteUI();
                         GameManager.Instance.ChangeState(GameState.Playing);
                     });
                 });
@@ -231,23 +225,5 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         GameManager.Instance.SetLastDeadActor(findPeopleActorNum);
         GameManager.Instance.ChangeState(GameState.Meeting);
-    }
-    
-    
-    //테스트 코드임
-    private void PrintDictionary<TKey, TValue>(Dictionary<TKey, TValue> dict, string label = "Dictionary Dump")
-    {
-        if (dict == null || dict.Count == 0)
-        {
-            Debug.Log($"{label} is empty.");
-            return;
-        }
-
-        string log = $"{label} contains {dict.Count} entries:\n";
-        foreach (var pair in dict)
-        {
-            log += $"Key: {pair.Key}, Value: {pair.Value}\n";
-        }
-        Debug.Log(log);
     }
 }

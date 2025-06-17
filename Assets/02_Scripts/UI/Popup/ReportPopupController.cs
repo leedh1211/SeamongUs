@@ -1,4 +1,4 @@
-using TMPro;
+ï»¿using TMPro;
 using UnityEngine;
 
 public class ReportPopupController : MonoBehaviour
@@ -8,7 +8,7 @@ public class ReportPopupController : MonoBehaviour
 
     public void Init(string deadName)
     {
-        titleText.text = $"{deadName}´ÔÀÇ ½ÃÃ¼°¡ ¹ß°ßµÇ¾ú½À´Ï´Ù.";
+        titleText.text = $"{deadName}ë‹˜ì´ ì‹œì²´ë¥¼ ë°œê²¬í–ˆìŠµë‹ˆë‹¤.";
     }
 
     public void PlayEnter()

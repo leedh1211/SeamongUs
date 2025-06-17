@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,6 +26,8 @@ namespace _02_Scripts.SignUP
 
         public void OnSignUpButtonPressed()
         {
+            SoundManager.Instance.PlaySFX(SFXType.Click);
+
             string id = idInputField.text;
             string pw = pwInputField.text;
             string pwc = pwcInputField.text;

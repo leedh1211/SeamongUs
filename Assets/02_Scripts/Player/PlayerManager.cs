@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
+    [SerializeField] private float AttackedCoolDown;
+    [SerializeField] private float KillCoolDown;
     private Dictionary<int, GameObject> playerGODict = new Dictionary<int, GameObject>();
     private HashSet<int> spawnedActorNumbers = new HashSet<int>();
 
@@ -126,6 +128,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 break;
             case EventCodes.PlayerAttacked:
             {
+                if (photonEvent.Sender == PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    controller = FindPlayerController(actorNumber);
+                    controller.SetKillCooldown(AttackedCoolDown);    
+                }
                 int receiverActnum = (int)data[0];
                 int attackerActorNumber = photonEvent.Sender;
                 int receiveDamage = (int)data[1];
@@ -133,8 +140,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
                 break;
             case EventCodes.PlayerKill: //임포스터 actorNum = data[0]
-                controller = FindPlayerController(actorNumber);
-                controller.SetKillCooldown(30f);
+                if (photonEvent.Sender == PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    controller = FindPlayerController(actorNumber);
+                    controller.SetKillCooldown(KillCoolDown);    
+                }
                 break;
             case EventCodes.PlayerDied:
                 if (PhotonNetwork.IsMasterClient)
@@ -168,7 +178,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 }
 
                 break;
-            case EventCodes.VoteResult:
+            case EventCodes.VoteResultKill:
             {
                 Debug.Log("투표 결과 들어옴");
                 // 1. 죽이기 (죽지 않는 값: -1)
@@ -177,16 +187,13 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     var player = FindPlayerController(actorNumber);
                     if (player != null)
                     {
+                        Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
+                        targetPlayer.SetCustomProperties(new Hashtable { { PlayerPropKey.IsDead, true } });
                         player.Die("vote");
                     }
                 }
             }
                 break;
-            case EventCodes.PlayerReport:
-            {
-
-                break;
-            }
         }
     }
     
@@ -242,7 +249,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             GameManager.Instance.EndGame(EndGameCategory.ImpostorsWin);
         }
-
+        
         if (AliveImposter == 0) // 생존자 승리
         {
             GameManager.Instance.EndGame(EndGameCategory.CitizensWin);

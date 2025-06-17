@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
@@ -14,15 +14,28 @@ public class TogglePanel : MonoBehaviour
         {
             button.onClick.AddListener(ToggleTarget);
         }
+        if (targetPanel != null && !targetPanel.activeSelf)
+        {
+            targetPanel.SetActive(true);    // 잠깐 켰다가
+            targetPanel.SetActive(false);   // 바로 끔
+        }
     }
 
     private void ToggleTarget()
     {
+        SoundManager.Instance.PlaySFX(SFXType.Click);
+        Debug.Log("ToggleTarget 실행됨!");
         // 첫 번째 패널 토글
         if (targetPanel != null)
         {
             bool isActive = targetPanel.activeSelf;
             targetPanel.SetActive(!isActive);
+            if (!isActive)
+            {
+                // 프레임 끝에서 Layout 강제 재계산
+                Canvas.ForceUpdateCanvases();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(targetPanel.GetComponent<RectTransform>());
+            }
         }
 
         // 두 번째 패널이 설정돼 있으면 같이 토글 (선택 사항)

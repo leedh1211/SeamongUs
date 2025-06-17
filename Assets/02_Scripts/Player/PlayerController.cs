@@ -2,6 +2,7 @@ using System.Collections;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -46,10 +47,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private float ghostAlpha = 0.5f;
     private bool isGhost = false;
 
+    public TMP_Text playerName;
     
-
     
-
     private bool IsUIFocused()
     {
         var sel = EventSystem.current?.currentSelectedGameObject;
@@ -85,6 +85,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
+        SetName();
         if (SceneManager.GetActiveScene().name == "GameScene" && photonView.IsMine)
         {
             StartCoroutine(WaitAndRegister());
@@ -96,20 +97,27 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         yield return new WaitUntil(() => MissionManager.Instance != null);
         MissionManager.Instance.RegisterLocalPlayer(this);
     }
+    
+    private void SetName()
+    {
+        Debug.Log("Set name");
+        Photon.Realtime.Player player = photonView.Owner;
+        playerName.text = player.NickName;
+    }
 
     private void FixedUpdate()
     {
+        if (killCooldown > 0)
+        {
+            killCooldown -= Time.fixedDeltaTime;
+        }
+        
         if (!photonView.IsMine)
         {
             if (Vector3.Distance(transform.position, networkPosition) > 2f)
                 transform.position = networkPosition;
             else
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.fixedDeltaTime * lerpSpeed);
-
-            if (killCooldown > 0)
-            {
-                killCooldown -= Time.fixedDeltaTime;
-            }
         }
         else
         {
@@ -174,6 +182,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void TryKill()
     {
+        Debug.Log(killCooldown);
         if (killCooldown > 0) return;
         if (photonView.gameObject.TryGetComponent<ImposterController>(out ImposterController imposter))
         {
@@ -188,6 +197,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public void SetKillCooldown(float cooldown)
     {
         this.killCooldown = cooldown;
+        StartCoroutine(PlayerUIManager.Instance.SetKillButtonCooldown(cooldown));
     }
 
     public void OnJumpInput(InputAction.CallbackContext ctx)
@@ -308,40 +318,53 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void Die(string Category = "killing")
+    public void Die(string category = "killing")
     {
-        if (animator != null)
-            animator.SetTrigger(DieHash);
-
-        StartCoroutine(DeathSequence(Category));
+        animator?.SetTrigger(DieHash);
+        StartCoroutine(DeathSequence(category));
     }
 
-    private IEnumerator DeathSequence(string Category)
+    private IEnumerator DeathSequence(string category)
     {
         yield return new WaitForSeconds(1f);
-        gameObject.layer = LayerMask.NameToLayer("Ghost");
 
+        // 1) 레이어 재귀 변경
+        int ghostLayer = LayerMask.NameToLayer("Ghost");
+        SetLayerRecursively(gameObject, ghostLayer);
+
+        // 2) 카메라 전환은 **본인**만
+        if (photonView.IsMine)
+            GetComponent<LayerController>()?.SwitchToGhostView();
+
+        // 3) 반투명 처리 (본인 + 원격 모두)
         if (playerSprite != null)
         {
             var sr = playerSprite.GetComponent<SpriteRenderer>();
             if (sr != null)
             {
-                var c = sr.color;
-                c.a = ghostAlpha;
+                Color c = sr.color;  c.a = ghostAlpha;
                 sr.color = c;
             }
         }
 
+        // 4) 물리 중지
         if (rb != null)
             rb.simulated = false;
 
-        if (Category != "vote")
-        {
-            DeadBodyManager.Instance.SpawnDeadBody(transform.position, PhotonNetwork.LocalPlayer.ActorNumber);    
-        }
-        
+        // 5) 시체 생성(투표 사망은 제외)
+        if (category != "vote")
+            DeadBodyManager.Instance.SpawnDeadBody(transform.position,
+                PhotonNetwork.LocalPlayer.ActorNumber);
+
         isGhost = true;
     }
+    private static void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        foreach (Transform t in obj.transform)
+            SetLayerRecursively(t.gameObject, layer);
+    }
+
     public void OnDanceInput(InputAction.CallbackContext ctx)   // Input System에서 G 키와 매핑
     {
         if (photonView.IsMine && ctx.performed)
