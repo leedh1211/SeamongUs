@@ -1,7 +1,8 @@
 # Seamong us
 
 
-<br><br><br>  <img src="https://github.com/user-attachments/assets/ed58775c-c05a-4d5d-b4ec-47062f23765e" width="500"> <br>(예시 이미지)<br>
+<br><br><br>  <img src="https://github.com/user-attachments/assets/48c41066-5a94-47ec-bbc9-748bda38d55b" width="500"> <br><br>
+
 
 
 
