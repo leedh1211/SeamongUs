@@ -215,7 +215,8 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                photonEvent.Code == EventCodes.PlayerAttacked ||
                photonEvent.Code == EventCodes.PlayerDied ||
                photonEvent.Code == EventCodes.VoteResult ||
-               photonEvent.Code == EventCodes.PlayerReport
+               photonEvent.Code == EventCodes.PlayerReport ||
+               photonEvent.Code == EventCodes.VoteResultKill
                ;
         
     }
