@@ -597,7 +597,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 0}
   spectatorCamera: {fileID: 0}
-  renderers: []
+  renderers:
+  - {fileID: 1135091042394323237}
+  - {fileID: 4932391225120704373}
+  nameText: {fileID: 4926196008496499306}
 --- !u!1 &5337496865493778829
 GameObject:
   m_ObjectHideFlags: 0
