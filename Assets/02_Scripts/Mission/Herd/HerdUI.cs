@@ -1,25 +1,25 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class HerdUI : MonoBehaviour, IMissionUI
 {
-    [Header("¾ç ÇÁ¸®ÆÕ (UI Image)")]
+    [Header("ì–‘ í”„ë¦¬íŒ¹ (UI Image)")]
     [SerializeField] private GameObject sheepPrefab;
-    [Header("¾çÀÌ »Ñ·ÁÁú ¿µ¿ª")]
+    [Header("ì–‘ì´ ë¿Œë ¤ì§ˆ ì˜ì—­")]
     [SerializeField] private RectTransform spawnArea;
-    [Header("°ñ ÁöÁ¡ ¿µ¿ª")]
+    [Header("ê³¨ ì§€ì  ì˜ì—­")]
     [SerializeField] private RectTransform goalArea;
-    [Header("Àå¾Ö¹° ÄÁÅ×ÀÌ³Ê")]
+    [Header("ì¥ì• ë¬¼ ì»¨í…Œì´ë„ˆ")]
     [SerializeField] private RectTransform obstacleContainer;
-    [Header("¾ç ¸¶¸® ¼ö")]
+    [Header("ì–‘ ë§ˆë¦¬ ìˆ˜")]
     [SerializeField] private int sheepCount = 5;
-    [Header("¾ç µû¶ó°¡´Â ¼Óµµ (´À¸®°Ô)")]
+    [Header("ì–‘ ë”°ë¼ê°€ëŠ” ì†ë„ (ëŠë¦¬ê²Œ)")]
     [SerializeField] private float herdSpeed = 0.2f;         
-    [Header("Àå¾Ö¹° ÇÁ¸®ÆÕ (UI Image)")]
+    [Header("ì¥ì• ë¬¼ í”„ë¦¬íŒ¹ (UI Image)")]
     [SerializeField] private GameObject obstaclePrefab;
-    [Header("Àå¾Ö¹° °³¼ö")]
+    [Header("ì¥ì• ë¬¼ ê°œìˆ˜")]
     [SerializeField] private int obstacleCount = 5;
-    [Header("Àå¾Ö¹° ÃÖ¼Ò °£°İ (ÇÈ¼¿)")]
+    [Header("ì¥ì• ë¬¼ ìµœì†Œ ê°„ê²© (í”½ì…€)")]
     [SerializeField] private float obstacleSpacing = 100f;
 
 
@@ -54,7 +54,7 @@ public class HerdUI : MonoBehaviour, IMissionUI
         float halfW = spawnArea.rect.width * 0.5f;
         float halfH = spawnArea.rect.height * 0.5f;
 
-        // 1) °ñ À§Ä¡´Â ±×´ë·Î ¿ìÇÏ´Ü¿¡
+        // 1) ê³¨ ìœ„ì¹˜ëŠ” ê·¸ëŒ€ë¡œ ìš°í•˜ë‹¨ì—.
         {
             var rt = goalArea;
             float gx = center.x + halfW - rt.sizeDelta.x * rt.pivot.x;
@@ -62,7 +62,7 @@ public class HerdUI : MonoBehaviour, IMissionUI
             rt.anchoredPosition = new Vector2(gx, gy);
         }
 
-        // 2) Àå¾Ö¹° »Ñ¸®±â: Áß¾Ó 80% ±¸¿ª, spacing ³Ğ°Ô
+        // 2) ì¥ì• ë¬¼ ë¿Œë¦¬ê¸°: ì¤‘ì•™ 80% êµ¬ì—­, spacing ë„“ê²Œ.
         obstaclePositions.Clear();
         float obsZoneW = halfW * 0.8f;  // 80%
         float obsZoneH = halfH * 0.8f;
@@ -86,10 +86,10 @@ public class HerdUI : MonoBehaviour, IMissionUI
             obstaclePositions.Add(pos);
         }
 
-        // 3) ¾ç ¼ö ¼³Á¤
+        // 3) ì–‘ ìˆ˜ ì„¤ì •.
         mission.SetTotalSheep(sheepCount);
 
-        // 4) ¾ç »Ñ¸®±â: ¿ŞÂÊ »ó´Ü
+        // 4) ì–‘ ë¿Œë¦¬ê¸°: ì™¼ìª½ ìƒë‹¨.
         float sheepW = sheepPrefab.GetComponent<RectTransform>().sizeDelta.x;
         float separation = sheepW * 0.5f;
 
@@ -117,7 +117,7 @@ public class HerdUI : MonoBehaviour, IMissionUI
                 mission: mission,
                 playerId: playerId,
                 ui: this,
-                speed: herdSpeed,  // ´À¸° ¼Óµµ·Î Àü´Ş
+                speed: herdSpeed,  // ëŠë¦° ì†ë„ë¡œ ì „ë‹¬.
                 followOffset: offset
             );
             spawnedSheep.Add(go);
