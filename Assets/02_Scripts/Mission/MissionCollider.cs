@@ -32,11 +32,6 @@ public class MissionCollider : MonoBehaviour
 
     public void HandleInteract(string playerId)
     {
-        if (playerController == null)
-        {
-            playerController = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);   
-        }
-        
         if (isOpen) return;
         
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
@@ -50,28 +45,21 @@ public class MissionCollider : MonoBehaviour
         }
         if (missionUI == null) return;
 
-        var mission = MissionManager.Instance
-            .PlayerMissions[playerId]
-            .FirstOrDefault(m => m.MissionID == missionType.ToString());
+        var mission = MissionManager.Instance.PlayerMissions[playerId].FirstOrDefault(m => m.MissionID == missionType.ToString());
         if (mission == null || mission.IsCompleted) return;
         isOpen = true;
         missionUI.Show(mission, playerId);
-        playerController.SetInteraction(true);
+        MissionManager.Instance.playerController.SetInteraction(true);
     }
 
     public void CloseUI()
     {
-        if (playerController == null)
-        {
-            playerController = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);   
-        }
-        
         if (!isOpen) return;
 
         isOpen = false;
         missionUIPanel.SetActive(false);
 
         // 상호작용 상태 해제
-        playerController.SetInteraction(false);
+        MissionManager.Instance.playerController.SetInteraction(false);
     }
 }
