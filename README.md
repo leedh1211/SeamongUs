@@ -6,7 +6,7 @@
 
 
 
-> *한 줄로 요약하는 프로젝트 소개 문구 (슬로건처럼..? 추천 받습니다)*
+> *"모두를 제거하고, 자원을 독차지하겠어."*
 
 ---
 ## 📌 목차  
@@ -19,7 +19,7 @@
 7. [서비스 구조](서비스-구조)  
 8. [와이어프레임](와이어프레임)  
 9. [API 명세서](api-명세서)  
-10. [ERD](erd)  
+10. [DataBase](database)  
 11. [프로젝트 파일 구조](프로젝트-파일-구조)  
 12. [Trouble Shooting](trouble-shooting)
 
@@ -223,6 +223,8 @@
 
 </details>
 
+<br>
+
 ## 5. ⏰ 개발기간
 
 <br>
@@ -236,23 +238,74 @@
 <br>
 
 ## 6. 🛠 기술스택
+### 🎮 Unity (2022.3.17f)
+- 2D 게임 제작, 물리 엔진, 애니메이션, UI 시스템 등 다양한 게임 기능 지원
 
-### Frontend
+- 대중적인 게임 개발 엔진으로 접근성이 높고 관련 자료가 풍부함
 
-### Backend
- 
-### DB 
+- 전체 게임 씬 구성 및 오브젝트 동작 처리 등 핵심 로직 구현
+
+<br>
+
+### 💻 C#
+- 게임 로직 처리, 이벤트 흐름 관리, 객체지향적 구조 설계
+
+- Unity와 기본 연동되는 언어이며, 구조적인 설계가 용이함
+
+- 캐릭터 이동, 아이템 시스템, 상태 관리 등 주요 게임 로직 구현
+
+<br>
+
+### 🧠 GitHub
+- 버전 관리, 프로젝트 백업, 이슈 트래킹, PR 기반 협업
+
+- 협업과 코드 변경 이력 추적에 효과적이며, 충돌 해결 용이
+
+- 팀원 간 병렬 개발 가능, 안정적인 협업 구조 확보
+
+<br>
+
+### 🛠️ Visual Studio
+- 디버깅, 자동 완성, 확장 기능 제공, Unity와 원활한 연동
+
+- Unity 개발에 최적화되어 있으며, 다양한 템플릿과 도구 내장
+
+- 코드 품질 향상 및 빠른 디버깅을 통한 개발 생산성 증가
+
+<br>
+
+### 🌐 Photon (PUN 2)
+- 실시간 멀티플레이어 네트워킹, 룸 생성/입장, 플레이어 동기화, RPC 호출 등
+
+- Unity와의 높은 호환성, 무료 요금제로도 충분한 기능 제공, 풍부한 문서화
+
+- 플레이어 간 위치 및 애니메이션 동기화, 채팅 및 아이템 획득 이벤트 공유, 룸 UI 구현
+
+<br>
 
 ---
 
 ## 7. 🧩 서비스 구조
+
+<br>
+
+> *FlowChart (로직 흐름도)*
 <img src="https://github.com/user-attachments/assets/6701470f-67af-4d80-b216-124723f7006b" width="500">
+
+<br>
 
 
 ## 8. 🧭 와이어프레임
-> Figma, Whimsical 등 이미지 삽입
 
-<img src="링크" alt="와이어프레임" width="600"/>
+<br>
+
+> *초기 UI 구상*
+<img src="https://github.com/user-attachments/assets/1bf549d5-43c7-4376-acd3-cd26abc405af" width="700">
+
+<br><br>
+
+> *초기 맵 설계도*
+<img src="https://github.com/user-attachments/assets/c985eb99-d182-4608-9c85-1697e90ed805" width="500">
 
 ---
 
@@ -267,11 +320,11 @@
 
 ---
 
-## 10. 🧬 ERD
+## 10. 🧬 DataBase
+> *회원가입 및 로그인 - DataBase 연동 과정*
+<img src="https://github.com/user-attachments/assets/c640e41d-cc84-4806-82f4-b81d92b30540" width="800">
 
-> 이미지 삽입 혹은 [dbdiagram.io](https://dbdiagram.io) 공유 링크
 
-<img src="링크" alt="ERD" width="600"/>
 
 ---
 
@@ -300,5 +353,37 @@
 ## 12. 🛠️ 트러블 슈팅
 
 <br>
+
+<details>
+<summary> 김웅진 트러블 슈팅 사항</summary>
+
+</details>
+
+<details>
+<summary> 이동헌 트러블 슈팅 사항</summary>
+
+</details>
+
+<details>
+<summary> 강민성 트러블 슈팅 사항</summary>
+
+</details>
+
+<details>
+<summary> 최진안 트러블 슈팅 사항</summary>
+
+</details>
+
+<details>
+<summary> 이선량 트러블 슈팅 사항</summary>
+
+</details>
+
+<details>
+<summary> 손양복 트러블 슈팅 사항</summary>
+
+</details>
+
+<br> 
 
 ---
