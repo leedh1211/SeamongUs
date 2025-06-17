@@ -294,7 +294,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 950181925221881841}
-  - component: {fileID: 4363304421963263934}
+  - component: {fileID: 2541446847166077119}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -321,7 +321,7 @@ RectTransform:
   m_AnchoredPosition: {x: 2.2126, y: -17.6998}
   m_SizeDelta: {x: 1704.4663, y: 715.9465}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &4363304421963263934
+--- !u!114 &2541446847166077119
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -330,7 +330,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7488632119569729441}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -339,11 +339,9 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: 10
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 10, y: 10}
+  m_Constraint: 0
+  m_ConstraintCount: 2
