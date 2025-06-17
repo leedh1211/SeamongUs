@@ -44,7 +44,7 @@ public class SheepController : MonoBehaviour
     {
         var rt = GetComponent<RectTransform>();
 
-        // (1) ���콺 ��ũ�� ��ǥ �� �г� ���� ��ǥ
+        // 마우스포인터 위치를 로컬 좌표로 변환
         Vector2 mouseLocal;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             panelRect,
@@ -52,18 +52,19 @@ public class SheepController : MonoBehaviour
             ui.GetComponentInParent<Canvas>().worldCamera,
             out mouseLocal
         );
+        // 양 안삐져나오도록 패널 영역 내로 제한
         var r = panelRect.rect;
         mouseLocal.x = Mathf.Clamp(mouseLocal.x, r.xMin, r.xMax);
         mouseLocal.y = Mathf.Clamp(mouseLocal.y, r.yMin, r.yMax);
 
-        // (2) �ε巴�� ���󰡱�
+        // 천천히 마우스포인터 따라붙도록
         rt.anchoredPosition = Vector2.Lerp(
             rt.anchoredPosition,
             mouseLocal,
             speed * Time.deltaTime
         );
 
-        // (3) �� ���� ���� üũ
+        // 미션 클리어
         if (!inGoal && RectIntersects(rt, goalArea))
         {
             inGoal = true;
@@ -71,7 +72,7 @@ public class SheepController : MonoBehaviour
             ui.Hide();
         }
 
-        // (4) ��ֹ� �浹 üũ
+        // 겹칠시 초기위치로
         foreach (var obs in obstacles)
         {
             if (RectIntersects(rt, obs))
@@ -84,7 +85,7 @@ public class SheepController : MonoBehaviour
         }
     }
 
-    // �� RectTransform�� ���� �г� ��ǥ�迡�� ��ġ���� �˻�
+    // 겹침 방지 bool 메서드
     private bool RectIntersects(RectTransform a, RectTransform b)
     {
         var ap = a.anchoredPosition;

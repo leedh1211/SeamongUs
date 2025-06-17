@@ -8,7 +8,7 @@ public class HerdMission : Mission
     private int collected;
 
     public HerdMission()
-        : base("HerdMission", "�綼�� �츮���� �����ּ���.")
+        : base("HerdMission", "양치기에게 양을 몰아가세요.")
     { }
 
     public override Mission Clone()
@@ -16,21 +16,10 @@ public class HerdMission : Mission
         return new HerdMission();
     }
 
-    // �� ���� ����
     public void SetTotalSheep(int count)
     {
         totalSheep = count;
         collected = 0;
     }
 
-    // �� �ϳ��� ��ǥ ������ �������� �� ȣ��
-    //public bool CollectOne()
-    //{
-    //    if (IsCompleted) return false;
-
-    //    collected++;
-    //    if (collected < totalSheep) return false;
-        
-    //    return true; 
-    //}
 }

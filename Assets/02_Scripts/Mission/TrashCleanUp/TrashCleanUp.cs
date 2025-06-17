@@ -1,33 +1,29 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class TrashCleanup : Mission
 {
-    private int totalTrash;    // �� �Ѹ� ������ ����
-    private int collected;     // ���ݱ��� �ֿ� ����
+    private int totalTrash;   
+    private int collected;     
 
     public TrashCleanup()
-        : base("TrashCleanup", "����� �����⸦ ��� ġ���ּ���.")
+        : base("TrashCleanup", "쓰레기를 정리해주세요.")
     { }
 
     public override Mission Clone()
     {
-        // �� �ν��Ͻ� ���� (�ѷ��� ���� ������ UI �ʿ��� ����)
+       
         return new TrashCleanup();
     }
 
-    /// <summary>
-    /// ������ �ѷ��� �����մϴ�. UI���� Show �ÿ� ȣ�����ּ���.
-    /// </summary>
+ 
     public void SetTotalTrash(int count)
     {
         totalTrash = count;
         collected = 0;
     }
 
-    /// <summary>
-    /// ������ �ϳ��� ���������� �˸��ϴ�.
-    /// </summary>
+
     public bool CollectOne()
     {
         if (IsCompleted) return false;
@@ -35,6 +31,6 @@ public class TrashCleanup : Mission
         collected++;
         if (collected < totalTrash) return false;
         
-        return true;  // Mission ���̽� Ŭ���� ���ο��� IsCompleted=true ó��
+        return true;  
     }
 }
