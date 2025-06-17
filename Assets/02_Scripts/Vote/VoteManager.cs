@@ -41,8 +41,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
             Instance = this;
         else
             Destroy(gameObject);
-
-        DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>
@@ -64,6 +62,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private IEnumerator VotingRoutine()
     {
         VoteUI.Instance.ResetVoteUI();
+        VoteUI.Instance.PopulateSlots();
         float currentTime = voteTime;
 
         while (currentTime > 0f)
@@ -207,6 +206,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     // 2. 팝업 띄우고 → 끝나면 상태 전환
                     UIManager.Instance.ShowVoteResultPopup(ejected, () =>
                     {   
+                        Debug.Log("콜백 5");
                         PhotonNetwork.RaiseEvent(
                             EventCodes.VoteResultKill,
                             new object[] { ejected },
@@ -214,7 +214,6 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                             ExitGames.Client.Photon.SendOptions.SendReliable
                         );
                         VoteUI.Instance.ResetVoteUI();
-                        GameManager.Instance.ChangeState(GameState.Playing);
                     });
                 });
                 break;
