@@ -170,7 +170,7 @@ MonoBehaviour:
   spawnArea: {fileID: 302978641938541871}
   goalArea: {fileID: 3730247365952224501}
   obstacleContainer: {fileID: 3652236470101175908}
-  sheepCount: 5
+  sheepCount: 1
   herdSpeed: 1
   obstaclePrefab: {fileID: 7483240973390439356, guid: 916a97f85cfde614bbac66c1e5b06bb1, type: 3}
   obstacleCount: 8
