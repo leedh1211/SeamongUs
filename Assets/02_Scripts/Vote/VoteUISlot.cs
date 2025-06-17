@@ -46,7 +46,12 @@ public class VoteUISlot : MonoBehaviour
         
         isDeadText.gameObject.SetActive(isDead);
         voteButton.gameObject.SetActive(!isDead);
-        // voteButton.interactable = !isDead;
+
+        object IsDeadObj = PhotonNetwork.LocalPlayer.CustomProperties[PlayerPropKey.IsDead];
+        if (VoteManager.Instance.VoteResults.ContainsKey(PhotonNetwork.LocalPlayer.ActorNumber) || (bool)IsDeadObj)
+        {
+            voteButton.interactable = false;    
+        }
 
         // 신고자 표시
         reporterMark.SetActive(playerId == ReportManager.Instance.LastReporter);
