@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-public class TrashCleanup : Mission
+﻿public class TrashCleanup : Mission
 {
     private int totalTrash;   
     private int collected;     

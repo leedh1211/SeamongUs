@@ -1,14 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class TrashUI : MonoBehaviour, IMissionUI
 {
-    [Header("¾²·¹±â ÇÁ¸®ÆÕ")]
+    [Header("ì“°ë ˆê¸° í”„ë¦¬íŒ¹")]
     [SerializeField] private GameObject trashPrefab;
-    [Header("¾²·¹±â ½ºÆù ¿µ¿ª (RectTransform)")]
+    [Header("ì“°ë ˆê¸° ìŠ¤í° ì˜ì—­ (RectTransform)")]
     [SerializeField] private RectTransform spawnArea;
-    [Header("¾²·¹±â ½ºÆù °¹¼ö")]
+    [Header("ì“°ë ˆê¸° ìŠ¤í° ê°¯ìˆ˜")]
     [SerializeField] private int spawnCount;
 
 
@@ -29,7 +28,7 @@ public class TrashUI : MonoBehaviour, IMissionUI
 
     private void SpawnTrashRandomly()
     {
-        // ±âÁ¸ ¾ÆÀÌÅÛ Á¤¸®
+        // ê¸°ì¡´ ì•„ì´í…œ ì •ë¦¬
         foreach (var go in spawned)
             if (go) Destroy(go);
         spawned.Clear();
@@ -37,23 +36,23 @@ public class TrashUI : MonoBehaviour, IMissionUI
     
         mission.SetTotalTrash(spawnCount);
 
-        // ½ºÆù ¿µ¿ª Å©±â
+        // ìŠ¤í° ì˜ì—­ í¬ê¸°
         var area = spawnArea.rect;
         float halfW = area.width * 0.5f;
         float halfH = area.height * 0.5f;
 
         for (int i = 0; i < spawnCount; i++)
         {
-            // 1) ºÎ¸ğ´Â spawnArea, worldPositionStays=false
+            // 1) ë¶€ëª¨ëŠ” spawnArea, worldPositionStays=false
             var go = Instantiate(trashPrefab, spawnArea, false);
             var rt = go.GetComponent<RectTransform>();
 
-            // 2) ·£´ı À§Ä¡: pivotÀÌ (0.5,0.5)¶ó¸é
+            // 2) ëœë¤ ìœ„ì¹˜: pivotì´ (0.5,0.5)ë¼ë©´
             float x = Random.Range(-halfW, halfW);
             float y = Random.Range(-halfH, halfH);
-            rt.anchoredPosition = new Vector2(x, y); // rtÀÇ anchoredPositionÀº ºÎ¸ğÀÇ anchor ±âÁØÀ¸·Î º»ÀÎ ÇÇº¿ÀÌ ¾ó¸¶³ª ¶³¾îÁ®ÀÖ´ÂÁö ¼³Á¤ÇØÁÖ´Âº¯¼ö.
+            rt.anchoredPosition = new Vector2(x, y); // rtì˜ anchoredPositionì€ ë¶€ëª¨ì˜ anchor ê¸°ì¤€ìœ¼ë¡œ ë³¸ì¸ í”¼ë´‡ì´ ì–¼ë§ˆë‚˜ ë–¨ì–´ì ¸ìˆëŠ”ì§€ ì„¤ì •í•´ì£¼ëŠ”ë³€ìˆ˜.
 
-            // 3) Å¬¸¯ ½Ã µ¿ÀÛÀ» À§ÇÑ ÄÄÆ÷³ÍÆ® ¼¼ÆÃ
+            // 3) í´ë¦­ ì‹œ ë™ì‘ì„ ìœ„í•œ ì»´í¬ë„ŒíŠ¸ ì„¸íŒ…
             var ti = go.GetComponent<TrashItem>() ?? go.AddComponent<TrashItem>();
             ti.Initialize(mission, playerId, this);
 

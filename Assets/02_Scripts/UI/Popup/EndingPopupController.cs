@@ -1,10 +1,9 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-using _02_Scripts.Ung_Managers;
 using System;
 using System.Linq;
 
@@ -14,29 +13,29 @@ public class EndingPopupController : MonoBehaviour
     [SerializeField] private RectTransform contentParent;
     [SerializeField] private GameObject playerSlotPrefab;
 
-    // ÆË¾÷À» ¶ç¿ï ¶§ ÀÌ ¸Ş¼­µå¸¦ ²À È£ÃâÇÏ¼¼¿ä.
+    // íŒì—…ì„ ë„ìš¸ ë•Œ ì´ ë©”ì„œë“œë¥¼ ê¼­ í˜¸ì¶œí•˜ì„¸ìš”.
     public void Init(EndGameCategory winnerCategory)
     {
-        // 1) Á¦¸ñ ¼¼ÆÃ
+        // 1) ì œëª© ì„¸íŒ…
         titleText.text =
             winnerCategory == EndGameCategory.CitizensWin
-            ? "»ıÁ¸ÀÚ ½Â¸®!"
-            : "ÀÓÆ÷½ºÅÍ ½Â¸®!";
+            ? "ìƒì¡´ì ìŠ¹ë¦¬!"
+            : "ì„í¬ìŠ¤í„° ìŠ¹ë¦¬!";
 
-        // 2) ½Â¸®ÀÚ ¸ñ·Ï Á¶È¸
+        // 2) ìŠ¹ë¦¬ì ëª©ë¡ ì¡°íšŒ
         List<Player> winners = new List<Player>();
 
         if (winnerCategory == EndGameCategory.CitizensWin)
         {
             foreach (var p in PhotonNetwork.PlayerList)
             {
-                // Role »Ì¾Æ¿À±â
+                // Role ë½‘ì•„ì˜¤ê¸°
                 p.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj);
                 Role role = (Role)Convert.ToInt32(roleObj);
                 if (role != Role.Crewmate)
-                    continue;   // ÀÓÆ÷½ºÅÍ´Â °Ç³Ê¶Ú´Ù
+                    continue;   // ì„í¬ìŠ¤í„°ëŠ” ê±´ë„ˆë›´ë‹¤
 
-                // PlayerMissions ¿¡¼­ ÀÌ ÇÃ·¹ÀÌ¾î Å°(ActorNumber.ToString())·Î ÇÒ´çµÈ ¹Ì¼Ç °¡Á®¿À±â
+                // PlayerMissions ì—ì„œ ì´ í”Œë ˆì´ì–´ í‚¤(ActorNumber.ToString())ë¡œ í• ë‹¹ëœ ë¯¸ì…˜ ê°€ì ¸ì˜¤ê¸°
                 string key = p.ActorNumber.ToString();
                 if (MissionManager.Instance.PlayerMissions.TryGetValue(key, out var missions)
                     && missions.All(m => m.IsCompleted))
@@ -47,14 +46,14 @@ public class EndingPopupController : MonoBehaviour
         }
         else
         {
-            // ¡°ÀÓÆ÷½ºÅÍ ½Â¸®¡± ¡æ »ì¾Æ ÀÖ´Â ÀÓÆ÷½ºÅÍ Àü¿ø
+            // â€œì„í¬ìŠ¤í„° ìŠ¹ë¦¬â€ â†’ ì‚´ì•„ ìˆëŠ” ì„í¬ìŠ¤í„° ì „ì›
             foreach (var p in PhotonNetwork.PlayerList)
             {
-                // dead ¿©ºÎ
+                // dead ì—¬ë¶€
                 p.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object deadObj);
                 bool isDead = deadObj is bool db && db;
 
-                // role ¿©ºÎ
+                // role ì—¬ë¶€
                 p.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj);
                 Role role = (Role)Convert.ToInt32(roleObj);
 
@@ -63,14 +62,14 @@ public class EndingPopupController : MonoBehaviour
             }
         }
 
-        // 3) ½½·Ô »ı¼º
+        // 3) ìŠ¬ë¡¯ ìƒì„±
         foreach (var p in winners)
         {
             var slot = Instantiate(playerSlotPrefab, contentParent, false);
             var img = slot.GetComponentInChildren<Image>();
             var txt = slot.GetComponentInChildren<TMP_Text>();
 
-            // ¾Æ¹ÙÅ¸ °¡Á®¿À±â (AvatarManager¿¡ ¿¬°áµÇ¾î ÀÖ´Ù¸é)
+            // ì•„ë°”íƒ€ ê°€ì ¸ì˜¤ê¸° (AvatarManagerì— ì—°ê²°ë˜ì–´ ìˆë‹¤ë©´)
             if (AvatarManager.Instance != null &&
                 p.CustomProperties.TryGetValue(PlayerPropKey.Spr, out object sprIdx))
             {

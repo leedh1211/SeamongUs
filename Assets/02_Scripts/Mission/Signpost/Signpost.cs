@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Signpost : Mission
+﻿public class Signpost : Mission
 {
     // Mission 클래스 생성자 호출
     public Signpost()
