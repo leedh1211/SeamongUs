@@ -12,13 +12,25 @@ public class LayerController : MonoBehaviour
     public TMP_Text nameText;
     private void Awake()
     {
-        // 런타임에 씬에서 카메라 자동 연결
+        // Main Camera는 태그로 찾기
         if (mainCamera == null)
             mainCamera = GameObject.FindWithTag("MainCamera")?.GetComponent<Camera>();
 
+        // Spectator Camera도 태그로 찾기 (비활성 상태도 OK)
         if (spectatorCamera == null)
-            spectatorCamera = GameObject.Find("Spectator Camera")?.GetComponent<Camera>();
+        {
+            GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            foreach (var go in allObjects)
+            {
+                if (go.CompareTag("SpectatorCamera"))
+                {
+                    spectatorCamera = go.GetComponent<Camera>();
+                    break;
+                }
+            }
+        }
     }
+
 
     public void SwitchToGhostView()
     {
