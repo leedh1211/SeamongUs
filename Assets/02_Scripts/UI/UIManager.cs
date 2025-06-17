@@ -28,11 +28,19 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     //public GameObject missionUI;    //list?
     //public GameObject meetingUI;
     public GameObject votingUI;
+
+    [Header("VoteResult")]
     public GameObject voteResult;
-    public PlayerManager playerManager;
     public TextMeshProUGUI voteText;
     public Image playerImage;
-    public string roletext;
+    private string roletext;
+
+    [Header("killed")]
+    public GameObject killedPopup;
+    public Image imposterImage;
+    public TextMeshProUGUI killedText;
+
+    public PlayerManager playerManager;
 
     public event Action OnReportPopupClosed; //이게 게임매니저에 아까 콜백 구독한애들 
     public event Action OnEndGamePopupClosed; //마찬가지
@@ -263,5 +271,28 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         yield return new WaitForSeconds(2f);
         voteResult.SetActive(false);
         voteResultCallback?.Invoke();
+    }
+
+    public void KilledPopup()
+    {
+        StartCoroutine(UpImageScale(imposterImage.rectTransform, 3f, 3f, 5, 0.6f, 0.15f, killedText));
+    }
+    IEnumerator UpImageScale(RectTransform target, float size, float duration, int repeat, float delay, float downdelay, TextMeshProUGUI text)
+                            //타겟 이미지 위치, 커지는 사이즈, 커지는 정도, 반복 횟수, 커지는 딜레이, 커지는 딜레이 감소정도, 복사되는 텍스트
+    {
+        killedPopup.SetActive(true);
+        text.text = ("저벅..");
+        for (int i = 0; i < repeat; i++)
+        {
+            target.localScale = Vector3.Lerp(target.localScale, target.localScale * size, 1/duration);
+            text.text += text.text;
+            yield return new WaitForSeconds(delay);
+            delay -= downdelay;
+        }
+        yield return new WaitForSeconds(delay);
+        text.fontSize = 100;
+        text.text = ("푹");
+        yield return new WaitForSeconds(delay*2);
+        killedPopup.SetActive(false);
     }
 }
