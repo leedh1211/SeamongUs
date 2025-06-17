@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -42,8 +43,7 @@ public class VoteUISlot : MonoBehaviour
         {
             spriteAvatar.sprite = avatar;
         }
-
-        // 사망자 처리
+        
         isDeadText.gameObject.SetActive(isDead);
         voteButton.gameObject.SetActive(!isDead);
         // voteButton.interactable = !isDead;

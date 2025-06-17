@@ -61,8 +61,8 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private IEnumerator VotingRoutine()
     {
-        VoteUI.Instance.ResetVoteUI();
         VoteUI.Instance.PopulateSlots();
+        VoteUI.Instance.ResetVoteUI();
         float currentTime = voteTime;
 
         while (currentTime > 0f)
