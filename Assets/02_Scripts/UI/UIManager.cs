@@ -199,26 +199,32 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         //팝업을 킴
         votingUI.SetActive(false);
         voteResult.SetActive(true);
-
-        Photon.Realtime.Player player = PhotonNetwork.CurrentRoom.Players[targetActor];
-        Debug.Log(player);
-        playerImage.rectTransform.localEulerAngles = Vector3.zero;
-
-
-        //임포스터 아닐경우
-        player.CustomProperties.TryGetValue(PlayerPropKey.Nick, out object nick);
-        player.CustomProperties.TryGetValue(PlayerPropKey.Role, out object role);
-        if ((int)role == 1)
+        
+        if (targetActor != -1)
         {
-            roletext = ($"{(string)nick}은 임포스터가 아닙니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
+            Player player = PhotonNetwork.CurrentRoom.Players[targetActor];
+            playerImage.rectTransform.localEulerAngles = Vector3.zero;
+
+            //임포스터 아닐경우
+            player.CustomProperties.TryGetValue(PlayerPropKey.Nick, out object nick);
+            player.CustomProperties.TryGetValue(PlayerPropKey.Role, out object role);
+            if ((int)role == 1)
+            {
+                roletext = ($"{(string)nick}은 임포스터가 아닙니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
+            }
+            else if ((int)role == 2)//임포스터일 경우
+            {
+                roletext = ($"{(string)nick}은 임포스터가 맞습니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
+            }else
+            {
+                roletext = ($"nickname은 임포스터가 맞습니다. \n 남은 임포스터는 n명입니다.");    
+            }    
         }
-        else if ((int)role == 2)//임포스터일 경우
+        else
         {
-            roletext = ($"{(string)nick}은 임포스터가 맞습니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
-        }else
-        {
-            roletext = ($"nickname은 임포스터가 맞습니다. \n 남은 임포스터는 n명입니다.");    
+            roletext = ($"누군가의 죽음이 쓸모없어졌습니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
         }
+        
         
         StartCoroutine(TextEffect(roletext, 0.1f));
     }
