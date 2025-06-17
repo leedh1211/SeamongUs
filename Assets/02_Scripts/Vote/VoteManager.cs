@@ -208,6 +208,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     // 2. 팝업 띄우고 → 끝나면 상태 전환
                     UIManager.Instance.ShowVoteResultPopup(ejected, () =>
                     {
+                        VoteUI.Instance.ResetVoteUI();
                         GameManager.Instance.ChangeState(GameState.Playing);
                     });
                 });
