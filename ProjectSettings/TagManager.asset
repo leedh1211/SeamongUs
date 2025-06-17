@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - DragIcon
+  - SpectatorCamera
   layers:
   - Default
   - TransparentFX
