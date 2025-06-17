@@ -374,6 +374,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
                 PhotonNetwork.LocalPlayer.ActorNumber);
 
         isGhost = true;
+
+        if (photonView.IsMine)
+        {
+            MissionManager.Instance.CloseAllMissionUIs();
+        }
     }
     private static void SetLayerRecursively(GameObject obj, int layer)
     {

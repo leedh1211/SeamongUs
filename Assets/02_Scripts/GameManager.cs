@@ -67,6 +67,8 @@ public class GameManager : MonoBehaviour
 
     private void ActionChangeState(GameState newState)
     {
+        if(newState== GameState.Meeting || newState == GameState.Voting)
+            MissionManager.Instance.CloseAllMissionUIs();
         switch (newState)
         {
             case GameState.Lobby:
