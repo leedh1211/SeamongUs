@@ -32,6 +32,8 @@ public class VotingChatUI : MonoBehaviour
 
     void OnSendClicked()
     {
+        PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.IsDead, out object isDead);
+        if ((bool)isDead) return;
         if (string.IsNullOrWhiteSpace(inputField.text)) return;
 
         SoundManager.Instance.PlaySFX(SFXType.Click);

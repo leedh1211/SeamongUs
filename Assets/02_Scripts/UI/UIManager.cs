@@ -214,7 +214,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
             else if ((int)role == 2)//임포스터일 경우
             {
-                roletext = ($"{(string)nick}은 임포스터가 맞습니다. \n 남은 임포스터는 {CountImposter()}명입니다.");
+                roletext = ($"{(string)nick}은 임포스터가 맞습니다. \n 남은 임포스터는 {CountImposter()-1}명입니다.");
             }else
             {
                 roletext = ($"nickname은 임포스터가 맞습니다. \n 남은 임포스터는 n명입니다.");    

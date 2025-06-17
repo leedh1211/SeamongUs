@@ -45,7 +45,8 @@ public class VoteUISlot : MonoBehaviour
 
         // 사망자 처리
         isDeadText.gameObject.SetActive(isDead);
-        voteButton.interactable = !isDead && !hasVoted; // 사망자와 투표 완료자는 버튼 비활성화
+        voteButton.gameObject.SetActive(!isDead);
+        // voteButton.interactable = !isDead;
 
         // 신고자 표시
         reporterMark.SetActive(playerId == ReportManager.Instance.LastReporter);
@@ -78,9 +79,6 @@ public class VoteUISlot : MonoBehaviour
     {
         // 활성화 시킬 UI 요소들
         voteButton.gameObject.SetActive(true);
-        isDeadText.gameObject.SetActive(true);
-        reporterMark.SetActive(true);
-        votedMark.SetActive(true);
 
         // 기존 마크 제거
         foreach (Transform transform in markParent) Destroy(transform.gameObject);
