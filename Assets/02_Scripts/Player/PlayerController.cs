@@ -350,6 +350,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
         
         isGhost = true;
+
+        if (photonView.IsMine)
+        {
+            MissionManager.Instance.CloseAllMissionUIs();
+        }
     }
     public void OnDanceInput(InputAction.CallbackContext ctx)   // Input System에서 G 키와 매핑
     {

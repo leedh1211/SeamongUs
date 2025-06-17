@@ -11,6 +11,8 @@ public class MissionCollider : MonoBehaviour
     private IMissionUI missionUI;
     public MissionType missionType;
 
+    private bool isOpen = false;
+
     private void Awake()
     {
         if (missionUIPanel == null)
@@ -27,6 +29,7 @@ public class MissionCollider : MonoBehaviour
 
     public void HandleInteract(string playerId)
     {
+        if (isOpen) return;
 
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
         {
@@ -43,7 +46,18 @@ public class MissionCollider : MonoBehaviour
             .PlayerMissions[playerId]
             .FirstOrDefault(m => m.MissionID == missionType.ToString());
         if (mission == null || mission.IsCompleted) return;
-
+        isOpen = true;
         missionUI.Show(mission, playerId);
+    }
+
+    public void CloseUI()
+    {
+        if (!isOpen) return;
+
+        isOpen = false;
+        missionUIPanel.SetActive(false);
+
+        // 상호작용 잠금 해제
+        FindObjectOfType<PlayerController>()?.SetInteraction(false);
     }
 }
