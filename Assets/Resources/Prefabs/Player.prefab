@@ -143,8 +143,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: NickName
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b2b6a9ecd6fb9c54990f4d0a80ff7495, type: 2}
+  m_sharedMaterial: {fileID: 8096951352986240885, guid: b2b6a9ecd6fb9c54990f4d0a80ff7495, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
