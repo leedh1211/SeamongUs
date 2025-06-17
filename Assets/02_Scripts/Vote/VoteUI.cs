@@ -1,5 +1,4 @@
-﻿using _02_Scripts.Ung_Managers;
-using Photon.Pun;
+﻿using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;

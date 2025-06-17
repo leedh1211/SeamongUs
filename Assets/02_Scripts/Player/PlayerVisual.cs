@@ -1,12 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
-using _02_Scripts.Alert;
-using _02_Scripts.Login.Player;
-using _02_Scripts.Ung_Managers;
 using Newtonsoft.Json;
 using UnityEngine;
 using Photon.Pun;
-using Photon.Pun.UtilityScripts;
 using TMPro;
 using UnityEngine.Networking;
 using Hashtable = ExitGames.Client.Photon.Hashtable;

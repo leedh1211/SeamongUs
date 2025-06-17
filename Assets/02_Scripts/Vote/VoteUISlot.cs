@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using _02_Scripts.Ung_Managers;
 
 public class VoteUISlot : MonoBehaviour
 {

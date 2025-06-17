@@ -1,8 +1,5 @@
-using System;
-using _02_Scripts.Login;
-using _02_Scripts.Ung_Managers;
+﻿using _02_Scripts.Login;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 

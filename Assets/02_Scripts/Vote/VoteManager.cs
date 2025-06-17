@@ -122,7 +122,7 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void EndVote()
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        
+
         Debug.Log("개표 시작");
 
         // 1. 투표 결과 없음
@@ -165,18 +165,16 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         );
     }
 
-
-    private void SetVoteTime(int votetime)
-    {
-        object[] eventData = new object[] { votetime }; // 투표 다했을 경우, 시간 줄어들게 세팅
-        PhotonNetwork.RaiseEvent(
-            EventCodes.SetVoteTime,
-            eventData,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            SendOptions.SendReliable
-        );
-    }
-
+    //private void SetVoteTime(int votetime)
+    //{
+    //    object[] eventData = new object[] { votetime }; // 투표 다했을 경우, 시간 줄어들게 세팅
+    //    PhotonNetwork.RaiseEvent(
+    //        EventCodes.SetVoteTime,
+    //        eventData,
+    //        new RaiseEventOptions { Receivers = ReceiverGroup.All },
+    //        SendOptions.SendReliable
+    //    );
+    //}
 
     public void OnEvent(EventData photonEvent)
     {
@@ -232,8 +230,8 @@ public class VoteManager : MonoBehaviourPunCallbacks, IOnEventCallback
         GameManager.Instance.SetLastDeadActor(findPeopleActorNum);
         GameManager.Instance.ChangeState(GameState.Meeting);
     }
-    
-    
+
+
     //테스트 코드임
     private void PrintDictionary<TKey, TValue>(Dictionary<TKey, TValue> dict, string label = "Dictionary Dump")
     {
