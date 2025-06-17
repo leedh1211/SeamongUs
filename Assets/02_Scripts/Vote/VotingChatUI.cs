@@ -17,7 +17,6 @@ public class VotingChatUI : MonoBehaviour
     {
         sendButton.onClick.AddListener(OnSendClicked);
         closeButton.onClick.AddListener(() => chatPanel.SetActive(false));
-        chatPanel.SetActive(false);
     }
 
     public void Open()

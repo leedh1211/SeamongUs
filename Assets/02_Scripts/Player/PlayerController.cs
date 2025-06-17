@@ -330,6 +330,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         yield return new WaitForSeconds(1f);
         gameObject.layer = LayerMask.NameToLayer("Ghost");
+        GetComponent<LayerController>()?.SwitchToGhostView();
+
 
         if (playerSprite != null)
         {
