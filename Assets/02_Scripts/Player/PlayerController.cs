@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public bool IsInteraction = false;
     
     [Header("Ghost Settings")]
-    [SerializeField] private float ghostMoveSpeed = 3f;
+    [SerializeField] private float ghostMoveSpeed = 6f;
     [SerializeField] private float ghostAlpha = 0.5f;
     private bool isGhost = false;
 
@@ -194,7 +194,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void OnKillInput(InputAction.CallbackContext context)
     {
-        if (IsInteraction || !photonView.IsMine || !context.performed)
+        if (isGhost || IsInteraction || !photonView.IsMine || !context.performed)
             return;
         TryKill();
         
