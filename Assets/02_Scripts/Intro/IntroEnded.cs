@@ -7,6 +7,11 @@ public class IntroEnded : MonoBehaviour
 {
     private void OnEnable()
     {
+        OnstartGame();
+    }
+
+    public void OnstartGame()
+    {
         SceneManager.LoadScene("Loginscene");
     }
 }
