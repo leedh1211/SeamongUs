@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
@@ -18,6 +18,8 @@ public class TogglePanel : MonoBehaviour
 
     private void ToggleTarget()
     {
+        SoundManager.Instance.PlaySFX(SFXType.Click);
+
         // 첫 번째 패널 토글
         if (targetPanel != null)
         {
