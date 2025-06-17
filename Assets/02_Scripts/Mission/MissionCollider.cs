@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class MissionCollider : MonoBehaviour
 {
-    [Tooltip("Inspector�� �� �̼ǿ� �����ϴ� UI �г� GameObject�� �巡���ϼ���")]
+    [Tooltip("Inspector에서 직접 연결하는 UI 패널 GameObject를 참조하세요")]
     [SerializeField] private GameObject missionUIPanel;
 
     private IMissionUI missionUI;
     public MissionType missionType;
+    public PlayerManager playerManager;
     public PlayerController playerController;
 
     private bool isOpen = false;
@@ -18,26 +19,31 @@ public class MissionCollider : MonoBehaviour
     {
         if (missionUIPanel == null)
         {
-            Debug.LogError($"{name}: missionUIPanel�� UI �г� GameObject�� �Ҵ��ؾ� �մϴ�.");
+            Debug.LogError($"{name}: missionUIPanel에 UI 패널 GameObject가 할당되어야 합니다.");
             return;
         }
 
-        // GameObject���� IMissionUI ����ü�� ã�Ƽ� �Ҵ�
+        // GameObject에서 IMissionUI 인터페이스를 구현한 컴포넌트를 찾음
         missionUI = missionUIPanel.GetComponent<IMissionUI>();
         if (missionUI == null)
-            Debug.LogError($"{name}: missionUIPanel�� IMissionUI�� ������ ������Ʈ(LaundryUI ��)�� �ٿ��� �մϴ�.");
+            Debug.LogError($"{name}: missionUIPanel에 IMissionUI를 구현한 컴포넌트(LaundryUI 등)가 필요합니다.");
+    }
+
+    private void Start()
+    {
+        playerController = playerManager.FindPlayerController(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     public void HandleInteract(string playerId)
     {
         if (isOpen) return;
-
+        
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(PlayerPropKey.Role, out object roleObj))
         {
             Role myRole = (Role)Convert.ToInt32(roleObj);
             if (myRole == Role.Impostor)
             {
-                Debug.Log("[MissionCollider] �������ʹ� �̼��� ������ �� �����ϴ�.");
+                Debug.Log("[MissionCollider] 임포스터는 미션을 실행할 수 없습니다.");
                 return;
             }
         }
@@ -59,7 +65,7 @@ public class MissionCollider : MonoBehaviour
         isOpen = false;
         missionUIPanel.SetActive(false);
 
-        // ��ȣ�ۿ� ��� ����
-        FindObjectOfType<PlayerController>()?.SetInteraction(false);
+        // 상호작용 상태 해제
+        playerController.SetInteraction(false);
     }
 }
