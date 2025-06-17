@@ -28,6 +28,10 @@ public class LobbyUIManager : Singleton<LobbyUIManager>
         {
             RoomListPanel.SetActive(false);
         }
+        else
+        {
+            RoomListPanel.SetActive(true);
+        }
     } 
 
     public void UpdateRoomList(List<RoomInfo> roomList)

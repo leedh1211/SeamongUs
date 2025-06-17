@@ -10,7 +10,7 @@ public class ImposterController : MonoBehaviour
     private PhotonView view;
 
     [SerializeField] private float killRange = 2.0f;
-    [SerializeField] private float AttackDamage = 50f;
+    [SerializeField] private int AttackDamage = 50;
     
     void Start()
     {

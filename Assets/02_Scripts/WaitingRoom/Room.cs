@@ -5,6 +5,7 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
+using _02_Scripts.Lobby;
 using ExitGames.Client.Photon;
 
 public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
@@ -144,6 +145,11 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         SetupUIByHost();
         RefreshPlayerSlots();
+    }
+
+    public void OutRoom()
+    {
+        NetworkManager.Instance.LeaveRoom();
     }
 
     public void OnEvent(EventData photonEvent)
