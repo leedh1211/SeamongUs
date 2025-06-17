@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class LayerController : MonoBehaviour
@@ -8,7 +9,7 @@ public class LayerController : MonoBehaviour
 
     [Header("플레이어 시각 요소")]
     public Renderer[] renderers;
-
+    public TMP_Text nameText;
     private void Awake()
     {
         // 런타임에 씬에서 카메라 자동 연결
@@ -31,5 +32,7 @@ public class LayerController : MonoBehaviour
 
         if (spectatorCamera != null)
             spectatorCamera.gameObject.SetActive(true);
+        if (nameText != null)
+            nameText.enabled = false;
     }
 }
