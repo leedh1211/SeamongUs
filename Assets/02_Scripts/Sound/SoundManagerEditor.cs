@@ -20,7 +20,7 @@ public class SoundManagerEditor : Editor
 
         // 효과음 목록도 Element가 아니라 enum 이름으로 보이게 하기
         EditorGUILayout.LabelField("SFX Clips", EditorStyles.boldLabel);
-        var sfxNames = System.Enum.GetNames(typeof(SfxType));
+        var sfxNames = System.Enum.GetNames(typeof(SFXType));
         EnsureArraySize(_sfxClipsProp, sfxNames.Length);
         for (int i = 0; i < sfxNames.Length; i++)
         {
@@ -37,7 +37,7 @@ public class SoundManagerEditor : Editor
 
         // BGM 목록도 enum 이름으로 보이게
         EditorGUILayout.LabelField("BGM Clips", EditorStyles.boldLabel);
-        var bgmNames = System.Enum.GetNames(typeof(BgmType));
+        var bgmNames = System.Enum.GetNames(typeof(BGMType));
         EnsureArraySize(_bgmClipsProp, bgmNames.Length);
         for (int i = 0; i < bgmNames.Length; i++)
         {

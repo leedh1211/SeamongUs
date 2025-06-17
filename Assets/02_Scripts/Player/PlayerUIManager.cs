@@ -69,16 +69,21 @@ public class PlayerUIManager : MonoBehaviour
         {
             killBtn.gameObject.SetActive(false);
             useBtn.gameObject.SetActive(true);
-        }else if (role == 2)
+        }
+        else if (role == 2)
         {
             killBtn.gameObject.SetActive(true);
             useBtn.gameObject.SetActive(false);
         }
-        
+
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
         player = playerManager.FindPlayerController(actorNumber);
         killBtn.onClick.RemoveAllListeners(); // 기존 리스너 제거 (선택)
-        killBtn.onClick.AddListener(() => player.TryKill());
+        killBtn.onClick.AddListener(() =>
+        {
+            SoundManager.Instance.PlaySFX(SFXType.Kill);
+            player.TryKill();
+        });
 
         useBtn.onClick.RemoveAllListeners();
         useBtn.onClick.AddListener(() => player.OnInteractAction());

@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Text;
 using _02_Scripts.Alert;
 using _02_Scripts.Login;
 using _02_Scripts.Login.Player;
 using Newtonsoft.Json;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -20,6 +18,8 @@ public class LoginManager : MonoBehaviour
 
     public void OnLoginButtonPressed()
     {
+        SoundManager.Instance.PlaySFX(SFXType.Click);
+
         string userId = idInputField.text;
         string password = pwInputField.text;
 

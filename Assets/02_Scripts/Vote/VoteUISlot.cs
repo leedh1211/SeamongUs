@@ -80,6 +80,8 @@ public class VoteUISlot : MonoBehaviour
     // 투표 버튼 클릭 시 호출되는 메서드
     private void OnVoteClicked()
     {
+        SoundManager.Instance.PlaySFX(SFXType.Click);
+
         VoteManager.Instance.OnVoteButtonClicked(TargetPlayerId);
         voteButton.interactable = false; // 투표 후 버튼 비활성화
         votedMark.SetActive(true); // 투표 완료 표시

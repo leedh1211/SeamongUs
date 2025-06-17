@@ -3,38 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum SfxType
+public enum SFXType
 {
-    Click, // 0
-    Start, // 1
-    End, // 2
+    Click,
+    Item,
+    Kill,
+    MissionComplete,
     Report,
+    VotePopup,
     Eject,
-    //Walk, Jump, Dance, Run, Win, Lose, Hit, Damage, Heal, Death, ...
+    CrewWin,
+    ImposterWin,
 }
 
-public enum BgmType
+public enum BGMType
 {
-    Login,
-    Room,
     Intro,
-    Ending, 
-    Map01, //Map02, Map03,
+    Start,
+    Play,
+    Voting,
 }
 
 /// <summary>
 /// 사운드 사용 법 참고사항:
-/// 방 입장 시
-/// SoundManager.Instance.PlayBGM(BgmType.Room);
-
+/// 인트로
+/// SoundManager.Instance.PlayBGM(BGMType.Intro);
+/// 
 /// 버튼 클릭 시
-/// SoundManager.Instance.PlaySfx(SfxType.Click);
-
-/// 리포트 버튼 클릭 시
-/// SoundManager.Instance.PlaySfx(SfxType.Report);
-
-/// 추방될 때
-/// SoundManager.Instance.PlaySfx(SfxType.Eject);
+/// SoundManager.Instance.PlaySFX(SFXType.Click);
 /// </summary>
 
 public class SoundManager : MonoBehaviour
@@ -52,8 +48,8 @@ public class SoundManager : MonoBehaviour
     private AudioSource sfxSource;
     private AudioSource bgmSource;
 
-    private Dictionary<SfxType, AudioClip> _sfxList;
-    private Dictionary<BgmType, AudioClip> _bgmList;
+    private Dictionary<SFXType, AudioClip> _sfxList;
+    private Dictionary<BGMType, AudioClip> _bgmList;
 
     private void Awake()
     {
@@ -79,11 +75,11 @@ public class SoundManager : MonoBehaviour
         InitializeMappings();
 
         // 초기 BGM 재생 (로그인 화면 BGM)
-        PlayBGM(BgmType.Login);
+        PlayBGM(BGMType.Start);
     }
 
     // 배경음악
-    public void PlayBGM(BgmType track)
+    public void PlayBGM(BGMType track)
     {
         if (!_bgmList.TryGetValue(track, out var clip) || clip == null)
         {
@@ -106,7 +102,7 @@ public class SoundManager : MonoBehaviour
     }
 
     // 효과음
-    public void PlaySFX(SfxType type)
+    public void PlaySFX(SFXType type)
     {
         if (!_sfxList.TryGetValue(type, out var clip) || clip == null)
         {
@@ -121,8 +117,8 @@ public class SoundManager : MonoBehaviour
     public void InitializeMappings()
     {
         // 효과음
-        _sfxList = new Dictionary<SfxType, AudioClip>();
-        foreach (var type in Enum.GetValues(typeof(SfxType)).Cast<SfxType>())
+        _sfxList = new Dictionary<SFXType, AudioClip>();
+        foreach (var type in Enum.GetValues(typeof(SFXType)).Cast<SFXType>())
         {
             int index = (int)type;
             if (index < sfxClips.Count)
@@ -136,8 +132,8 @@ public class SoundManager : MonoBehaviour
         }
 
         // 배경음악
-        _bgmList = new Dictionary<BgmType, AudioClip>();
-        foreach (BgmType type in Enum.GetValues(typeof(BgmType)))
+        _bgmList = new Dictionary<BGMType, AudioClip>();
+        foreach (BGMType type in Enum.GetValues(typeof(BGMType)))
         {
             int index = (int)type;
             if (index < bgmClips.Length)
