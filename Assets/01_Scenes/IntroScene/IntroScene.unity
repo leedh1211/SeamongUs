@@ -178,15 +178,15 @@ PrefabInstance:
     - target: {fileID: 6692231835852239885, guid: 4a0dbe2ea34f68440adb579e6937f8ca, type: 3}
       propertyPath: bgmClips.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: d7fbdb51eef8f0840ad4a75ac51e9996, type: 3}
+      objectReference: {fileID: 8300000, guid: 790c73b81b0058b40a397e3691f70b76, type: 3}
     - target: {fileID: 6692231835852239885, guid: 4a0dbe2ea34f68440adb579e6937f8ca, type: 3}
       propertyPath: bgmClips.Array.data[1]
       value: 
-      objectReference: {fileID: 8300000, guid: eb19cea61ca97cc4bac2f0a3b5218e7f, type: 3}
+      objectReference: {fileID: 8300000, guid: 99b0b97930070e4489e4924dea61e382, type: 3}
     - target: {fileID: 6692231835852239885, guid: 4a0dbe2ea34f68440adb579e6937f8ca, type: 3}
       propertyPath: bgmClips.Array.data[2]
       value: 
-      objectReference: {fileID: 8300000, guid: a462cdfc1d7d793428513b8c7bf2b7b4, type: 3}
+      objectReference: {fileID: 8300000, guid: f7d0e2ae282c7c1439f6322c02d71ca9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
