@@ -13,6 +13,7 @@ public class SheepController : MonoBehaviour
     private bool inGoal;
     private float speed;
     private Vector2 followOffset;
+    public PlayerController playerController;
 
     public void Initialize(
         RectTransform panelRect,
@@ -69,6 +70,7 @@ public class SheepController : MonoBehaviour
             inGoal = true;
             MissionManager.Instance.CompleteMission(playerId, mission.MissionID);
             ui.Hide();
+            playerController.SetInteraction(false);
         }
 
         // 겹칠시 초기위치로

@@ -12,7 +12,7 @@ public class SignpostUI : MonoBehaviour, IMissionUI
     private string missionID;
 
     private readonly int[] angles = { 90, 135, 180, 225, 270, 315 };
-
+    public PlayerController playerController;
     private void Awake()
     {
         // 각 버튼 클릭 시 회전 이벤트 연결
@@ -78,5 +78,6 @@ public class SignpostUI : MonoBehaviour, IMissionUI
 
         // 창닫기
         gameObject.SetActive(false);
+        playerController.SetInteraction(false);
     }
 }
