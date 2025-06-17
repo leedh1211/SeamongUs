@@ -5488,9 +5488,6 @@ MonoBehaviour:
   - {fileID: 1876279605}
   - {fileID: 2084115096}
   - {fileID: 158915719}
-  chatContentParent: {fileID: 0}
-  chatMessagePrefab: {fileID: 0}
-  scrollRect: {fileID: 0}
 --- !u!114 &574654065
 MonoBehaviour:
   m_ObjectHideFlags: 0

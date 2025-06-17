@@ -30,8 +30,6 @@ public class StatManager : MonoBehaviour
     {
         stats[StatType.CurHp] = new ResourceStat(StatType.CurHp, 100);
         stats[StatType.Stamina] = new ResourceStat(StatType.Stamina, 100);
-        Consume(StatType.CurHp, stats[StatType.CurHp].MaxValue / 2);
-
     }
 
     private void Start()
@@ -158,43 +156,5 @@ public class StatManager : MonoBehaviour
         }
     }
     public bool isDead = false;
-
-    // public void Die()
-    // {
-    //     if (isDead)
-    //     {
-    //         Debug.Log("[StatManager] 이미 사망 처리된 플레이어입니다.");
-    //         return;
-    //     }
-    //
-    //     isDead = true;
-    //     Debug.Log("[StatManager] 플레이어 사망 처리 호출");
-    //
-    //     if (animator != null)
-    //     {
-    //         animator.SetTrigger("Die");
-    //     }
-    //
-    //     // PlayerController 찾기
-    //     controller ??= GetComponent<PlayerController>();
-    //     if (controller == null)
-    //     {
-    //         PlayerManager pm = FindObjectOfType<PlayerManager>();
-    //         if (pm != null)
-    //         {
-    //             Debug.Log("사망 플레이어 : " + $"actorNumber: {actorNumber}");
-    //             controller = pm.FindPlayerController(actorNumber);
-    //         }
-    //     }
-    //
-    //     // 실제 사망 처리
-    //     if (controller != null)
-    //     {
-    //         controller.Die();
-    //     }
-    //     else
-    //     {
-    //         Debug.LogWarning("[StatManager] PlayerController를 찾을 수 없습니다.");
-    //     }
-    // }
+    
 }

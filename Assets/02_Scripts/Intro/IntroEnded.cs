@@ -10,8 +10,10 @@ public class IntroEnded : MonoBehaviour
         OnstartGame();
     }
 
+    
     public void OnstartGame()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("Loginscene");
     }
 }
