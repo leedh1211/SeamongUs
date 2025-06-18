@@ -81,7 +81,7 @@ public class SheepController : MonoBehaviour
         {
             if (RectIntersectsWithPadding(rt, obs, overlapPadding))
             {
-                // �浹 ��� ����
+                
                 rt.anchoredPosition = initialPos;
                 inGoal = false;
                 break;
