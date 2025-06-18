@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private float jumpDuration = 0.4f;
 
     private Vector3 visualDefaultPos;
-    private bool jumping;
+    
 
     [Header("Layer Masks")]
     public LayerMask interactLayer;
@@ -51,7 +51,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private bool isGhost = false;
 
     public TMP_Text playerName;
-    
     
     private bool IsUIFocused()
     {
@@ -232,16 +231,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             SendOptions.SendReliable);
     }
 
-    //private bool IsJumpableAhead()
-    //{
-    //    if (moveInput == Vector2.zero) return false;
-    //    RaycastHit2D hit = Physics2D.Raycast(transform.position, moveInput.normalized, 0.6f, jumpableLayer);
-    //    return hit.collider != null;
-    //}
-
     public IEnumerator JumpCoroutine()
     {
-        jumping = true;
         animator.SetBool(IsJumpingHash, true);
         float half = jumpDuration * 0.5f;
         float t = 0;
@@ -256,7 +247,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             yield return null;
         }
 
-        jumping = false;
         animator.SetBool(IsJumpingHash, false);
 
         t = 0;
@@ -325,16 +315,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (deadBodyActorNum == 0) return;
         ReportManager.Instance.ReportBody(deadBodyActorNum);
     }
-    
-    //private void OnVotingEnd()
-    //{
-    //    foreach (var player in VoteManager.Instance.VoteResults)
-    //    {
-    //        // 플레이어에게 투표 결과 전송
-    //        Debug.Log($"  {player.Key} => {player.Value}");
-    //    }
-    //}
-
     public void Die(string category = "killing")
     {
         animator?.SetTrigger(DieHash);

@@ -14,8 +14,6 @@ public class DropItem : MonoBehaviourPun
         {
             int actorNumber = other.GetComponent<PhotonView>().Owner.ActorNumber;
 
-            Debug.Log($"플레이어 {actorNumber}가 아이템 {itemId} 획득 요청");
-
             // MasterClient에 아이템 추가 요청 RPC 호출
             photonView.RPC("RPC_RequestAddItem", RpcTarget.MasterClient, actorNumber, itemId);
 
@@ -27,8 +25,6 @@ public class DropItem : MonoBehaviourPun
     [PunRPC]
     private void RPC_RequestAddItem(int actorNumber, int itemId)
     {
-        Debug.Log($"[MasterClient] 아이템 {itemId} 지급 허용 → Actor {actorNumber}");
-
         Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
         if (targetPlayer == null)
         {
@@ -59,6 +55,5 @@ public class DropItem : MonoBehaviourPun
         }
 
         inventory.AddItem(item);
-        Debug.Log($"[Local] 아이템 '{item.itemName}' 인벤토리에 추가 완료");
     }
 }

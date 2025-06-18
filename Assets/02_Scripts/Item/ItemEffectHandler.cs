@@ -22,7 +22,6 @@ public class ItemEffectHandler : MonoBehaviour
         switch (item.effectType)
         {
             case ItemEffectType.HealHp:
-                Debug.Log($"[ItemEffectHandler] 체력 회복 시도: +{item.effectValue}");
                 statManager.Recover(StatType.CurHp, item.effectValue);
                 break;
 

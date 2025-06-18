@@ -113,7 +113,6 @@ public class UIInventory : MonoBehaviour
     {
         selectedInventoryItem = inventoryItem;
         UpdateSelectedItemUI(inventoryItem);
-        Debug.Log($"[UIInventory] 아이템 선택됨: {inventoryItem.item.itemName}");
     }
 
 

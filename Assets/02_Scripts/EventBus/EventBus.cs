@@ -38,11 +38,9 @@ public static class EventBus
             else
             {
                 eventDict[eventType] = newHandler;
-                // Debug.Log($"[EventBus] Unsubscribed from {eventType.Name}");
             }
         }
     }
-
 
     //특정 타입의 이벤트를 발행하는 메서드
     public static void Raise<TEvent>(TEvent eventArgs)

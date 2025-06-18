@@ -7,7 +7,6 @@ public class IntroEnded : MonoBehaviour
     {
         OnstartGame();
     }
-
     
     public void OnstartGame()
     {
