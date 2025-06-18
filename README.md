@@ -18,10 +18,8 @@
 6. [기술스택](기술스택)  
 7. [서비스 구조](서비스-구조)  
 8. [와이어프레임](와이어프레임)  
-9. [API 명세서](api-명세서)  
-10. [DataBase](database)  
-11. [프로젝트 파일 구조](프로젝트-파일-구조)  
-12. [Trouble Shooting](trouble-shooting)
+9. [DataBase](DataBase)  
+10. [트러블 슈팅](트러블-슈팅)  
 
 <br>
 
@@ -42,9 +40,8 @@
 | 항목                | 내용 |
 |---------------------|------|
 | 🏷️ **프로젝트 명**    | `Seamong Us` <br> (Sea + Among Us의 결합어) |
-| 📝 **한 줄 소개**     | *프로젝트의 한 줄 소개를 작성해주세요.* |
+| 📝 **팀 이름**     | 쉬고10조 |
 | 🎮 **장르**          | 멀티플레이어 심리 추리 게임 (Social Deduction) |
-| 💡 **핵심 컨셉**      | - *Seamong Us 핵심 컨셉 1*<br>- *Seamong Us 핵심 컨셉 2*<br>- 어몽어스 스타일의 역할 기반 플레이 |
 | 🏝️ **제작 배경**     | 기존 어몽어스 장르의 시스템을 **생존 테마**로 재해석하여 <br> 더 강한 **몰입감과 전략적 재미**를 제공 |
 | 💻 **개발 목표 플랫폼** | PC 🖥️<br>Unity + Photon 🛠️ 기반 멀티플레이 |
 
@@ -54,17 +51,11 @@
 
 | 항목           | 내용                                                                                     |
 |----------------|------------------------------------------------------------------------------------------|
-| 🎨 **배경**      | *바다 위 난파선과 구명보트 등 역동적인 해양 환경*                                         |
+| 🎨 **배경**      | 오래 전, 바다 위의 어느 섬 작은 동굴엔 값비싼 자원이 있다는 소문이 떠돌았다.<br> 사람들은 그것을 찾아내기 위해 이 섬에 모였지만 자원은 끝내 발견되지 않았고, 그들은 탈출하지도 못한 채 섬에 갇혀 함께 살아갈 뿐이었다.<br> 그러던 어느 날, 갑작스레 동굴이 무너져내렸다.<br> 분명 누군가가 일부러 그런 것이다. 자원을 찾은 자가, 증거를 감추기 위해...<br> 주민들은 서로를 의심하기 시작했다. 분명 음모일 거라고, 계획된 일이라고.<br> 그들의 갈등은 나날이 커져갔고, 서로를 더욱 믿지 못하게 되어갔다.<br> 그리고 마침내, 누군가 결심하였다.<br> "모두를 제거하고, 자원을 독차지하겠어."<br> 그것이, 이 섬에 피어난 절망의 시작점이었다...|
 | 🎭 **역할 분배**  | 🔪 **Imposter** - 정체를 숨기고 미션 방해 및 크루원 암살<br>🛠️ **Crewmate** - 임포스터 색출 및 미션 완수 |
 | 🎯 **미션**      | 🎮 다양한 미니게임으로 구성된 크루원의 승리 조건                                         |
 | 🍄 **아이템**    | 🍄 **버섯** - 체력 일정량 회복<br>🥩 **고기** - 일정 시간 이동 속도 증가                    |
 | 🗳️ **투표**     | 🤝 회의와 투표를 통해 임포스터를 색출하는 시스템       
-
-<br>
-
-### 키워드
-
-`키워드 부분` · `넣을까요 말까요?` · `애매하긴 해`
 
 <br>
 
@@ -75,12 +66,12 @@
 ## 2. 👥 팀소개
 | 이름 | 역할 | 담당 업무| GitHub | Blog |
 |------|------|--------|-------|-------|
-| 김웅진 | 팀장 | *김웅진 담당 업무* | [https://github.com/KUJ1031](https://github.com/KUJ1031) | https://thsusekdnlt1.tistory.com/ |
-| 이동헌 | 팀원 | *이동헌 담당 업무* | [https://github.com/leedh1211](https://github.com/leedh1211) | https://leedh12.tistory.com/ |
-| 강민성 | 팀원 | *강민성 담당 업무* | [https://github.com/mcas0215](https://github.com/mcas0215) | https://mcas0215.tistory.com/ |
-| 최진안 | 팀원 | *최진안 담당 업무* | [https://github.com/hhd14725](https://github.com/hhd14725) | https://muchmercy.tistory.com/manage/posts |
-| 이선량 | 팀원 | *이선량 담당 업무* | [https://github.com/AgathaYi](https://github.com/AgathaYi) | https://05cm.tistory.com/ |
-| 손양복 | 팀원 | *손양복 담당 업무* | [https://github.com/YBdhhh](https://github.com/YBdhhh) | https://97926.tistory.com/ |
+| 김웅진 | 팀장 | 아이템 / 인벤토리 / 인트로 씬 / 채팅 / 네트워크 관련 / 플레이어 체력 | [https://github.com/KUJ1031](https://github.com/KUJ1031) | https://thsusekdnlt1.tistory.com/ |
+| 이동헌 | 팀원 | DB,서버,네트워크 전반 / 멀티 동기화 / GIT관리 및 씬 병합 / 게임 흐름 총괄 | [https://github.com/leedh1211](https://github.com/leedh1211) | https://leedh12.tistory.com/ |
+| 강민성 | 팀원 | 플레이어 / 크루원, 임포스터 / 고스트 / 상호작용 / 채팅 | [https://github.com/mcas0215](https://github.com/mcas0215) | https://mcas0215.tistory.com/ |
+| 최진안 | 팀원 | 미션 퍼즐 전반 / 충돌 감지 처리 / 상호작용 / UI 보조 | [https://github.com/hhd14725](https://github.com/hhd14725) | https://muchmercy.tistory.com/manage/posts |
+| 이선량 | 팀원 | 타일 맵 구성 / 시네머신 / 사운드 / 미션 퍼즐 보조 / 투표 로직 보조 | [https://github.com/AgathaYi](https://github.com/AgathaYi) | https://05cm.tistory.com/ |
+| 손양복 | 팀원 | UI/UX 전반 / 투표 이후 추방 UI / 팝업 요소 및 디자인 | [https://github.com/YBdhhh](https://github.com/YBdhhh) | https://97926.tistory.com/ |
 
 <br>
 
@@ -129,7 +120,7 @@
 <br><br>
 
 - 🟢 방 입장
-<img src="https://github.com/user-attachments/assets/8c9682d8-0488-448f-aa59-04249f7dcbd1" width="500">
+<img src="https://github.com/user-attachments/assets/37c6f073-3407-4d13-b996-0547f32f9ed5" width="500">
 
 <br><br>
 
@@ -140,12 +131,12 @@
 <br>
     
 - 💬 실시간 채팅
-<img src="https://github.com/user-attachments/assets/56062cb0-90f4-46e1-b284-0c0a4f6fdf9e" width="500">
+<img src="https://github.com/user-attachments/assets/2ba53a76-1345-451d-9be9-c92bcb30461f" width="500">
 
 <br><br>
 
 - 🎭 코스튬
-<img src="https://github.com/user-attachments/assets/b6085fb4-21f3-4081-a6fc-a51bbcd85d0e" width="500">
+<img src="https://github.com/user-attachments/assets/dbf93bf3-a1c5-4a41-aa5c-8ce85c8a4e26" width="500">
 
 <br><br>
 
@@ -164,9 +155,21 @@
 <br><br>
 
 - 🗡 플레이어 암살 (Imposter)
-<img src="https://github.com/user-attachments/assets/b482792d-206f-4438-b7d1-a9308bef7749" width="500">
+  
+<br>
 
-<br><br>
+1️⃣ 임포스터 시점
+
+<img src="https://github.com/user-attachments/assets/8032f8f5-af40-45c5-8712-5cad42839fca" width="500">
+
+<br>
+
+2️⃣ 피해자 시점
+
+<img src="https://github.com/user-attachments/assets/335daf82-3158-4619-96ce-c82e00bf2364" width="500">
+
+<br>
+<br>
 
 - 🧩 미션 탐색 및 수행 (Crewmate)<br><br>
 
@@ -195,10 +198,12 @@
 <br><br>
 
 - 🚨 시체 발견 및 신고 (Crewmate)
+<img src="https://github.com/user-attachments/assets/e7bccd1d-f6b3-4891-8b7d-e5a806ae6c9c" width="500">
 
 <br><br>
 
 - 🗳 회의 및 투표 진행 (All)
+<img src="https://github.com/user-attachments/assets/0fa01a3a-f976-436c-ab0f-9b3fe0b01419" width="500">
 
 <br><br>
 
@@ -210,10 +215,13 @@
 
 
 - 🏆 승리 조건 체크
+<img src="https://github.com/user-attachments/assets/fdc35290-f856-47cc-a44f-6c4f0cbb51d5" width="500">
 
 <br><br>
 
 - 🔁 로비 재입장
+
+<img src="https://github.com/user-attachments/assets/64790bbb-464f-4ff5-ab76-75afa453e79b" width="500">
 
 <br><br>
 
@@ -227,8 +235,6 @@
 
 ## 5. ⏰ 개발기간
 
-<br>
-
 - **총 개발 기간**: 2025.06.11 ~ 2025.06.18
   
 <br>
@@ -237,57 +243,64 @@
 
 <br>
 
-## 6. 🛠 기술스택
-### 🎮 Unity (2022.3.17f)
-- 2D 게임 제작, 물리 엔진, 애니메이션, UI 시스템 등 다양한 게임 기능 지원
+## 6. 🛠 기술적 의사결정
 
-- 대중적인 게임 개발 엔진으로 접근성이 높고 관련 자료가 풍부함
+> *기술 요구 사항*
+### 🌐 서버 통신 - Photon PUN2
+- 실시간 멀티플레이어 네트워킹, 룸 생성/입장, 플레이어 동기화, RPC 호출 등 지원  
+- Unity와의 높은 호환성, 무료 요금제에서도 충분한 기능 제공  
+- 플레이어 간 위치/애니메이션 동기화, 채팅, 아이템 획득 이벤트 공유 구현
 
-- 전체 게임 씬 구성 및 오브젝트 동작 처리 등 핵심 로직 구현
+### 🔄 게임 흐름 분기 - EventBus / EventCode
+- 각 모듈 간 결합도 최소화 및 의존성 제거  
+- 다양한 게임 상황을 코드 흐름상에서 분기 처리 가능  
+- 이벤트 기반 아키텍처로 유지보수 및 확장성 향상
 
-<br>
+### 📡 데이터 전달 - JSON
+- 직렬화/역직렬화를 통해 서버와의 데이터 통신 구현  
+- 간단하고 가벼운 포맷으로 구조화된 정보 전달  
+- 클라이언트-서버 간 게임 상태, 캐릭터 정보 전달 등에 활용
 
-### 💻 C#
-- 게임 로직 처리, 이벤트 흐름 관리, 객체지향적 구조 설계
+### 🧱 아이템 시스템 - ScriptableObject
+- 아이템 정보(이름, 설명, 스탯 등)를 Data 자산으로 분리  
+- 런타임에 ScriptableObject 데이터를 기반으로 객체 생성  
+- 코드와 데이터의 분리로 관리 용이, 확장성 높은 아이템 구조 구성
 
-- Unity와 기본 연동되는 언어이며, 구조적인 설계가 용이함
-
-- 캐릭터 이동, 아이템 시스템, 상태 관리 등 주요 게임 로직 구현
-
-<br>
-
-### 🧠 GitHub
-- 버전 관리, 프로젝트 백업, 이슈 트래킹, PR 기반 협업
-
-- 협업과 코드 변경 이력 추적에 효과적이며, 충돌 해결 용이
-
-- 팀원 간 병렬 개발 가능, 안정적인 협업 구조 확보
-
-<br>
-
-### 🛠️ Visual Studio
-- 디버깅, 자동 완성, 확장 기능 제공, Unity와 원활한 연동
-
-- Unity 개발에 최적화되어 있으며, 다양한 템플릿과 도구 내장
-
-- 코드 품질 향상 및 빠른 디버깅을 통한 개발 생산성 증가
+### 🔁 실시간 로직 흐름 - Observer Pattern
+- UI, 상태, 리소스 등 변화 감지 및 반응 처리  
+- 이벤트 기반으로 각 모듈 간의 직접 참조 없이 동기화 가능  
+- 유지보수성 향상 및 기능 확장 시 유연한 대응 가능
 
 <br>
 
-### 🌐 Photon (PUN 2)
-- 실시간 멀티플레이어 네트워킹, 룸 생성/입장, 플레이어 동기화, RPC 호출 등
+> *사용 기술 스택*
+### 🎥 카메라 설정 - Cinemachine
+- 자연스럽고 부드러운 카메라 이동 구현  
+- 플레이어를 따라다니는 추적 카메라, 줌 인/아웃, 전환 효과 등 유연하게 설정 가능  
+- 씬 연출 및 몰입감을 높이는 데 기여
 
-- Unity와의 높은 호환성, 무료 요금제로도 충분한 기능 제공, 풍부한 문서화
+### 🌍 전역 접근성 - Singleton
+- 인스턴스 단일화를 통한 전역 관리 구조 설계  
+- 전역에서 접근 가능한 Manager 관련 로직 구현  
+- 리소스 절약 및 상태 공유 간소화
 
-- 플레이어 간 위치 및 애니메이션 동기화, 채팅 및 아이템 획득 이벤트 공유, 룸 UI 구현
+### 🧩 프로젝트 확장 - OCP (Open-Closed Principle)
+- 클래스는 확장에는 열려 있고, 변경에는 닫혀 있어야 한다는 원칙 적용  
+- 기능 추가 시 기존 코드를 수정하지 않고 새로운 기능을 덧붙이는 구조  
+- 유지보수성과 확장성을 모두 고려한 설계 방식
+
+### 🏭 객체 생성 로직 캡슐화 - Factory Pattern
+- 객체 생성 책임을 분리하여 클라이언트 코드로부터 생성 로직 숨김  
+- 다양한 타입의 객체를 유연하게 생성 가능  
+- 결합도 최소화 및 코드 재사용성 향상
 
 <br>
 
 ---
 
-## 7. 🧩 서비스 구조
-
 <br>
+
+## 7. 🧩 서비스 구조
 
 > *FlowChart (로직 흐름도)*
 <img src="https://github.com/user-attachments/assets/6701470f-67af-4d80-b216-124723f7006b" width="500">
@@ -296,8 +309,6 @@
 
 
 ## 8. 🧭 와이어프레임
-
-<br>
 
 > *초기 UI 구상*
 <img src="https://github.com/user-attachments/assets/1bf549d5-43c7-4376-acd3-cd26abc405af" width="700">
@@ -309,78 +320,59 @@
 
 ---
 
-## 9. 📡 API 명세서
-
-| Method | Endpoint | Description | Request | Response |
-|--------|----------|-------------|---------|----------|
-|  |  |  |  |  |
-|  |  |  |  |  |
-
-> 더 보기: [Swagger 문서 보기](#)
-
----
-
-## 10. 🧬 DataBase
+## 9. 🧬 DataBase
 > *회원가입 및 로그인 - DataBase 연동 과정*
 <img src="https://github.com/user-attachments/assets/c640e41d-cc84-4806-82f4-b81d92b30540" width="800">
 
-
-
----
-
-## 11. 📁 프로젝트 파일 구조
-
-*예시구조입니다. 파일 리팩토링 후 수정 요망*
-```bash
-
-📦project-root
-├─ 📁 client
-│  ├─ 📁 src
-│  │  ├─ 📁 components
-│  │  └─ 📁 pages
-├─ 📁 server
-│  ├─ 📁 controllers
-│  └─ 📁 routes
-└─ 📄 README.md
-```
-
-<br>
-
 ---
 
 <br>
 
-## 12. 🛠️ 트러블 슈팅
+## 10. 🛠️ 트러블 슈팅
 
 <br>
 
 <details>
 <summary> 김웅진 트러블 슈팅 사항</summary>
 
+<img src="https://github.com/user-attachments/assets/760e13a6-bbac-4b31-9441-22151758cd5e" width="500">
+
 </details>
 
 <details>
 <summary> 이동헌 트러블 슈팅 사항</summary>
+
+<img src="https://github.com/user-attachments/assets/df0317b4-305e-46d7-83e3-89fcbe8bd53a" width="500">
 
 </details>
 
 <details>
 <summary> 강민성 트러블 슈팅 사항</summary>
 
+<img src="https://github.com/user-attachments/assets/e1442451-5673-4831-9577-61a7d707d511" width="500">
+
+
+
 </details>
 
 <details>
 <summary> 최진안 트러블 슈팅 사항</summary>
+
+<img src="https://github.com/user-attachments/assets/5a67a358-af70-4644-bebd-ca27b93a3792" width="500">
 
 </details>
 
 <details>
 <summary> 이선량 트러블 슈팅 사항</summary>
 
+<img src="" width="500">
+
 </details>
 
 <details>
 <summary> 손양복 트러블 슈팅 사항</summary>
+
+<img src="" width="500">
 
 </details>
 
