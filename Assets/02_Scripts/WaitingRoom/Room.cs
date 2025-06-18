@@ -8,6 +8,7 @@ using System.Collections;
 using _02_Scripts.Alert;
 using _02_Scripts.Lobby;
 using ExitGames.Client.Photon;
+using UnityEngine.EventSystems;
 
 public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -87,6 +88,7 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 
         string buttonText = nextReady ? "Wait" : "Ready";
         readyButton.GetComponentInChildren<TextMeshProUGUI>().text = buttonText;
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     bool GetIsReady()
