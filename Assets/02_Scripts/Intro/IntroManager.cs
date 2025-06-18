@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class IntroManager : MonoBehaviour
 {
-    private void Awake()
+    private void Start()
     {
         SoundManager.Instance.PlayBGM(BGMType.Intro);
     }
