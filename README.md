@@ -15,7 +15,7 @@
 3. [프로젝트 계기](#프로젝트-계기)  
 4. [주요기능](#주요기능)  
 5. [개발기간](#개발기간)  
-6. [기술스택](#기술스택)  
+6. [기술적 의사결정](#기술적-의사결정)  
 7. [서비스 구조](#서비스-구조)  
 8. [와이어프레임](#와이어프레임)  
 9. [database](#database)
@@ -42,6 +42,7 @@
 | 🏷️ **프로젝트 명**    | `Seamong Us` <br> (Sea + Among Us의 결합어) |
 | 📝 **팀 이름**     | 쉬고10조 |
 | 🎮 **장르**          | 멀티플레이어 심리 추리 게임 (Social Deduction) |
+| 💡 **조작 방법**          | 이동 : WASD <br> 점프 : Space <br> 상호 작용 : E 혹은 마우스 클릭 <br> 감정 표현 : G |
 | 🏝️ **제작 배경**     | 기존 어몽어스 장르의 시스템을 **생존 테마**로 재해석하여 <br> 더 강한 **몰입감과 전략적 재미**를 제공 |
 | 💻 **개발 목표 플랫폼** | PC 🖥️<br>Unity + Photon 🛠️ 기반 멀티플레이 |
 
@@ -365,14 +366,15 @@
 <details>
 <summary> 이선량 트러블 슈팅 사항</summary>
 
-<img src="" width="500">
+<img src="https://github.com/user-attachments/assets/e884f95a-dbc5-44c2-85b4-6acae83185e8" width="500">
+
 
 </details>
 
 <details>
 <summary> 손양복 트러블 슈팅 사항</summary>
 
-<img src="" width="500">
+<img src="https://github.com/user-attachments/assets/211f495e-6ece-499e-b7d3-0b2f630c3ed1" width="500">
 
 </details>
 
