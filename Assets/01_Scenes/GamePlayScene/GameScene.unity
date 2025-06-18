@@ -32419,7 +32419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 717e3edccf9e6774cb691413a9099062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voteTime: 30
+  voteTime: 120
   voteUI: {fileID: 7777552860583331028}
   playerManager: {fileID: 6444560719775073502}
 --- !u!222 &3764158731876477750
