@@ -278,6 +278,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void KilledPopup(Action callback)
     {
+        playerDiedCallback = callback;
         var go = Instantiate(killedPopup, popupParent);
         StartCoroutine(UpImageScale(go, 3f, 3f, 3, 0.5f, 0.2f ));
     }
