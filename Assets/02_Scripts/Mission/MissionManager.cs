@@ -70,7 +70,6 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
             .ToList();
 
         playerMissions[playerKey] = selected;
-        Debug.Log("playerMissions["+playerKey+"]="+playerMissions[playerKey]);
         var ids = selected.Select(m => m.MissionID).ToArray();
         PhotonNetwork.RaiseEvent(
             EventCodes.MissionsAssigned,
@@ -82,7 +81,6 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void CompleteMission(string playerKey, string missionID)
     {
         SoundManager.Instance.PlaySFX(SFXType.MissionComplete);
-        Debug.Log("Mission Completed");
         playerController.SetInteraction(false);
         if (!playerMissions.TryGetValue(playerKey, out var list))
             return;
@@ -110,12 +108,10 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (!playerMissions.TryGetValue(playerKey, out var list) || list.Count == 0)
         {
-            Debug.Log(list.Count);
             return 0f;
         }
         
         int done = list.Count(m => m.IsCompleted);
-        Debug.Log(done+"/"+list.Count);
         return (float)done / list.Count;
     }
 
@@ -130,9 +126,7 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 var clones = missionList
                     .Select(mid => allMissions.First(m => m.MissionID == mid).Clone())
                     .ToList();
-                Debug.Log("테스트 이벤트 할당 중 플레이어는 : "+playerId);
                 playerMissions[playerId] = clones;
-                Debug.Log("테스트 이벤트 할당 중"+playerMissions[playerId]);
                 break;
 
             case EventCodes.MissionCompleted:
@@ -157,7 +151,6 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (GetTotalProgress() < 1f)
             return;
-        Debug.Log("[MissionManager] 모든 미션 완료! 승리 처리 호출");
         GameManager.Instance.EndGame(EndGameCategory.CitizensWin);
     }
     
@@ -175,7 +168,6 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (totalMissions == 0)
             return 0f;
-        Debug.Log("totalCompleted : "+totalCompleted+"totalMissions"+totalMissions);
         return (float)totalCompleted / totalMissions;
     }
 
@@ -197,7 +189,6 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
             {
                 role = (Role)Convert.ToInt32(roleObj);
             }
-            Debug.Log("미션할당 직전 플레이어의 ActorNumber : " + player.ActorNumber + "플레이어의 role" + role.ToString());
             if (role == Role.Crewmate)
             {
                 // 크루원은 미션 할당
@@ -209,8 +200,6 @@ public class MissionManager : MonoBehaviourPunCallbacks, IOnEventCallback
             new object[] {},
             new RaiseEventOptions { Receivers = ReceiverGroup.All },
             SendOptions.SendReliable);
-        
-        Debug.Log($"각 {missionCount}개의 미션 할당 완료.");
     }
 
     public void RegisterLocalPlayer(PlayerController controller)

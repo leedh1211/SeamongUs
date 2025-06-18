@@ -21,8 +21,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [SerializeField] private float jumpDuration = 0.4f;
 
     private Vector3 visualDefaultPos;
-    private bool jumping;
-
+    
     [Header("Layer Masks")]
     public LayerMask interactLayer;
     public LayerMask playerLayer;
@@ -52,13 +51,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public TMP_Text playerName;
     
-    
     private bool IsUIFocused()
     {
         var sel = EventSystem.current?.currentSelectedGameObject;
         if (sel == null) return false;
-        return sel.GetComponent<TMPro.TMP_InputField>() != null;
-
+        return sel.GetComponent<TMP_InputField>() != null;
     }
     
     public void SetInteraction(bool on)
@@ -70,10 +67,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (on && rb != null)                      // 잠금이면 즉시 정지
             rb.velocity = Vector2.zero;
     }
-
     
     private float killCooldown = 0f;
-
 
     private static readonly int DieHash = Animator.StringToHash("Die");
     private static readonly int SpeedHash = Animator.StringToHash("currentMoveSpeed");
@@ -83,7 +78,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private Animator animator;
     private Vector3 networkPosition;
     private bool facingLeft;
-    private bool playDance;
 
     [SerializeField] private Transform playerSprite;
 
@@ -114,7 +108,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private void SetName()
     {
         Debug.Log("Set name");
-        Photon.Realtime.Player player = photonView.Owner;
+        Player player = photonView.Owner;
         playerName.text = player.NickName;
     }
 
@@ -202,7 +196,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void TryKill()
     {
-        Debug.Log(killCooldown);
         if (killCooldown > 0) return;
         if (photonView.gameObject.TryGetComponent<ImposterController>(out ImposterController imposter))
         {
@@ -232,16 +225,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             SendOptions.SendReliable);
     }
 
-    private bool IsJumpableAhead()
-    {
-        if (moveInput == Vector2.zero) return false;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, moveInput.normalized, 0.6f, jumpableLayer);
-        return hit.collider != null;
-    }
-
     public IEnumerator JumpCoroutine()
     {
-        jumping = true;
         animator.SetBool(IsJumpingHash, true);
         float half = jumpDuration * 0.5f;
         float t = 0;
@@ -256,7 +241,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             yield return null;
         }
 
-        jumping = false;
         animator.SetBool(IsJumpingHash, false);
 
         t = 0;
@@ -325,16 +309,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (deadBodyActorNum == 0) return;
         ReportManager.Instance.ReportBody(deadBodyActorNum);
     }
-    
-    private void OnVotingEnd()
-    {
-        foreach (var player in VoteManager.Instance.VoteResults)
-        {
-            // 플레이어에게 투표 결과 전송
-            Debug.Log($"  {player.Key} => {player.Value}");
-        }
-    }
-
     public void Die(string category = "killing")
     {
         animator?.SetTrigger(DieHash);
@@ -392,7 +366,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (IsInteraction || !photonView.IsMine || !ctx.performed) 
             return;
 
-        playDance = true;
         animator.SetTrigger("Dance");
         photonView.RPC(nameof(DoDanceRPC), RpcTarget.Others);
     }

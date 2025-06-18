@@ -13,7 +13,6 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
     public LayerMask groundLayer;
 
     private Collider2D groundCollider;
-    private bool hasSpawned = false;
 
     private new void OnEnable()
     {
@@ -85,8 +84,6 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
             new RaiseEventOptions { Receivers = ReceiverGroup.All },
             SendOptions.SendReliable
         );
-
-        Debug.Log($"[PlayerSpawner] RaiseEvent로 PlayerSpawn 전송됨: Actor={actorNumber}, ViewID={viewID}");
     }
 
 }

@@ -44,12 +44,10 @@ public class Buff
         {
             case BuffType.Speed:
                 player.GetComponent<PlayerController>()?.ModifySpeed(Value);
-                Debug.Log($"[Buff] 이동속도 +{Value} (지속 {Duration}초)");
                 break;
 
             case BuffType.Invisibility:
                 player.layer = LayerMask.NameToLayer("Invisible"); // 레이어는 프로젝트에 따라 다를 수 있음
-                Debug.Log($"[Buff] 은신 시작 (지속 {Duration}초)");
                 break;
         }
     }

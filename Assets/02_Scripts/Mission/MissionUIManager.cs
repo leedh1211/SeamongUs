@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Pun;
@@ -31,7 +31,6 @@ namespace _02_Scripts.Mission
             {
                 case EventCodes.MissionsAssignedCompleted:
                     playerKey = PhotonNetwork.LocalPlayer.ActorNumber.ToString();
-                    Debug.Log("미션유아이매니저의 플레이어키는"+playerKey);
                     UpdateMissionList();
                     GameManager.Instance.ChangeState(GameState.Playing);
                     break;

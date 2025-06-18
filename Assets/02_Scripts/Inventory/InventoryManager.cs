@@ -12,8 +12,6 @@ public class InventoryManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_RequestAddItem(int actorNumber, int itemId)
     {
-        Debug.Log($"[Master] 플레이어 {actorNumber}에게 아이템 {itemId} 추가 요청 받음");
-
         // 상태 업데이트
         AddItemToPlayer(actorNumber, itemId);
     }
@@ -56,7 +54,6 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         if (uiInventory != null)
         {
             uiInventory.AddItem(item);
-            Debug.Log($"[Local] 아이템 '{item.itemName}' 인벤토리에 추가 완료");
         }
         else
         {

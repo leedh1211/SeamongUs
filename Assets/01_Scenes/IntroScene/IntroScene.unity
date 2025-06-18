@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoundManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2641878824186487632, guid: 4a0dbe2ea34f68440adb579e6937f8ca, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6692231835852239885, guid: 4a0dbe2ea34f68440adb579e6937f8ca, type: 3}
       propertyPath: bgmClips.Array.data[0]
       value: 
