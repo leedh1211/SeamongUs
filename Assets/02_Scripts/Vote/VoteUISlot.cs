@@ -52,6 +52,10 @@ public class VoteUISlot : MonoBehaviour
         {
             voteButton.interactable = false;    
         }
+        else
+        {
+            voteButton.interactable = true;
+        }
 
         // 신고자 표시
         reporterMark.SetActive(playerId == ReportManager.Instance.LastReporter);

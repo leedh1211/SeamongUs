@@ -63,6 +63,7 @@ public class VoteUI : MonoBehaviour
                 bool isDead = (bool)(p.CustomProperties[PlayerPropKey.IsDead] ?? false);
                 bool isReporter = p.ActorNumber == ReportManager.Instance.LastReporter;
                 bool hasVoted = VoteManager.Instance.VoteResults.ContainsKey(p.ActorNumber);
+                Debug.Log("hasVoted : "+hasVoted);
                 Sprite avatar = AvatarManager.Instance.GetSprite(p.ActorNumber);
                 
                 slot.Init(
