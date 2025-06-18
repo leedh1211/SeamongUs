@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections.Generic;
 using ExitGames.Client.Photon;
 
 public class ImposterController : MonoBehaviour

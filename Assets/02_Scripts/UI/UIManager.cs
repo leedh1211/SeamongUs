@@ -1,10 +1,8 @@
 ﻿using Photon.Pun;
 using System;
 using ExitGames.Client.Photon;
-using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TMPro;
@@ -45,8 +43,8 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public event Action OnReportPopupClosed; //이게 게임매니저에 아까 콜백 구독한애들 
     public event Action OnEndGamePopupClosed; //마찬가지
-    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
-    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
+    new void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
+    new void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
 
     [Header("엔딩팝업")]
     [SerializeField] private GameObject crewWinPopupPrefab;

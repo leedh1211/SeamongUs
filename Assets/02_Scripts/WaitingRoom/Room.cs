@@ -4,7 +4,6 @@ using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections;
 using _02_Scripts.Alert;
 using _02_Scripts.Lobby;
 using ExitGames.Client.Photon;
@@ -24,12 +23,12 @@ public class Room : MonoBehaviourPunCallbacks, IOnEventCallback
 
     [SerializeField] private Button[] spriteButtons; // 9개 버튼 배열
 
-    void OnEnable()
+    new void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
     }
 
-    void OnDisable()
+    new void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
     }

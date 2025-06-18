@@ -1,10 +1,8 @@
 ﻿
 using System.Collections;
-using ExitGames.Client.Photon;
 using Photon.Pun;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 

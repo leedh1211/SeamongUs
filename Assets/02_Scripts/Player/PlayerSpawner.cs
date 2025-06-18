@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Tilemaps;
 
 public class PlayerSpawner : MonoBehaviourPunCallbacks
 {
@@ -17,12 +15,12 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
     private Collider2D groundCollider;
     private bool hasSpawned = false;
 
-    private void OnEnable()
+    private new void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void OnDisable()
+    private new void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }

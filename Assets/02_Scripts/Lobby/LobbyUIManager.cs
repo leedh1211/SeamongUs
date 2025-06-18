@@ -1,10 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using _02_Scripts.Lobby;
-using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utill;
 
 public class LobbyUIManager : Singleton<LobbyUIManager>
 {
