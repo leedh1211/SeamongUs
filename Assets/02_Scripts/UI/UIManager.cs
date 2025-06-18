@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -58,6 +59,8 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private RectTransform popupParent;
     
     private Action voteResultCallback;
+    private Action playerDiedCallback;
+    
 
     bool popupActive = false;
 
@@ -273,14 +276,27 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         voteResultCallback?.Invoke();
     }
 
-    public void KilledPopup()
+    public void KilledPopup(Action callback)
     {
-        StartCoroutine(UpImageScale(imposterImage.rectTransform, 3f, 3f, 5, 0.6f, 0.15f, killedText));
+        playerDiedCallback = callback;
+        // StartCoroutine(UpImageScale(imposterImage.rectTransform, 1.5f, 3f, 5, 0.6f, 0.15f, killedText));
     }
-    IEnumerator UpImageScale(RectTransform target, float size, float duration, int repeat, float delay, float downdelay, TextMeshProUGUI text)
+
+    [ContextMenu("킬 테스트 팝업")]
+    public void testKilledPopup()
+    {
+        var go = Instantiate(killedPopup, popupParent);
+        StartCoroutine(UpImageScale(go, 3f, 3f, 3, 0.5f, 0.2f ));
+    }
+    IEnumerator UpImageScale(GameObject go, float size, float duration, int repeat, float delay, float downdelay)
                             //타겟 이미지 위치, 커지는 사이즈, 커지는 정도, 반복 횟수, 커지는 딜레이, 커지는 딜레이 감소정도, 복사되는 텍스트
     {
-        killedPopup.SetActive(true);
+        var targetArray = go.GetComponentsInChildren<RectTransform>();
+        RectTransform target = targetArray.FirstOrDefault(r => r.name == "imposterImage");
+        var textArray = go.GetComponentsInChildren<TextMeshProUGUI>();
+        TextMeshProUGUI text = textArray.FirstOrDefault(r => r.name == "killed");
+        float originDelay = delay;
+        go.SetActive(true);
         text.text = ("저벅..");
         for (int i = 0; i < repeat; i++)
         {
@@ -289,10 +305,11 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
             yield return new WaitForSeconds(delay);
             delay -= downdelay;
         }
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(originDelay);
         text.fontSize = 100;
         text.text = ("푹");
-        yield return new WaitForSeconds(delay*2);
-        killedPopup.SetActive(false);
+        yield return new WaitForSeconds(originDelay*2);
+        Destroy(go);
+        playerDiedCallback?.Invoke();
     }
 }

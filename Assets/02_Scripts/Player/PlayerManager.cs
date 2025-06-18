@@ -174,7 +174,10 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 if (playerController != null)
                 {
                     Debug.Log($"[Event] PlayerController 찾음: {playerController.name}, 사망 처리 시작");
-                    playerController.Die();
+                    UIManager.Instance.KilledPopup(()=>
+                    {
+                        playerController.Die();
+                    });
                 }
                 else
                 {

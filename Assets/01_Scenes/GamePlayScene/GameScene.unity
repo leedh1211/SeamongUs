@@ -9198,9 +9198,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2916350521550589173}
     - target: {fileID: 4455491029172768261, guid: 7b0c472bef99eff40b998901198904d5, type: 3}
+      propertyPath: killedText
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4455491029172768261, guid: 7b0c472bef99eff40b998901198904d5, type: 3}
       propertyPath: voteResult
       value: 
       objectReference: {fileID: 1740623421}
+    - target: {fileID: 4455491029172768261, guid: 7b0c472bef99eff40b998901198904d5, type: 3}
+      propertyPath: killedPopup
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4455491029172768261, guid: 7b0c472bef99eff40b998901198904d5, type: 3}
       propertyPath: playerImage
       value: 
@@ -9209,6 +9217,10 @@ PrefabInstance:
       propertyPath: popupParent
       value: 
       objectReference: {fileID: 1740623418}
+    - target: {fileID: 4455491029172768261, guid: 7b0c472bef99eff40b998901198904d5, type: 3}
+      propertyPath: imposterImage
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
