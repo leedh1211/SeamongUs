@@ -1,5 +1,4 @@
-﻿using Photon.Realtime;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DeadBody : MonoBehaviour
 {

@@ -2,11 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Resources;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.UI;
 
 public enum StatType
 {

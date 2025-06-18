@@ -1,11 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using _02_Scripts.Alert;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public enum GameState { 
     Lobby,

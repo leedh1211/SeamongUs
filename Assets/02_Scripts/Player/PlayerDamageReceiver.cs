@@ -1,5 +1,4 @@
-﻿using ExitGames.Client.Photon;
-using UnityEngine;
+﻿using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -8,8 +7,8 @@ public class PlayerDamageReceiver : MonoBehaviourPunCallbacks
     private StatManager stat;
     private Player localPlayer;
 
-    void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
-    void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
+    new void OnEnable() => PhotonNetwork.AddCallbackTarget(this);
+    new void OnDisable() => PhotonNetwork.RemoveCallbackTarget(this);
 
     void Awake()
     {

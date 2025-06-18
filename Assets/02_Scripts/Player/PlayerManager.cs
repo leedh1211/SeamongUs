@@ -16,12 +16,12 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private Tilemap groundTilemap; // GroundLevel 타일맵
     [SerializeField] private int spawnRange = 4;
 
-    private void OnEnable()
+    private new void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
     }
 
-    private void OnDisable()
+    private new void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
     }
