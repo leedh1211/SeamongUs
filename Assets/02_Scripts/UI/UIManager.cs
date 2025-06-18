@@ -281,7 +281,7 @@ public class UIManager : MonoBehaviourPunCallbacks, IOnEventCallback
         var go = Instantiate(killedPopup, popupParent);
         StartCoroutine(UpImageScale(go, 3f, 3f, 3, 0.5f, 0.2f ));
     }
-    
+
     IEnumerator UpImageScale(GameObject go, float size, float duration, int repeat, float delay, float downdelay)
                             //타겟 이미지 위치, 커지는 사이즈, 커지는 정도, 반복 횟수, 커지는 딜레이, 커지는 딜레이 감소정도, 복사되는 텍스트
     {
