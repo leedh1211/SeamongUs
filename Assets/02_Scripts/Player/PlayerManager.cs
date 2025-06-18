@@ -181,7 +181,11 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                             playerController.Die();
                         });    
                     }
-                    playerController.Die();
+                    else
+                    {
+                        playerController.Die();    
+                    }
+                    
                 }
                 else
                 {
