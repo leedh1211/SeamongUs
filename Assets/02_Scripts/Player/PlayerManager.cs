@@ -174,10 +174,13 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 if (playerController != null)
                 {
                     Debug.Log($"[Event] PlayerController 찾음: {playerController.name}, 사망 처리 시작");
-                    UIManager.Instance.KilledPopup(()=>
+                    if (PhotonNetwork.LocalPlayer.ActorNumber == actorNumber)
                     {
-                        playerController.Die();
-                    });
+                        UIManager.Instance.KilledPopup(()=>
+                        {
+                            playerController.Die();
+                        });    
+                    }
                 }
                 else
                 {
