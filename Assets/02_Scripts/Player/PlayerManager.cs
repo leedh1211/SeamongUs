@@ -127,7 +127,14 @@ public class PlayerManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 break;
             case EventCodes.PlayerJump:
                 controller = FindPlayerController(actorNumber);
-                controller.StartCoroutine(controller.JumpCoroutine());
+                if (controller != null)
+                {
+                    controller.StartCoroutine(controller.JumpCoroutine());
+                }
+                else
+                {
+                    Debug.LogWarning($"[PlayerManager] PlayerController를 찾을 수 없음 (Actor#{actorNumber})");
+                }
                 break;
             case EventCodes.PlayerAttacked:
             {

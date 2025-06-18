@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         var sel = EventSystem.current?.currentSelectedGameObject;
         if (sel == null) return false;
-        return sel.GetComponent<TMPro.TMP_InputField>() != null;
+        return sel.GetComponent<TMP_InputField>() != null;
 
     }
     
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private void SetName()
     {
         Debug.Log("Set name");
-        Photon.Realtime.Player player = photonView.Owner;
+        Player player = photonView.Owner;
         playerName.text = player.NickName;
     }
 
@@ -232,12 +232,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             SendOptions.SendReliable);
     }
 
-    private bool IsJumpableAhead()
-    {
-        if (moveInput == Vector2.zero) return false;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, moveInput.normalized, 0.6f, jumpableLayer);
-        return hit.collider != null;
-    }
+    //private bool IsJumpableAhead()
+    //{
+    //    if (moveInput == Vector2.zero) return false;
+    //    RaycastHit2D hit = Physics2D.Raycast(transform.position, moveInput.normalized, 0.6f, jumpableLayer);
+    //    return hit.collider != null;
+    //}
 
     public IEnumerator JumpCoroutine()
     {
@@ -326,14 +326,14 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         ReportManager.Instance.ReportBody(deadBodyActorNum);
     }
     
-    private void OnVotingEnd()
-    {
-        foreach (var player in VoteManager.Instance.VoteResults)
-        {
-            // 플레이어에게 투표 결과 전송
-            Debug.Log($"  {player.Key} => {player.Value}");
-        }
-    }
+    //private void OnVotingEnd()
+    //{
+    //    foreach (var player in VoteManager.Instance.VoteResults)
+    //    {
+    //        // 플레이어에게 투표 결과 전송
+    //        Debug.Log($"  {player.Key} => {player.Value}");
+    //    }
+    //}
 
     public void Die(string category = "killing")
     {

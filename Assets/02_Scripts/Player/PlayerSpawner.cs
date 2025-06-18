@@ -13,7 +13,7 @@ public class PlayerSpawner : MonoBehaviourPunCallbacks
     public LayerMask groundLayer;
 
     private Collider2D groundCollider;
-    private bool hasSpawned = false;
+    // private bool hasSpawned = false;
 
     private new void OnEnable()
     {
