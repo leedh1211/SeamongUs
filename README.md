@@ -24,7 +24,7 @@
 <br>
 
 ---
-## 1. 📖 프로젝트 소개
+## 1. 프로젝트 소개
 
 <br>
 
@@ -63,7 +63,7 @@
 
 <br>
 
-## 2. 👥 팀소개
+## 2. 팀소개
 | 이름 | 역할 | 담당 업무| GitHub | Blog |
 |------|------|--------|-------|-------|
 | 김웅진 | 팀장 | 아이템 / 인벤토리 / 인트로 씬 / 채팅 / 네트워크 관련 / 플레이어 체력 | [https://github.com/KUJ1031](https://github.com/KUJ1031) | https://thsusekdnlt1.tistory.com/ |
@@ -79,7 +79,7 @@
 
 <br>
 
-## 3. 💡 프로젝트 계기
+## 3. 프로젝트 계기
 > *초기 팀 프로젝트 구상 계획*
 <img src="https://github.com/user-attachments/assets/394c89dd-a4a2-41bb-8d80-7c9f52f250ac" width="405">
 <img src="https://github.com/user-attachments/assets/fd2f515f-106d-4db1-9a32-913409c1599a" width="500">
@@ -103,7 +103,7 @@
 
 <br>
 
-## 4. 🔧 주요기능
+## 4. 주요기능
 
 <details>
 <summary> 방 입장 이전</summary>
@@ -233,7 +233,7 @@
 
 <br>
 
-## 5. ⏰ 개발기간
+## 5. 개발기간
 
 - **총 개발 기간**: 2025.06.11 ~ 2025.06.18
   
@@ -243,7 +243,7 @@
 
 <br>
 
-## 6. 🛠 기술적 의사결정
+## 6. 기술적 의사결정
 
 > *기술 요구 사항*
 ### 🌐 서버 통신 - Photon PUN2
@@ -300,7 +300,7 @@
 
 <br>
 
-## 7. 🧩 서비스 구조
+## 7. 서비스 구조
 
 > *FlowChart (로직 흐름도)*
 <img src="https://github.com/user-attachments/assets/6701470f-67af-4d80-b216-124723f7006b" width="500">
@@ -308,7 +308,7 @@
 <br>
 
 
-## 8. 🧭 와이어프레임
+## 8. 와이어프레임
 
 > *초기 UI 구상*
 <img src="https://github.com/user-attachments/assets/1bf549d5-43c7-4376-acd3-cd26abc405af" width="700">
@@ -320,7 +320,7 @@
 
 ---
 
-## 9. 🧬 DataBase
+## 9. DataBase
 > *회원가입 및 로그인 - DataBase 연동 과정*
 <img src="https://github.com/user-attachments/assets/c640e41d-cc84-4806-82f4-b81d92b30540" width="800">
 
@@ -328,7 +328,7 @@
 
 <br>
 
-## 10. 🛠️ 트러블 슈팅
+## 10.  트러블 슈팅
 
 <br>
 
